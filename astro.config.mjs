@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://github.io',
+  site: 'https://ahkdesign.github.io',
   output: 'static',
 });
