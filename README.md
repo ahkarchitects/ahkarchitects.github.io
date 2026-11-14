@@ -1,24 +1,27 @@
 # AHK Interiors
 
-Official static portfolio website for AHK Interiors (Arishella Harish Kumar), built with Astro and hosted on GitHub Pages.
+Official static portfolio website for AHK Interiors (Arishella Harish Kumar), built with plain HTML and CSS for GitHub Pages.
 
 ## Local development
 
-Install dependencies and start the Astro development server:
+Open `index.html` directly in your browser. Edit `index.html` for content and `styles.css` for appearance. No package installation or build step is required.
+
+If Python 3 is already installed and allowed by your device policy, you can also preview over HTTP from the repository root:
 
 ```sh
-npm ci
-npm run dev
+python3 -m http.server 4321 --bind 127.0.0.1
 ```
 
-Create a production build with `npm run build`; the static site is generated in `dist/`.
+Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished.
 
 ## GitHub Pages deployment
 
-The workflow in `.github/workflows/deploy.yml` builds and deploys the site when changes are pushed to `main`. It can also be started manually with **Actions → Deploy to GitHub Pages → Run workflow** or by sending a `repository_dispatch` event from an external integration.
+In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **Deploy from a branch**, then select **main** and **/ (root)** and save.
 
-In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. The project site URL for `ahkdesign.github.io` is `https://ahkdesign.github.io/`. To use the future custom domain, configure `ahkdesign.in` in GitHub Pages and add the corresponding DNS records.
+Merge the website changes into `main`. GitHub Pages publishes the root `index.html` at `https://ahkdesign.github.io/`; subsequent pushes to `main` update the site automatically. There is no custom deployment workflow or npm build.
+
+To use a custom domain you own, configure it in GitHub Pages and add the corresponding DNS records. That makes the custom domain the address of this site, not a separate production deployment alongside staging.
 
 ## Future Sanity integration
 
-The current site is static and does not require Sanity credentials. When Sanity is integrated, store any required API keys or tokens as GitHub Actions repository secrets and reference them from the workflow or build environment; do not commit credentials to the repository. A Sanity webhook can trigger a rebuild using GitHub's `repository_dispatch` event.
+The current site has no CMS integration and requires no credentials. Sanity integration and automated content updates would require a separate implementation and approved tooling. Never put private API keys or tokens in browser-delivered HTML or JavaScript, or commit them to the repository.
