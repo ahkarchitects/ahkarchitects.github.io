@@ -24,7 +24,9 @@ To use a custom domain you own, configure it in GitHub Pages and add the corresp
 
 ## Branding and link previews
 
-The approved north-arrow logo is in `assets/ahk-logo.png`. Browser and home-screen icons use the PNG variants in `assets/`. The 1200-by-630 `assets/social-preview.png` is referenced by Open Graph and Twitter card metadata in `index.html`.
+The north-arrow logo is drawn as vector paths in `assets/ahk-logo.svg`, shared by the page and SVG-capable browser tabs so it stays sharp at any size. `assets/favicon-32.png` is a fallback for browsers without SVG favicon support. The 1200-by-630 `assets/social-preview.png` is a raster sharing card referenced by Open Graph and Twitter card metadata; many sharing services do not accept SVG preview images.
+
+There is no Apple-specific home-screen icon. Without one, iOS may use a page snapshot or generic icon depending on the browser/version; the PNG favicon is not a guaranteed home-screen fallback. The website itself is unaffected.
 
 When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in `index.html`. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
 

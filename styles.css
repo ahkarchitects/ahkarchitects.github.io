@@ -72,7 +72,6 @@
     width: clamp(7rem, 15vw, 9.5rem);
     height: auto;
     margin: 0 auto 2rem;
-    clip-path: polygon(50% 0, 100% 100%, 50% 77%, 0 100%);
   }
 
   .eyebrow,
