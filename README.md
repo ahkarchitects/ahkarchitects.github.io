@@ -22,6 +22,12 @@ Merge the website changes into `main`. GitHub Pages publishes the root `index.ht
 
 To use a custom domain you own, configure it in GitHub Pages and add the corresponding DNS records. That makes the custom domain the address of this site, not a separate production deployment alongside staging.
 
+## Branding and link previews
+
+The approved north-arrow logo is in `assets/ahk-logo.png`. Browser and home-screen icons use the PNG variants in `assets/`. The 1200-by-630 `assets/social-preview.png` is referenced by Open Graph and Twitter card metadata in `index.html`.
+
+When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in `index.html`. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
+
 ## Future Sanity integration
 
 The current site has no CMS integration and requires no credentials. Sanity integration and automated content updates would require a separate implementation and approved tooling. Never put private API keys or tokens in browser-delivered HTML or JavaScript, or commit them to the repository.
