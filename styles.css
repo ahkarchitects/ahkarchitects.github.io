@@ -530,6 +530,103 @@ button.text-link {
   font-size: 0.7rem;
 }
 
+.gallery-stage {
+  position: relative;
+}
+
+.gallery-count {
+  margin: 1rem 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.project-dialog .gallery-arrow {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--image-caption);
+  border-radius: 50%;
+  color: var(--image-caption);
+  background: var(--dialog-backdrop);
+  font-size: 2rem;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.gallery-arrow-previous {
+  left: 0.75rem;
+}
+
+.gallery-arrow-next {
+  right: 0.75rem;
+}
+
+.gallery-arrow:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.gallery-dots {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  display: flex;
+  width: max-content;
+  max-width: calc(100% - 1.5rem);
+  padding: 0 0.25rem;
+  border-radius: 2rem;
+  background: var(--dialog-backdrop);
+  transform: translateX(-50%);
+}
+
+.project-dialog .gallery-dot {
+  display: grid;
+  flex: 0 1 2rem;
+  place-items: center;
+  width: 2rem;
+  min-width: 1.5rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+}
+
+.gallery-dot::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--image-caption);
+  border-radius: 50%;
+  content: "";
+}
+
+.gallery-dot[aria-current="true"]::before {
+  background: var(--image-caption);
+}
+
+.project-dialog .gallery-arrow:focus-visible,
+.project-dialog .gallery-dot:focus-visible {
+  outline: 2px solid var(--image-caption);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .project-dialog .gallery-dot {
+    flex-basis: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .gallery-dot::before {
+    width: 0.35rem;
+    height: 0.35rem;
+  }
+}
+
 .scope-list {
   display: grid;
   gap: 0.45rem;

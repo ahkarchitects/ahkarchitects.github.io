@@ -17,12 +17,17 @@
   let activeSlug = null;
   let opener = null;
   let catalogueReady = false;
+  let navigateGallery = null;
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
     if (className) node.className = className;
     return node;
+  }
+
+  function validImageFile(file) {
+    return typeof file === "string" && /^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(file);
   }
 
   function validateMetadata(data) {
@@ -42,12 +47,21 @@
     const cover = data.cover;
     if (
       !cover ||
-      typeof cover.file !== "string" ||
-      !/^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(cover.file) ||
+      !validImageFile(cover.file) ||
       typeof cover.alt !== "string" ||
       !cover.alt.trim()
     ) {
       throw new Error("Invalid project cover.");
+    }
+    if (
+      data.gallery !== undefined &&
+      (
+        !Array.isArray(data.gallery) ||
+        data.gallery.some((file) => !validImageFile(file)) ||
+        new Set([cover.file, ...data.gallery]).size !== data.gallery.length + 1
+      )
+    ) {
+      throw new Error("Invalid project gallery.");
     }
     return data;
   }
@@ -212,12 +226,108 @@
     }
     details.append(list);
 
-    content.replaceChildren(details, coverFigure(slug, data, "detail-cover"));
+    content.replaceChildren(
+      details,
+      data.gallery?.length ? renderGallery(slug, data) : coverFigure(slug, data, "detail-cover")
+    );
     content.hidden = false;
+  }
+
+  function renderGallery(slug, data) {
+    const files = [data.cover.file, ...data.gallery];
+    const gallery = element("section", undefined, "detail-gallery");
+    gallery.setAttribute("aria-label", `${data.title} image gallery`);
+    gallery.setAttribute("aria-roledescription", "carousel");
+    const figure = element("figure", undefined, "detail-cover");
+    const stage = element("div", undefined, "gallery-stage");
+    const imageSlot = element("div", undefined, "gallery-image");
+    imageSlot.id = "project-gallery-image";
+    const caption = element("figcaption", `${data.title} · Concept illustration`);
+    const count = element("p", undefined, "gallery-count");
+    count.setAttribute("role", "status");
+    count.setAttribute("aria-atomic", "true");
+    const dots = element("div", undefined, "gallery-dots");
+    dots.setAttribute("role", "group");
+    dots.setAttribute("aria-label", "Choose an image");
+    const status = element("p", undefined, "detail-message");
+    status.setAttribute("role", "status");
+    const retryImage = element("button", "Retry image", "text-link");
+    retryImage.type = "button";
+    retryImage.hidden = true;
+    let index = 0;
+
+    function showImage(destination) {
+      if (destination < 0 || destination >= files.length) return;
+      index = destination;
+      const file = files[index];
+      const image = element("img");
+      const name = file.replace(/\.[^.]+$/, "").replace(/-/g, " ");
+      image.alt = index === 0 ? data.cover.alt : `${data.title}: ${name} concept illustration`;
+      image.decoding = "async";
+      image.loading = "eager";
+      imageSlot.replaceChildren(image);
+      imageSlot.setAttribute("aria-busy", "true");
+      count.textContent = `Image ${index + 1} of ${files.length}`;
+      for (const { button, offset } of arrows) {
+        button.disabled = offset < 0 ? index === 0 : index === files.length - 1;
+      }
+      for (const [position, dot] of [...dots.children].entries()) {
+        if (position === index) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      }
+      status.textContent = "Loading image...";
+      status.hidden = false;
+      retryImage.hidden = true;
+      image.addEventListener("load", () => {
+        if (!imageSlot.isConnected || !imageSlot.contains(image)) return;
+        imageSlot.setAttribute("aria-busy", "false");
+        status.hidden = true;
+      });
+      image.addEventListener("error", () => {
+        if (!imageSlot.isConnected || !imageSlot.contains(image)) return;
+        imageSlot.setAttribute("aria-busy", "false");
+        status.textContent = "This image could not be loaded. Retry it or choose another image.";
+        retryImage.hidden = false;
+        console.error(`Could not load gallery image "${file}" for project "${slug}".`);
+      });
+      image.src = new URL(`./projects/${slug}/${file}`, window.location.href).href;
+    }
+
+    const arrows = [
+      { offset: -1, text: "\u2039", className: "gallery-arrow gallery-arrow-previous" },
+      { offset: 1, text: "\u203a", className: "gallery-arrow gallery-arrow-next" }
+    ].map((control) => {
+      const button = element("button", control.text, control.className);
+      button.type = "button";
+      button.setAttribute("aria-label", control.offset < 0 ? "Previous image" : "Next image");
+      button.setAttribute("aria-controls", imageSlot.id);
+      button.addEventListener("click", () => showImage(index + control.offset));
+      stage.append(button);
+      return { button, offset: control.offset };
+    });
+    for (const [position, file] of files.entries()) {
+      const dot = element("button", undefined, "gallery-dot");
+      dot.type = "button";
+      dot.setAttribute("aria-label", `Show image ${position + 1} of ${files.length}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")}`);
+      dot.setAttribute("aria-controls", imageSlot.id);
+      dot.addEventListener("click", () => {
+        if (position !== index) showImage(position);
+      });
+      dots.append(dot);
+    }
+    stage.prepend(imageSlot);
+    stage.append(dots);
+    figure.append(stage, caption);
+    gallery.append(figure, count, status, retryImage);
+    navigateGallery = (offset) => showImage(index + offset);
+    retryImage.addEventListener("click", () => showImage(index));
+    showImage(0);
+    return gallery;
   }
 
   async function loadDetails(slug) {
     const request = ++detailRequest;
+    navigateGallery = null;
     activeSlug = slug;
     content.hidden = true;
     content.replaceChildren();
@@ -251,6 +361,7 @@
 
   function hideDetails() {
     detailRequest++;
+    navigateGallery = null;
     activeSlug = null;
     if (dialog.open) dialog.close();
     document.body.classList.remove("project-open");
@@ -284,6 +395,16 @@
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
     closeDetails();
+  });
+  dialog.addEventListener("keydown", (event) => {
+    if (
+      !navigateGallery ||
+      event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+      event.target.closest("input, textarea, select, [contenteditable]") ||
+      !["ArrowLeft", "ArrowRight"].includes(event.key)
+    ) return;
+    event.preventDefault();
+    navigateGallery(event.key === "ArrowLeft" ? -1 : 1);
   });
   retry.addEventListener("click", () => loadDetails(activeSlug));
   catalogueRetry.addEventListener("click", loadCatalogue);
