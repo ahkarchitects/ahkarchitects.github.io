@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">House by the Grove concept illustration</title>
+  <desc id="desc">A cartoon timber cabin cutaway with a shaded veranda, forest trees and cozy seating, not a photograph.</desc>
+  <defs>
+    <linearGradient id="background" x2="0" y2="1"><stop stop-color="#d6e6d4"/><stop offset="1" stop-color="#8fb7a4"/></linearGradient>
+  </defs>
+  <rect width="960" height="720" fill="url(#background)"/>
+  <circle cx="761" cy="135" r="52" fill="#f8e9b7"/>
+  <path d="M0 338Q112 239 236 322T473 310T724 299T960 301V720H0Z" fill="#abc8ad"/>
+  <ellipse cx="480" cy="609" rx="389" ry="61" fill="#517f6d" opacity=".25"/>
+  <g stroke="#486f5e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <g fill="#77a087">
+      <path d="M126 160L58 286H90L45 362H205L159 286H194Z"/><path d="M836 163L780 282H805L765 356H911L867 282H889Z"/>
+      <path d="M128 363V453M839 355V456" stroke="#7b7952" stroke-width="12"/>
+    </g>
+    <path d="M144 493V211L469 113L793 225V498L473 622Z" fill="#d8b184" stroke="#655d49"/>
+    <path d="M144 211L469 113V397L144 493Z" fill="#bd936c" stroke="#655d49"/>
+    <path d="M469 113L793 225V498L469 397Z" fill="#9b7857" stroke="#655d49"/>
+    <path d="M144 493L469 397L793 498L473 622Z" fill="#e2c49a" stroke="#655d49"/>
+    <path d="M155 269L455 180M155 316L455 227M155 363L455 274M155 410L455 321M155 457L455 368" stroke="#a47c58"/>
+    <path d="M492 184L761 277V467L492 379Z" fill="#b3cfb0" stroke="#655d49" stroke-width="10"/>
+    <path d="M505 201L746 284V355L505 275Z" fill="#dce7ce" stroke="none"/>
+    <path d="M505 348L746 428M568 211V405M691 253V449" stroke="#655d49" stroke-width="8"/>
+    <g fill="#7da38a" stroke="none">
+      <path d="M537 235L506 309H524L498 349L583 378L558 328H577Z"/>
+      <path d="M635 247L602 334H623L591 383L684 414L660 358H679Z"/>
+      <path d="M725 293L696 359H711L687 409L749 430V368Z"/>
+    </g>
+    <path d="M544 290V368M635 319V395M724 346V424" stroke="#7c8060" stroke-width="7"/>
+    <path d="M474 405L785 507M512 425L471 440M572 444L529 460M632 465L588 482M692 486L648 502M752 507L706 526" stroke="#b0926b"/>
+    <path d="M259 496L441 444L650 516L468 579Z" fill="#8fac95"/>
+    <path d="M192 431L299 400L405 437V484L291 519L192 482Z" fill="#688c78" stroke="#496b58"/>
+    <path d="M196 432V378Q196 363 214 369L288 395V470Z" fill="#8bab8c"/>
+    <path d="M289 396L380 370Q401 365 401 387V438L289 471Z" fill="#99b498"/>
+    <path d="M208 442L291 471L390 442L307 414Z" fill="#b3c49f"/>
+    <path d="M227 379L265 392L257 431L219 418Z" fill="#edc592"/>
+    <path d="M326 394L359 384L369 421L336 431Z" fill="#e6b080"/>
+    <path d="M211 490V507M378 495V511" stroke="#655d49" stroke-width="9"/>
+    <path d="M418 498L499 474L577 500L494 529Z" fill="#bb875a" stroke="#655d49"/>
+    <path d="M418 498V518L494 546V529ZM494 529L577 500V520L494 546Z" fill="#966d4c" stroke="#655d49"/>
+    <path d="M440 526V550M555 530V551" stroke="#655d49" stroke-width="8"/>
+    <path d="M476 484L496 478L511 484L491 490Z" fill="#f5dfb6"/>
+    <path d="M254 248L324 227V313L254 334Z" fill="#b0b6a0" stroke="#655d49"/>
+    <path d="M264 312L286 271L315 295" fill="none" stroke="#f3dfb6" stroke-width="8"/>
+    <path d="M675 487L711 499L705 535L677 526Z" fill="#d0a477" stroke="#655d49"/>
+    <path d="M691 490V442M691 468Q663 459 663 442Q687 440 691 468M691 456Q718 450 722 430Q696 428 691 456" fill="#668c71"/>
+    <path d="M141 211L469 113L797 225" fill="none" stroke="#655d49" stroke-width="14"/>
+  </g>
+  <path d="M77 168V192M65 180H89M872 426V448M861 437H883" stroke="#e8f1d8" stroke-width="4" stroke-linecap="round"/>
+</svg>

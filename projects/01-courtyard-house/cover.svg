@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">Courtyard House concept illustration</title>
+  <desc id="desc">A cartoon cutaway of a peach living room with rounded seating and a leafy courtyard, not a photograph.</desc>
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#f8e6cb"/><stop offset="1" stop-color="#efc1a5"/></linearGradient>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#fff2da"/><stop offset="1" stop-color="#e9b293"/></linearGradient>
+  </defs>
+  <rect width="960" height="720" fill="url(#sky)"/>
+  <circle cx="794" cy="132" r="63" fill="#fff5d9"/>
+  <path d="M62 549Q470 470 899 556L899 640Q468 705 62 617Z" fill="#c9907e" opacity=".3"/>
+  <g stroke="#79584d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M106 497V186L490 81L853 209V510L477 647Z" fill="url(#wall)"/>
+    <path d="M106 186L490 81V389L106 497Z" fill="#f6d9b5"/>
+    <path d="M490 81L853 209V510L490 389Z" fill="#e8ad92"/>
+    <path d="M106 497L490 389L853 510L477 647Z" fill="#fbe8c9"/>
+    <path d="M505 159L805 258V461L505 364Z" fill="#a7bd8a" stroke-width="10"/>
+    <path d="M519 172L791 263V359L519 270Z" fill="#d9e5bd" stroke="none"/>
+    <path d="M519 345L791 435M603 191V396M710 225V430" fill="none" stroke="#9c674d" stroke-width="10"/>
+    <path d="M617 370L755 414L701 441L568 395Z" fill="#c3cc98"/>
+    <path d="M674 390V239M674 310L631 267M674 291L711 257" fill="none" stroke="#907454" stroke-width="12"/>
+    <g fill="#6e9471" stroke="#527a60">
+      <circle cx="631" cy="248" r="40"/><circle cx="699" cy="230" r="49"/><circle cx="665" cy="201" r="44"/><circle cx="731" cy="269" r="34"/><circle cx="665" cy="271" r="43"/>
+    </g>
+    <g fill="#9bbb7e" stroke="none"><circle cx="634" cy="226" r="17"/><circle cx="686" cy="206" r="22"/><circle cx="724" cy="256" r="14"/></g>
+    <path d="M236 498L471 432L708 511L469 594Z" fill="#e6b09a" stroke="#c98c78"/>
+    <path d="M169 443L302 407L410 444L274 485Z" fill="#cc795d"/>
+    <path d="M169 443V489L274 528V485Z" fill="#b96851"/>
+    <path d="M274 485L410 444V490L274 528Z" fill="#e1a080"/>
+    <path d="M179 442V388Q179 369 197 373L264 396Q279 401 279 420V478Z" fill="#f4c796"/>
+    <path d="M279 420Q279 403 296 398L373 377Q390 373 390 391V444L279 478Z" fill="#f9d8ab"/>
+    <path d="M188 449L268 477L386 442L308 416Z" fill="#ffe3b9"/>
+    <path d="M205 391L248 406L248 442L205 427Z" fill="#9eaf85"/>
+    <path d="M315 410L358 397L358 432L315 445Z" fill="#d18a6b"/>
+    <path d="M194 498V515M375 501V518" stroke="#79584d" stroke-width="9"/>
+    <ellipse cx="487" cy="498" rx="85" ry="31" fill="#b67c59"/>
+    <path d="M402 498V516Q487 548 572 516V498Q487 530 402 498Z" fill="#9a654c"/>
+    <path d="M429 526V550M546 527V550" stroke-width="9"/>
+    <path d="M464 473L503 473L498 498Q484 508 470 498Z" fill="#f4d6a6"/>
+    <path d="M483 477V444M483 460Q457 456 458 436Q480 434 483 460M484 456Q509 449 507 429Q486 430 484 456" fill="#7f9b69"/>
+    <path d="M740 471L783 486L777 528Q757 538 739 521Z" fill="#cd8569"/>
+    <path d="M760 481V422M760 450Q724 447 728 418Q753 417 760 450M760 437Q790 436 796 407Q765 405 760 437" fill="#6c946e"/>
+    <path d="M144 251L218 230V314L144 336Z" fill="#fff0d5"/>
+    <path d="M156 312L174 271L189 294L206 259V303Z" fill="#cd926f" stroke="none"/>
+  </g>
+  <g fill="#fff4de"><circle cx="112" cy="112" r="6"/><circle cx="862" cy="420" r="5"/><path d="M839 92V114M828 103H850" stroke="#fff4de" stroke-width="4" stroke-linecap="round"/></g>
+</svg>

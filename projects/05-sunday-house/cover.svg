@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">Sunday House concept illustration</title>
+  <desc id="desc">A cheerful cartoon family living and dining room with a teak table, cream sofa and garden views, not a photograph.</desc>
+  <defs>
+    <linearGradient id="background" x2="0" y2="1"><stop stop-color="#fff0c9"/><stop offset="1" stop-color="#eac28e"/></linearGradient>
+    <linearGradient id="window" x2="0" y2="1"><stop stop-color="#d7e9d0"/><stop offset="1" stop-color="#a9c18b"/></linearGradient>
+  </defs>
+  <rect width="960" height="720" fill="url(#background)"/>
+  <circle cx="803" cy="131" r="54" fill="#fff7db"/>
+  <ellipse cx="477" cy="603" rx="385" ry="56" fill="#b78b58" opacity=".24"/>
+  <g stroke="#8c6b4e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M117 484V189L471 86L846 215V510L478 642Z" fill="#fff0cd"/>
+    <path d="M117 189L471 86V382L117 484Z" fill="#f6ddb2"/>
+    <path d="M471 86L846 215V510L471 382Z" fill="#e8bd8e"/>
+    <path d="M117 484L471 382L846 510L478 642Z" fill="#f9e6c0"/>
+    <path d="M506 169L797 269V458L506 359Z" fill="url(#window)" stroke-width="9"/>
+    <path d="M519 334Q556 288 596 352Q634 305 674 375Q717 330 784 393V440L519 347Z" fill="#84ab7c" stroke="none"/>
+    <g fill="#b6cd91" stroke="none"><circle cx="557" cy="309" r="29"/><circle cx="650" cy="330" r="35"/><circle cx="749" cy="364" r="28"/></g>
+    <path d="M602 202V391M701 236V424" stroke-width="7"/>
+    <path d="M194 490L388 435L574 497L378 562Z" fill="#e6b487" stroke="#cca078"/>
+    <path d="M171 437L269 409L370 444V491L270 522L171 487Z" fill="#d2ab7d"/>
+    <path d="M177 438V380Q177 365 194 371L266 396V478Z" fill="#f9e3b9"/>
+    <path d="M267 397L347 375Q365 370 365 391V445L267 478Z" fill="#fff0ce"/>
+    <path d="M188 449L267 477L355 449L277 423Z" fill="#fff2d3"/>
+    <path d="M204 382L243 396L234 435L196 421Z" fill="#dda082"/>
+    <path d="M295 401L324 393L335 428L306 437Z" fill="#aabb86"/>
+    <path d="M187 495V513M345 501V521" stroke-width="8"/>
+    <ellipse cx="396" cy="500" rx="51" ry="20" fill="#c49766"/>
+    <path d="M364 515V543M429 515V543" stroke-width="8"/>
+    <path d="M383 487L407 487L404 503L386 503Z" fill="#eeb994"/>
+    <path d="M516 421L638 386L767 430L643 470Z" fill="#ba8658"/>
+    <path d="M516 421V439L643 487V470ZM643 470L767 430V448L643 487Z" fill="#a0714e"/>
+    <path d="M533 445V510M746 454V519M644 487V552" stroke-width="10"/>
+    <path d="M535 485L567 476L600 487L566 499Z" fill="#efcf9a"/>
+    <path d="M535 485V523M600 487V526M566 499V539" stroke-width="6"/>
+    <path d="M535 485V454Q535 442 546 445L568 453V477" fill="#f4d6a2"/>
+    <path d="M691 506L724 495L756 507L723 519Z" fill="#efcf9a"/>
+    <path d="M691 506V546M756 507V545M723 519V560" stroke-width="6"/>
+    <path d="M727 495V467Q727 454 740 459L757 465V507" fill="#f4d6a2"/>
+    <ellipse cx="587" cy="418" rx="17" ry="6" fill="#f8e8c9"/>
+    <ellipse cx="703" cy="438" rx="17" ry="6" fill="#f8e8c9"/>
+    <path d="M626 399L650 407L646 430L629 425Z" fill="#d99575"/>
+    <path d="M638 405V376M638 388L621 369M638 382L654 367" fill="none" stroke="#85a06b" stroke-width="6"/>
+    <g fill="#e8b969" stroke="none"><circle cx="621" cy="366" r="8"/><circle cx="638" cy="372" r="9"/><circle cx="655" cy="365" r="8"/></g>
+    <path d="M634 143V207" stroke-width="5"/>
+    <path d="M601 207Q634 175 667 229Z" fill="#f8d390"/>
+    <path d="M301 177L395 150V247L301 274Z" fill="#fff0cc"/>
+    <circle cx="345" cy="201" r="22" fill="#e2ad70" stroke="none"/>
+    <path d="M311 254L329 222L346 237L381 204V234Z" fill="#adc18e" stroke="none"/>
+    <path d="M775 479L813 492L808 531L779 523Z" fill="#d89870"/>
+    <path d="M794 487V436M794 465Q764 458 765 437Q791 437 794 465M794 451Q822 448 826 424Q800 425 794 451" fill="#83a579"/>
+  </g>
+  <path d="M126 107V129M115 118H137M864 402V424M853 413H875" stroke="#fff8dd" stroke-width="4" stroke-linecap="round"/>
+</svg>
