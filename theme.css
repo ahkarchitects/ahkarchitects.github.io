@@ -24,7 +24,7 @@
   --image-shade: #18171365;
   --image-caption: #fff;
   --transparent: transparent;
-  --logo-filter: none;
+  --logo-background: light-dark(transparent, #fff);
 }
 
 :root[data-theme="light"] {
@@ -33,11 +33,4 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --logo-filter: invert(1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --logo-filter: invert(1);
-  }
 }

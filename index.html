@@ -44,20 +44,27 @@
           </span>
         </span>
       </a>
-      <div class="header-actions">
-        <div class="header-contacts" data-contact-links-copy>
-          <a class="header-contact-fallback" href="#contact">Contact</a>
-        </div>
-        <label class="theme-control" hidden>
-          <span>Theme</span>
-          <select id="theme-select">
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
+      <div class="header-contacts" data-contact-links-copy>
+        <a class="header-contact-fallback" href="#contact">Contact</a>
       </div>
     </header>
+    <div class="theme-toolbar" hidden>
+      <fieldset class="theme-control">
+        <legend class="sr-only">Theme</legend>
+        <label>
+          <input class="sr-only" type="radio" name="theme" value="system" checked />
+          <span>System</span>
+        </label>
+        <label>
+          <input class="sr-only" type="radio" name="theme" value="light" />
+          <span>Light</span>
+        </label>
+        <label>
+          <input class="sr-only" type="radio" name="theme" value="dark" />
+          <span>Dark</span>
+        </label>
+      </fieldset>
+    </div>
 
     <main>
       <section class="hero" id="home" aria-labelledby="hero-title">

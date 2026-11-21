@@ -18,9 +18,9 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 ## Light and dark themes
 
-The site follows the visitor's system appearance by default. The header's **Theme** selector offers **System**, **Light**, and **Dark**. Explicit choices are saved in this site's browser local storage; choosing System clears the override and follows future system changes. If storage is unavailable, switching still works for the current visit and a warning appears in the browser console.
+The site follows the visitor's system appearance by default. A compact **System / Light / Dark** segmented control sits just below the header on the right, leaving the top bar for branding and contact links. It uses native radio buttons, supporting Tab and arrow-key navigation without a dropdown. Explicit choices are saved in this site's browser local storage; choosing System clears the override and follows future system changes. If storage is unavailable, switching still works for the current visit and a warning appears in the browser console.
 
-Maintain both palettes in `theme.css`: each `light-dark(light, dark)` value pairs the original warm light appearance with a darker earth-toned equivalent. This uses the native CSS `light-dark()` function supported by current Chrome, Edge, Firefox, and Safari. Layout, fonts, and image sizing stay in `styles.css`; photographs and contact icon brand colors are not recolored. The monochrome logo is inverted in dark mode to remain visible.
+Maintain both palettes in `theme.css`: each `light-dark(light, dark)` value pairs the original warm light appearance with a darker earth-toned equivalent. This uses the native CSS `light-dark()` function supported by current Chrome, Edge, Firefox, and Safari. Layout, fonts, and image sizing stay in `styles.css`; photographs and contact icon brand colors are not recolored. The logo keeps its original black-and-white artwork in both modes, with a small white backing in dark mode for clarity.
 
 `theme.js` applies a saved preference before the page renders and keeps the browser toolbar color in sync with the background. Without JavaScript, the selector stays hidden and CSS still follows the system theme.
 
