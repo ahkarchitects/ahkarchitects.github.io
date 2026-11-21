@@ -200,11 +200,6 @@ h1 em,
   margin-bottom: 3.4rem;
 }
 
-.hero-index {
-  color: #a29c90;
-  font-size: 0.6rem;
-}
-
 .projects-section {
   padding: 5.5rem 0 6rem;
   border-top: 1px solid var(--line);
@@ -501,7 +496,7 @@ h1 em,
 
   .hero-aside {
     display: grid;
-    grid-template-columns: 2.8rem 1fr auto;
+    grid-template-columns: 2.8rem 1fr;
     align-items: center;
     gap: 1rem;
     padding-top: 1.5rem;
