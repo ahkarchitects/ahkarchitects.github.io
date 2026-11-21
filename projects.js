@@ -85,7 +85,10 @@
     image.alt = data.cover.alt;
     image.decoding = "async";
     image.loading = className === "project-image" ? "lazy" : "eager";
-    const caption = element("figcaption", number ? `${number} / ${data.title}` : data.title);
+    const caption = element(
+      "figcaption",
+      `${number ? `${number} / ` : ""}${data.title} · Concept illustration`
+    );
     image.addEventListener("error", () => {
       caption.textContent = `${data.title}: cover image could not be loaded.`;
       caption.setAttribute("role", "status");
