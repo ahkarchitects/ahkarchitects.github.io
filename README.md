@@ -30,6 +30,12 @@ There is no Apple-specific home-screen icon. Without one, iOS may use a page sna
 
 When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in `index.html`. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
 
+## Portfolio images
+
+The five project illustrations are AI-generated concepts stored locally as optimized JPEGs in `assets/projects/`. The site does not load project images from Unsplash or another external image host. These illustrations are not photographs of completed client work; the project labels and page disclaimer identify the sample content.
+
+When replacing an illustration, update its descriptive alt text and intrinsic image dimensions in `index.html`. Keep the concept disclosure unless the sample content is replaced with an actual project.
+
 ## Future Sanity integration
 
 The current site has no CMS integration and requires no credentials. Sanity integration and automated content updates would require a separate implementation and approved tooling. Never put private API keys or tokens in browser-delivered HTML or JavaScript, or commit them to the repository.
