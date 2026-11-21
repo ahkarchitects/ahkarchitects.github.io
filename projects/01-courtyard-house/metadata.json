@@ -1,0 +1,11 @@
+{
+  "title": "Courtyard House",
+  "type": "Private residence · Concept",
+  "description": "A quiet, light-filled home built around a green heart and the rituals of everyday life.",
+  "location": "Bengaluru, India",
+  "scope": ["Architecture & planning", "Interior design", "Turnkey execution"],
+  "cover": {
+    "file": "cover.jpg",
+    "alt": "AI-generated concept of a warm living room opening onto a planted courtyard through teak-framed doors"
+  }
+}

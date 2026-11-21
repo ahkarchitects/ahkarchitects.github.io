@@ -27,6 +27,7 @@
     <meta name="twitter:description" content="Architecture, interior design, and turnkey spaces by Arishella Harish Kumar." />
     <meta name="twitter:image" content="https://ahkdesign.github.io/assets/social-preview.png" />
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./projects.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -63,120 +64,27 @@
           <p class="scroll-hint"><span aria-hidden="true">←</span> Scroll to explore <span aria-hidden="true">→</span></p>
         </div>
 
-        <div class="project-list" aria-label="Project concepts">
-          <article class="project-card" id="project-01">
-            <div class="project-info">
-              <p class="project-number">01 <span>/ 05</span></p>
-              <p class="project-type">Private residence · Concept</p>
-              <h3>Courtyard House</h3>
-              <p class="project-description">A quiet, light-filled home built around a green heart and the rituals of everyday life.</p>
-              <dl class="project-facts">
-                <div><dt>Location</dt><dd>Bengaluru, India</dd></div>
-              </dl>
-              <h4>Scope</h4>
-              <ul class="scope-list" aria-label="Project scope">
-                <li class="included">Architecture &amp; planning</li>
-                <li class="included">Interior design</li>
-                <li class="included">Turnkey execution</li>
-              </ul>
-            </div>
-            <figure class="project-image">
-              <img src="./assets/projects/courtyard-house.jpg" alt="AI-generated concept of a warm living room opening onto a planted courtyard through teak-framed doors" width="1536" height="1024" fetchpriority="high" />
-              <figcaption>01 / Courtyard House</figcaption>
-            </figure>
-          </article>
-
-          <article class="project-card" id="project-02">
-            <div class="project-info">
-              <p class="project-number">02 <span>/ 05</span></p>
-              <p class="project-type">Apartment refresh · Concept</p>
-              <h3>The Still House</h3>
-              <p class="project-description">A considered interior palette that turns a city apartment into a softer place to land.</p>
-              <dl class="project-facts">
-                <div><dt>Location</dt><dd>Chennai, India</dd></div>
-              </dl>
-              <h4>Scope</h4>
-              <ul class="scope-list" aria-label="Project scope">
-                <li>Architecture &amp; planning</li>
-                <li class="included">Interior design</li>
-                <li>Turnkey execution</li>
-              </ul>
-            </div>
-            <figure class="project-image">
-              <img src="./assets/projects/the-still-house.jpg" alt="AI-generated concept of a serene apartment living room with linen seating, a cane chair, and sheer curtains" width="1536" height="1024" loading="lazy" />
-              <figcaption>02 / The Still House</figcaption>
-            </figure>
-          </article>
-
-          <article class="project-card" id="project-03">
-            <div class="project-info">
-              <p class="project-number">03 <span>/ 05</span></p>
-              <p class="project-type">Weekend home · Concept</p>
-              <h3>House by the Grove</h3>
-              <p class="project-description">A nature-led home with simple forms, shaded edges, and room to slow down.</p>
-              <dl class="project-facts">
-                <div><dt>Location</dt><dd>Coorg, India</dd></div>
-              </dl>
-              <h4>Scope</h4>
-              <ul class="scope-list" aria-label="Project scope">
-                <li class="included">Architecture &amp; planning</li>
-                <li class="included">Interior design</li>
-                <li>Turnkey execution</li>
-              </ul>
-            </div>
-            <figure class="project-image">
-              <img src="./assets/projects/house-by-the-grove.jpg" alt="AI-generated concept of a timber-and-stone living room overlooking a shaded veranda and misty green grove" width="1672" height="940" loading="lazy" />
-              <figcaption>03 / House by the Grove</figcaption>
-            </figure>
-          </article>
-
-          <article class="project-card" id="project-04">
-            <div class="project-info">
-              <p class="project-number">04 <span>/ 05</span></p>
-              <p class="project-type">Compact apartment · Concept</p>
-              <h3>Little City Home</h3>
-              <p class="project-description">A smart, welcoming home where every corner earns its place without feeling crowded.</p>
-              <dl class="project-facts">
-                <div><dt>Location</dt><dd>Hyderabad, India</dd></div>
-              </dl>
-              <h4>Scope</h4>
-              <ul class="scope-list" aria-label="Project scope">
-                <li>Architecture &amp; planning</li>
-                <li class="included">Interior design</li>
-                <li>Turnkey execution</li>
-              </ul>
-            </div>
-            <figure class="project-image">
-              <img src="./assets/projects/little-city-home.jpg" alt="AI-generated concept of a compact apartment with built-in wood storage, a small sofa, and a window-side dining nook" width="1536" height="1024" loading="lazy" />
-              <figcaption>04 / Little City Home</figcaption>
-            </figure>
-          </article>
-
-          <article class="project-card" id="project-05">
-            <div class="project-info">
-              <p class="project-number">05 <span>/ 05</span></p>
-              <p class="project-type">Family residence · Concept</p>
-              <h3>Sunday House</h3>
-              <p class="project-description">A generous family home designed for shared meals, easy mornings, and changing seasons.</p>
-              <dl class="project-facts">
-                <div><dt>Location</dt><dd>Mysuru, India</dd></div>
-              </dl>
-              <h4>Scope</h4>
-              <ul class="scope-list" aria-label="Project scope">
-                <li class="included">Architecture &amp; planning</li>
-                <li class="included">Interior design</li>
-                <li>Turnkey execution</li>
-              </ul>
-            </div>
-            <figure class="project-image">
-              <img src="./assets/projects/sunday-house.jpg" alt="AI-generated concept of a sunlit family living and dining room with a teak table, cream seating, and garden views" width="1536" height="1024" loading="lazy" />
-              <figcaption>05 / Sunday House</figcaption>
-            </figure>
-          </article>
+        <div class="catalogue-status">
+          <p id="catalogue-loading" class="detail-message" role="status" hidden>Loading projects...</p>
+          <p id="catalogue-error" class="detail-message" role="alert" hidden></p>
+          <button id="catalogue-retry" class="text-link" type="button" hidden>Try again</button>
         </div>
+        <div class="project-list" id="project-list" aria-label="Project concepts"></div>
+        <noscript><p class="disclaimer">Enable JavaScript to load project summaries and open project details.</p></noscript>
         <p class="disclaimer">These are illustrative portfolio concepts with AI-generated images. Locations are samples, not completed client projects.</p>
       </section>
     </main>
+
+    <dialog class="project-dialog" id="project-dialog" aria-labelledby="project-dialog-title">
+      <div class="dialog-header">
+        <h2 id="project-dialog-title" tabindex="-1">Project details</h2>
+        <button class="dialog-close" type="button" autofocus aria-label="Close project details">Close &times;</button>
+      </div>
+      <p id="project-loading" class="detail-message" role="status" hidden>Loading project details...</p>
+      <p id="project-error" class="detail-message" role="alert" hidden></p>
+      <button id="project-retry" class="text-link" type="button" hidden>Try again</button>
+      <div id="project-detail-content" hidden></div>
+    </dialog>
 
     <footer class="site-footer" id="contact">
       <div>
