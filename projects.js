@@ -17,12 +17,23 @@
   let activeSlug = null;
   let opener = null;
   let catalogueReady = false;
+  let navigateGallery = null;
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
     if (className) node.className = className;
     return node;
+  }
+
+  function validImage(image) {
+    return (
+      image &&
+      typeof image.file === "string" &&
+      /^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(image.file) &&
+      typeof image.alt === "string" &&
+      image.alt.trim()
+    );
   }
 
   function validateMetadata(data) {
@@ -39,15 +50,22 @@
     ) {
       throw new Error("Invalid project scope.");
     }
-    const cover = data.cover;
+    if (!validImage(data.cover)) throw new Error("Invalid project cover.");
     if (
-      !cover ||
-      typeof cover.file !== "string" ||
-      !/^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(cover.file) ||
-      typeof cover.alt !== "string" ||
-      !cover.alt.trim()
+      data.gallery !== undefined &&
+      (
+        !Array.isArray(data.gallery) ||
+        data.gallery.some((image) =>
+          !validImage(image) ||
+          typeof image.title !== "string" ||
+          !image.title.trim() ||
+          typeof image.description !== "string" ||
+          !image.description.trim()
+        ) ||
+        new Set([data.cover.file, ...data.gallery.map((image) => image.file)]).size !== data.gallery.length + 1
+      )
     ) {
-      throw new Error("Invalid project cover.");
+      throw new Error("Invalid project gallery.");
     }
     return data;
   }
@@ -212,12 +230,93 @@
     }
     details.append(list);
 
-    content.replaceChildren(details, coverFigure(slug, data, "detail-cover"));
+    content.replaceChildren(
+      details,
+      data.gallery?.length ? renderGallery(slug, data) : coverFigure(slug, data, "detail-cover")
+    );
     content.hidden = false;
+  }
+
+  function renderGallery(slug, data) {
+    const images = [
+      { ...data.cover, title: `${data.title} overview`, description: data.description },
+      ...data.gallery
+    ];
+    const gallery = element("section", undefined, "detail-gallery");
+    gallery.setAttribute("aria-label", `${data.title} image gallery`);
+    const figure = element("figure", undefined, "detail-cover");
+    figure.id = "project-gallery-image";
+    const controls = element("div", undefined, "gallery-controls");
+    const previous = element("button", "\u2190 Previous", "gallery-previous");
+    const next = element("button", "Next \u2192", "gallery-next");
+    for (const button of [previous, next]) {
+      button.type = "button";
+      button.setAttribute("aria-controls", figure.id);
+    }
+    previous.setAttribute("aria-label", "Previous image");
+    next.setAttribute("aria-label", "Next image");
+    const count = element("span", undefined, "gallery-count");
+    count.setAttribute("role", "status");
+    count.setAttribute("aria-atomic", "true");
+    const description = element("p", undefined, "gallery-description");
+    const status = element("p", undefined, "detail-message");
+    status.setAttribute("role", "status");
+    const retryImage = element("button", "Retry image", "text-link");
+    retryImage.type = "button";
+    retryImage.hidden = true;
+    const hint = element("p", "Use Previous / Next or the Left / Right arrow keys to browse.", "gallery-hint");
+    controls.append(previous, count, next);
+    gallery.append(element("h3", "Explore this concept"), figure, controls, description, status, retryImage, hint);
+    let index = 0;
+
+    function showImage() {
+      const item = images[index];
+      const image = element("img");
+      image.alt = item.alt;
+      image.decoding = "async";
+      image.loading = "eager";
+      const caption = element("figcaption", `${item.title} · Concept illustration`);
+      figure.replaceChildren(image, caption);
+      figure.setAttribute("aria-busy", "true");
+      count.textContent = `Image ${index + 1} of ${images.length}`;
+      description.textContent = item.description;
+      previous.disabled = index === 0;
+      next.disabled = index === images.length - 1;
+      status.textContent = "Loading image...";
+      status.hidden = false;
+      retryImage.hidden = true;
+      image.addEventListener("load", () => {
+        if (!figure.isConnected || !figure.contains(image)) return;
+        figure.setAttribute("aria-busy", "false");
+        status.hidden = true;
+      });
+      image.addEventListener("error", () => {
+        if (!figure.isConnected || !figure.contains(image)) return;
+        figure.setAttribute("aria-busy", "false");
+        status.textContent = "This image could not be loaded. Retry it or browse to another image.";
+        retryImage.hidden = false;
+        console.error(`Could not load gallery image "${item.file}" for project "${slug}".`);
+      });
+      image.src = new URL(`./projects/${slug}/${item.file}`, window.location.href).href;
+    }
+
+    function navigate(offset) {
+      const destination = index + offset;
+      if (destination < 0 || destination >= images.length) return;
+      index = destination;
+      showImage();
+    }
+    navigateGallery = navigate;
+    previous.addEventListener("click", () => navigate(-1));
+    next.addEventListener("click", () => navigate(1));
+    retryImage.addEventListener("click", showImage);
+    showImage();
+    return gallery;
   }
 
   async function loadDetails(slug) {
     const request = ++detailRequest;
+    navigateGallery = null;
     activeSlug = slug;
     content.hidden = true;
     content.replaceChildren();
@@ -251,6 +350,7 @@
 
   function hideDetails() {
     detailRequest++;
+    navigateGallery = null;
     activeSlug = null;
     if (dialog.open) dialog.close();
     document.body.classList.remove("project-open");
@@ -284,6 +384,16 @@
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
     closeDetails();
+  });
+  dialog.addEventListener("keydown", (event) => {
+    if (
+      !navigateGallery ||
+      event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+      event.target.closest("input, textarea, select, [contenteditable]") ||
+      !["ArrowLeft", "ArrowRight"].includes(event.key)
+    ) return;
+    event.preventDefault();
+    navigateGallery(event.key === "ArrowLeft" ? -1 : 1);
   });
   retry.addEventListener("click", () => loadDetails(activeSlug));
   catalogueRetry.addEventListener("click", loadCatalogue);
