@@ -4,7 +4,7 @@ Official static portfolio website for AHK Interiors (Arishella Harish Kumar), bu
 
 ## Local development
 
-Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, layout and typography in `styles.css`, and theme colors in `theme.css`. No build script, package installation, or custom GitHub Actions workflow is required.
+Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, layout and typography in `styles.css`, and theme colors in `theme.css`. No build script or package installation is required to preview or publish the site. A GitHub Actions workflow validates project submissions separately.
 
 Preview the repository over HTTP using any static web server. If Python is already installed, this optional command starts a local preview server; Python is not a site or deployment dependency:
 
@@ -89,7 +89,23 @@ Metadata fields:
 | `scope` | Included services from `Architecture & planning`, `Interior design`, and `Turnkey execution`. Use `[]` if none apply. |
 | `cover` | Object with `file` and descriptive `alt`. Image dimensions are handled by CSS. |
 
-Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. These errors are detected in the browser, not before publishing, so check the site after content updates. There is no `order` field to maintain.
+Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. There is no `order` field to maintain.
+
+### Automated project validation
+
+`.github/workflows/validate-projects.yml` runs on every pull request targeting `main`, every push to `main`, and manual runs from the Actions tab. It checks that the list contains unique valid folder names and matches the project directories, that every project has valid `metadata.json` with exactly the fields above, and that scopes contain only supported services without duplicates. Unknown metadata fields (including `order`), duplicate JSON keys, missing files, and symbolic links used for required project files or directories are rejected. No separate project HTML page is required.
+
+Each referenced cover must decode as its declared image format and be **at most 250 KiB (256,000 bytes)**. Additional images are ignored. The workflow reports file-specific errors and never edits, compresses, or publishes content.
+
+To run the same checks locally, use Python 3.12 or newer and install the validation-only dependency (preferably in a virtual environment):
+
+```sh
+python -m pip install -r scripts/requirements-validation.txt
+python -m unittest discover -s tests
+python scripts/validate_projects.py
+```
+
+The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
 The main page's layout and hero load immediately. JavaScript fetches the small folder list and each listed project's metadata to render cards; covers use native lazy loading. Metadata is cached for the visit, and **View project** opens an accessible same-page dialog with location and scope, reusing that metadata and the same cover. There are no galleries or additional detail images yet. Links such as `/?project=01-courtyard-house` support direct opening, refresh, and browser Back/Forward. JavaScript and a working HTTP connection are required for project cards and details; the rest of the page remains available without JavaScript.
 
