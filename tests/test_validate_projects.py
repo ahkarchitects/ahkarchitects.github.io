@@ -113,6 +113,65 @@ class ProjectValidationTests(unittest.TestCase):
         self.cover.symlink_to(target)
         self.assertIn("not a symbolic link", self.errors())
 
+    def add_gallery(self):
+        self.gallery_image = self.folder / "bedroom.png"
+        Image.new("RGB", (4, 4)).save(self.gallery_image)
+        self.item = {
+            "file": "bedroom.png",
+            "alt": "Illustrated bedroom",
+            "title": "A quiet bedroom",
+            "description": "Soft materials for a restful room.",
+        }
+        self.data["gallery"] = [self.item]
+        self.write_metadata()
+
+    def test_valid_optional_gallery(self):
+        self.add_gallery()
+        self.assertEqual(validate_projects(self.root), [])
+        self.data["gallery"] = []
+        self.write_metadata()
+        self.assertEqual(validate_projects(self.root), [])
+
+    def test_invalid_gallery_metadata(self):
+        self.add_gallery()
+        for gallery in (
+            None,
+            {},
+            [None],
+            [{**self.item, "file": "../bedroom.png"}],
+            [{**self.item, "alt": ""}],
+            [{**self.item, "title": " "}],
+            [{**self.item, "description": 1}],
+            [{**self.item, "extra": True}],
+            [self.item, self.item],
+            [{**self.item, "file": "cover.png"}],
+        ):
+            with self.subTest(gallery=gallery):
+                self.data["gallery"] = gallery
+                self.write_metadata()
+                self.assertIn("gallery", self.errors())
+
+    def test_missing_corrupt_mislabeled_and_symlink_gallery_images(self):
+        self.add_gallery()
+        self.gallery_image.unlink()
+        self.assertIn("invalid gallery[0]", self.errors())
+        self.gallery_image.write_bytes(b"not an image")
+        self.assertIn("invalid gallery[0]", self.errors())
+        Image.new("RGB", (4, 4)).save(self.gallery_image, format="JPEG")
+        self.assertIn("do not match the filename extension", self.errors())
+        target = self.root / "outside.png"
+        self.gallery_image.rename(target)
+        self.gallery_image.symlink_to(target)
+        self.assertIn("not a symbolic link", self.errors())
+
+    def test_exact_gallery_size_boundary(self):
+        self.add_gallery()
+        original = self.gallery_image.read_bytes()
+        self.gallery_image.write_bytes(original + b"\0" * (MAX_COVER_BYTES - len(original)))
+        self.assertEqual(validate_projects(self.root), [])
+        self.gallery_image.write_bytes(self.gallery_image.read_bytes() + b"\0")
+        self.assertIn("maximum is 256000 bytes", self.errors())
+
 
 if __name__ == "__main__":
     unittest.main()
