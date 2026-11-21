@@ -1,0 +1,28 @@
+name: Validate projects
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Project content validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install image validation dependency
+        run: python -m pip install -r scripts/requirements-validation.txt
+      - name: Test validator
+        run: python -m unittest discover -s tests
+      - name: Validate project content
+        run: python scripts/validate_projects.py
