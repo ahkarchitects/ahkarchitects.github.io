@@ -1,24 +1,26 @@
 # AHK Interiors
 
-Official static portfolio website for AHK Interiors (Arishella Harish Kumar), built with plain HTML and CSS for GitHub Pages.
+Official static portfolio website for AHK Interiors (Arishella Harish Kumar), built with plain HTML, CSS, and a small JavaScript project-detail view for GitHub Pages. Project content lives in repository folders; no CMS, private credentials, or separate project HTML pages are required.
 
 ## Local development
 
-Open `index.html` directly in your browser. Edit `index.html` for content and `styles.css` for appearance. No package installation or build step is required.
+Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, and appearance in `styles.css`. No build script, package installation, or custom GitHub Actions workflow is required.
 
-If Python 3 is already installed and allowed by your device policy, you can also preview over HTTP from the repository root:
+Preview the repository over HTTP using any static web server. If Python is already installed, this optional command starts a local preview server; Python is not a site or deployment dependency:
 
 ```sh
-python3 -m http.server 4321 --bind 127.0.0.1
+python -m http.server 4321 --bind 127.0.0.1
 ```
 
-Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished.
+Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished. Use HTTP rather than opening the file directly: browsers restrict fetching project metadata from `file://` URLs.
+
+Content edits take effect after refreshing the preview. There are no generated files to update.
 
 ## GitHub Pages deployment
 
-In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **Deploy from a branch**, then select **main** and **/ (root)** and save.
+In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **Deploy from a branch**, then select **main** and **/ (root)** and save. If you switched the source to GitHub Actions while trying the earlier build-based approach, switch it back.
 
-Merge the website changes into `main`. GitHub Pages publishes the root `index.html` at `https://ahkdesign.github.io/`; subsequent pushes to `main` update the site automatically. There is no custom deployment workflow or npm build.
+Merge the website changes into `main`. GitHub Pages publishes the repository's static files at `https://ahkdesign.github.io/`; subsequent commits to `main` update the site automatically. This project does not need a Python build script or a custom publishing workflow. GitHub may show its own managed Pages deployment in the Actions tab; that does not mean you need to maintain an Actions workflow.
 
 To use a custom domain you own, configure it in GitHub Pages and add the corresponding DNS records. That makes the custom domain the address of this site, not a separate production deployment alongside staging.
 
@@ -32,9 +34,56 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 ## Portfolio images
 
-The five project illustrations are AI-generated concepts stored locally as optimized JPEGs in `assets/projects/`. The site does not load project images from Unsplash or another external image host. These illustrations are not photographs of completed client work; the project labels and page disclaimer identify the sample content.
+The five existing illustrations are AI-generated concepts, each stored as `cover.jpg` in its project folder. No additional images or galleries have been added. These illustrations are not photographs of completed client work; the project labels and page disclaimer identify the sample content.
 
-When replacing an illustration, update its descriptive alt text and intrinsic image dimensions in `index.html`. Keep the concept disclosure unless the sample content is replaced with an actual project.
+When replacing a cover, update its descriptive `alt` text in the project's metadata. No width or height fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped photos with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses photos. Keep the concept disclosure unless the sample content is replaced with an actual project.
+
+## Updating projects without editing HTML
+
+Each project is a folder containing `metadata.json` and one cover image:
+
+```text
+projects/
+  index.json
+  01-courtyard-house/
+    metadata.json
+    cover.jpg
+```
+
+To add a project, copy an existing project folder on your computer, rename it with lowercase letters, numbers, and hyphens, replace its cover, and edit `metadata.json` with a plain-text editor. In GitHub, open the repository's `projects` folder, choose **Add file → Upload files**, and upload the new project folder. Then edit `projects/index.json` to include that folder's exact name and commit both changes to `main` (or open a pull request). No HTML editing is needed.
+
+`projects/index.json` is the only manual discovery list:
+
+```json
+[
+  "01-courtyard-house",
+  "02-the-still-house",
+  "03-house-by-the-grove",
+  "04-little-city-home",
+  "05-sunday-house"
+]
+```
+
+When adding, renaming, or removing a project folder, update this list too. Unlisted folders are not displayed. Keep the JSON quotes and commas intact, with no trailing comma after the last entry. Folder names must be unique.
+
+Listed projects are sorted alphabetically by their full folder names, regardless of the list's entry order. There are no hardcoded project names in the JavaScript. Keep numeric prefixes zero-padded to the same width: `02-...` sorts before `10-...`. To insert between `01-...` and `02-...` without renaming everything, use `01a-new-project`; to append, use `06-new-project`. Renaming a folder changes its position and its project URL, so previously shared links using the old name will no longer open that project. The display name comes from metadata `title` and does not need the numeric prefix. Card numbers and totals are calculated from the resulting order.
+
+Metadata fields:
+
+| Field | Content |
+| --- | --- |
+| `title` | Project name. |
+| `type` | Existing category/status, such as `Private residence · Concept`. |
+| `description` | Plain-text project description; use `\n` for line breaks. |
+| `location` | City and country. |
+| `scope` | Included services from `Architecture & planning`, `Interior design`, and `Turnkey execution`. Use `[]` if none apply. |
+| `cover` | Object with `file` and descriptive `alt`. Image dimensions are handled by CSS. |
+
+Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. These errors are detected in the browser, not before publishing, so check the site after content updates. There is no `order` field to maintain.
+
+The main page's layout and hero load immediately. JavaScript fetches the small folder list and each listed project's metadata to render cards; covers use native lazy loading. Metadata is cached for the visit, and **View project** opens an accessible same-page dialog with location and scope, reusing that metadata and the same cover. There are no galleries or additional detail images yet. Links such as `/?project=01-courtyard-house` support direct opening, refresh, and browser Back/Forward. JavaScript and a working HTTP connection are required for project cards and details; the rest of the page remains available without JavaScript.
+
+All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
 ## WhatsApp contact
 
@@ -43,7 +92,3 @@ The header and footer link directly to the business WhatsApp chat using `wa.me` 
 There is no hosted widget or third-party script. Loading the icon makes a request to the Simple Icons CDN, exposing the visitor's IP address to the CDN; `referrerpolicy="no-referrer"` prevents sending the page URL. If the CDN is unavailable or changes the icon path, the text contact links remain usable. The CDN does not manage or update the contact number.
 
 The phone number is not displayed as text, but it is public in the link and available to chat recipients. This does not hide or protect a personal number. To change the contact, update both WhatsApp links in `index.html`; use a dedicated business number if personal-number privacy is required.
-
-## Future Sanity integration
-
-The current site has no CMS integration and requires no credentials. Sanity integration and automated content updates would require a separate implementation and approved tooling. Never put private API keys or tokens in browser-delivered HTML or JavaScript, or commit them to the repository.
