@@ -44,9 +44,9 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 ## Portfolio images
 
-The five covers are original cartoon-style vector illustrations, each stored as `cover.svg` in its project folder. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. No additional images or galleries have been added. Every card and detail cover is captioned "Concept illustration"; project types also identify the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
+The five covers are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. No additional images or galleries have been added. Every card and detail cover is captioned "Concept illustration"; project types also identify the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
 
-When replacing a cover, update its descriptive `alt` text in the project's metadata. No width or height fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Use self-contained SVGs without scripts, embedded external images, or external fonts. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
+When replacing a cover, update its descriptive `alt` text in the project's metadata. No width or height fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
 
 ## Updating projects without editing HTML
 
@@ -57,7 +57,7 @@ projects/
   index.json
   01-courtyard-house/
     metadata.json
-    cover.svg
+    cover.jpg
 ```
 
 To add a project, copy an existing project folder on your computer, rename it with lowercase letters, numbers, and hyphens, replace its cover, and edit `metadata.json` with a plain-text editor. In GitHub, open the repository's `projects` folder, choose **Add file → Upload files**, and upload the new project folder. Then edit `projects/index.json` to include that folder's exact name and commit both changes to `main` (or open a pull request). No HTML editing is needed.
@@ -89,7 +89,7 @@ Metadata fields:
 | `scope` | Included services from `Architecture & planning`, `Interior design`, and `Turnkey execution`. Use `[]` if none apply. |
 | `cover` | Object with `file` and descriptive `alt`. Image dimensions are handled by CSS. |
 
-Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`, or `.svg` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. These errors are detected in the browser, not before publishing, so check the site after content updates. There is no `order` field to maintain.
+Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. These errors are detected in the browser, not before publishing, so check the site after content updates. There is no `order` field to maintain.
 
 The main page's layout and hero load immediately. JavaScript fetches the small folder list and each listed project's metadata to render cards; covers use native lazy loading. Metadata is cached for the visit, and **View project** opens an accessible same-page dialog with location and scope, reusing that metadata and the same cover. There are no galleries or additional detail images yet. Links such as `/?project=01-courtyard-house` support direct opening, refresh, and browser Back/Forward. JavaScript and a working HTTP connection are required for project cards and details; the rest of the page remains available without JavaScript.
 

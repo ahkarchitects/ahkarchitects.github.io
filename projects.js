@@ -43,7 +43,7 @@
     if (
       !cover ||
       typeof cover.file !== "string" ||
-      !/^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif|svg)$/.test(cover.file) ||
+      !/^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(cover.file) ||
       typeof cover.alt !== "string" ||
       !cover.alt.trim()
     ) {
