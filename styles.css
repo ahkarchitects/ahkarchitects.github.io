@@ -530,61 +530,6 @@ button.text-link {
   font-size: 0.7rem;
 }
 
-.detail-gallery {
-  margin-top: 2rem;
-}
-
-.detail-gallery h3 {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 400;
-}
-
-.detail-gallery .detail-cover {
-  margin-top: 1rem;
-}
-
-.gallery-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin: 1rem 0;
-}
-
-.gallery-controls button {
-  min-height: 2.75rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--line);
-}
-
-.gallery-controls button:disabled {
-  color: var(--secondary-text);
-  cursor: default;
-  opacity: 0.6;
-}
-
-.gallery-count {
-  color: var(--muted);
-  font-size: 0.75rem;
-  text-align: center;
-}
-
-.gallery-description {
-  max-width: 40rem;
-  color: var(--description-text);
-  font-size: 0.85rem;
-  line-height: 1.7;
-}
-
-.gallery-hint {
-  margin-top: 0.75rem;
-  color: var(--muted);
-  font-size: 0.7rem;
-  line-height: 1.6;
-}
-
 .scope-list {
   display: grid;
   gap: 0.45rem;
