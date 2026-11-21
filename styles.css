@@ -9,6 +9,7 @@
   --muted: #777267;
   --line: #d8d3c9;
   --accent: #9c7955;
+  --whatsapp-green: #25d366;
   --serif: Georgia, "Times New Roman", serif;
   --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -34,6 +35,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
   padding: 1.65rem 5.5vw;
   border-bottom: 1px solid var(--line);
 }
@@ -41,6 +43,41 @@ a {
 .wordmark,
 .header-link {
   text-decoration: none;
+}
+
+.whatsapp-link,
+.whatsapp-link:link,
+.whatsapp-link:visited,
+.whatsapp-link:hover,
+.whatsapp-link:focus,
+.whatsapp-link:active {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--whatsapp-green);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.whatsapp-link img {
+  flex: 0 0 1.5rem;
+}
+
+.whatsapp-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.whatsapp-link:focus-visible {
+  outline: 2px solid var(--whatsapp-green);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.contact-details .whatsapp-link {
+  margin-bottom: 1.5rem;
 }
 
 .wordmark {
