@@ -95,7 +95,7 @@ Keep JSON quotation marks and commas intact. Cover filenames must be lowercase l
 
 `.github/workflows/validate-projects.yml` runs on every pull request targeting `main`, every push to `main`, and manual runs from the Actions tab. It checks that the list contains unique valid folder names and matches the project directories, that every project has valid `metadata.json` with exactly the fields above, and that scopes contain only supported services without duplicates. Unknown metadata fields (including `order`), duplicate JSON keys, missing files, and symbolic links used for required project files or directories are rejected. No separate project HTML page is required.
 
-Each referenced cover must decode as its declared image format and be **at most 250 KiB (256,000 bytes)**. Additional images are ignored. The workflow reports file-specific errors and never edits, compresses, or publishes content. Some existing covers exceed this limit and will fail until manually optimized; they have deliberately been left unchanged.
+Each referenced cover must decode as its declared image format and be **at most 250 KiB (256,000 bytes)**. Additional images are ignored. The workflow reports file-specific errors and never edits, compresses, or publishes content.
 
 To run the same checks locally, use Python 3.12 or newer and install the validation-only dependency (preferably in a virtual environment):
 
