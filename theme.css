@@ -1,0 +1,43 @@
+:root {
+  color-scheme: light dark;
+  --paper: light-dark(#f4f1eb, #24211c);
+  --ink: light-dark(#292720, #f4f1eb);
+  --muted: light-dark(#6d685e, #bbb3a6);
+  --line: light-dark(#d8d3c9, #514a3f);
+  --accent: light-dark(#896644, #cca77e);
+  --section-background: light-dark(#eeebe4, #1c1a16);
+  --hero-text: light-dark(#625e54, #c9c1b4);
+  --description-text: light-dark(#6d685e, #c0b8ab);
+  --secondary-text: light-dark(#6d685e, #b7ae9f);
+  --detail-text: light-dark(#454138, #ded7cc);
+  --included-text: light-dark(#514d43, #ded7cc);
+  --link-border: light-dark(#a69b88, #98856b);
+  --card-border: light-dark(#ded9cf, #514a3f);
+  --scope-border: light-dark(#d5d0c6, #6e6557);
+  --included-border: light-dark(#aa9477, #b4946f);
+  --included-check: light-dark(#8d7151, #cca77e);
+  --scrollbar: light-dark(#b7ad9c, #827360);
+  --image-background: light-dark(#d8d1c5, #393329);
+  --whatsapp-green: light-dark(#137c3b, #65df90);
+  --email-red: light-dark(#c33125, #ff8c80);
+  --dialog-backdrop: #181713b3;
+  --image-shade: #18171365;
+  --image-caption: #fff;
+  --transparent: transparent;
+  --logo-filter: none;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --logo-filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --logo-filter: invert(1);
+  }
+}

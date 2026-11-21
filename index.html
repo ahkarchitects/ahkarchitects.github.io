@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f4f1eb" />
+    <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
       content="AHK Interiors creates thoughtful homes and spaces through architecture, interior design, and turnkey execution."
@@ -26,6 +27,8 @@
     <meta name="twitter:title" content="AHK Interiors | Thoughtful spaces, made personal" />
     <meta name="twitter:description" content="Architecture, interior design, and turnkey spaces by Arishella Harish Kumar." />
     <meta name="twitter:image" content="https://ahkdesign.github.io/assets/social-preview.png?v=3" />
+    <link rel="stylesheet" href="./theme.css" />
+    <script src="./theme.js"></script>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./contact-links.js" defer></script>
     <script src="./projects.js" defer></script>
@@ -41,8 +44,18 @@
           </span>
         </span>
       </a>
-      <div class="header-contacts" data-contact-links-copy>
-        <a class="header-contact-fallback" href="#contact">Contact</a>
+      <div class="header-actions">
+        <div class="header-contacts" data-contact-links-copy>
+          <a class="header-contact-fallback" href="#contact">Contact</a>
+        </div>
+        <label class="theme-control" hidden>
+          <span>Theme</span>
+          <select id="theme-select">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
       </div>
     </header>
 
