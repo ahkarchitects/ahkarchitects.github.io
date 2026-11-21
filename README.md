@@ -36,6 +36,14 @@ The five project illustrations are AI-generated concepts stored locally as optim
 
 When replacing an illustration, update its descriptive alt text and intrinsic image dimensions in `index.html`. Keep the concept disclosure unless the sample content is replaced with an actual project.
 
+## WhatsApp contact
+
+The header and footer link directly to the business WhatsApp chat using `wa.me` with the Indian country code (`91`). Both icons load from the Simple Icons CDN using `https://cdn.simpleicons.org/whatsapp/25D366`, which explicitly colors the logo WhatsApp green (`#25D366`). The contact text uses the same color in all link states. Icon updates follow the CDN's releases and caching, but are not guaranteed to appear immediately.
+
+There is no hosted widget or third-party script. Loading the icon makes a request to the Simple Icons CDN, exposing the visitor's IP address to the CDN; `referrerpolicy="no-referrer"` prevents sending the page URL. If the CDN is unavailable or changes the icon path, the text contact links remain usable. The CDN does not manage or update the contact number.
+
+The phone number is not displayed as text, but it is public in the link and available to chat recipients. This does not hide or protect a personal number. To change the contact, update both WhatsApp links in `index.html`; use a dedicated business number if personal-number privacy is required.
+
 ## Future Sanity integration
 
 The current site has no CMS integration and requires no credentials. Sanity integration and automated content updates would require a separate implementation and approved tooling. Never put private API keys or tokens in browser-delivered HTML or JavaScript, or commit them to the repository.
