@@ -28,6 +28,8 @@ To use a custom domain you own, configure it in GitHub Pages and add the corresp
 
 The north-arrow logo is drawn as vector paths in `assets/ahk-logo.svg`, shared by the page and SVG-capable browser tabs so it stays sharp at any size. `assets/favicon-32.png` is a fallback for browsers without SVG favicon support. The 1200-by-630 `assets/social-preview.png` is a raster sharing card referenced by Open Graph and Twitter card metadata; many sharing services do not accept SVG preview images.
 
+The sharing card uses the logo, AHK Interiors name, services, and "By Arishella Harish Kumar" byline without contact links or the old coming-soon message. It is a manually maintained PNG, not a live rendering of the header, so it needs no image-generation pipeline. The `?v=3` query in both preview-image URLs distinguishes the updated image for caches; bump that version when replacing the card again. Sharing platforms can also cache the page metadata, so existing shares may still need a preview refresh after deployment.
+
 There is no Apple-specific home-screen icon. Without one, iOS may use a page snapshot or generic icon depending on the browser/version; the PNG favicon is not a guaranteed home-screen fallback. The website itself is unaffected.
 
 When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in `index.html`. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
@@ -85,10 +87,16 @@ The main page's layout and hero load immediately. JavaScript fetches the small f
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
-## WhatsApp contact
+## Header and contact links
 
-The header and footer link directly to the business WhatsApp chat using `wa.me` with the Indian country code (`91`). Both icons load from the Simple Icons CDN using `https://cdn.simpleicons.org/whatsapp/25D366`, which explicitly colors the logo WhatsApp green (`#25D366`). The contact text uses the same color in all link states. Icon updates follow the CDN's releases and caching, but are not guaranteed to appear immediately.
+The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Turnkey spaces on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it.
 
-There is no hosted widget or third-party script. Loading the icon makes a request to the Simple Icons CDN, exposing the visitor's IP address to the CDN; `referrerpolicy="no-referrer"` prevents sending the page URL. If the CDN is unavailable or changes the icon path, the text contact links remain usable. The CDN does not manage or update the contact number.
+The footer defines a single contact group in `index.html` under `data-contact-links-source`. The small local `contact-links.js` script copies that group into the header, so both locations use the same links, labels, icons, and styles. Edit the source group once to update both locations. On mobile, the header stacks the compact WhatsApp and Email links alongside the brand, while the services remain on one line. Without JavaScript, the header's Contact link leads to the footer, where both contact links still work.
 
-The phone number is not displayed as text, but it is public in the link and available to chat recipients. This does not hide or protect a personal number. To change the contact, update both WhatsApp links in `index.html`; use a dedicated business number if personal-number privacy is required.
+WhatsApp links directly to the business chat using `wa.me` with the Indian country code (`91`). Email uses `mailto:arishellaharish@gmail.com` and opens the visitor's configured email application, not necessarily Gmail. The supplied dotted address reaches the same inbox: [Google confirms that dots do not matter in personal `gmail.com` addresses](https://support.google.com/mail/answer/7436150?hl=en). This does not apply to custom-domain Google Workspace addresses.
+
+The WhatsApp and Gmail icons load from the Simple Icons CDN using `https://cdn.simpleicons.org/whatsapp/25D366` and `https://cdn.simpleicons.org/gmail/EA4335`. Links use the matching green and red colors. Icon updates follow the CDN's releases and caching, but are not guaranteed to appear immediately.
+
+There is no hosted contact widget or third-party script. Loading an icon makes a request to the Simple Icons CDN, exposing the visitor's IP address to the CDN; `referrerpolicy="no-referrer"` prevents sending the page URL. If the CDN is unavailable or changes an icon path, the text contact links remain usable. The CDN does not manage the contact details.
+
+The phone number and email address are public in the links even though they are not displayed as text. Use dedicated business contact details if personal-contact privacy is required.
