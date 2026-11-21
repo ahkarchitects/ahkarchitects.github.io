@@ -43,6 +43,36 @@ def validate_projects(root):
     def report(path, message):
         errors.append(f"{path.relative_to(root)}: {message}")
 
+    def check_image(folder, filename, label):
+        if not isinstance(filename, str) or not COVER_FILE.fullmatch(filename):
+            field = "cover.file" if label == "cover" else label
+            report(folder / "metadata.json", f"{field} must be a supported lowercase image filename in this folder")
+            return
+        image_path = folder / filename
+        try:
+            if image_path.is_symlink() or not image_path.is_file():
+                raise ValueError(f"{label} must be an existing regular file, not a symbolic link")
+            size = image_path.stat().st_size
+            if size > MAX_COVER_BYTES:
+                report(image_path, f"{label} is {size} bytes; maximum is {MAX_COVER_BYTES} bytes (250 KiB)")
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", Image.DecompressionBombWarning)
+                with Image.open(image_path) as image:
+                    if image.format != FORMATS[filename.rsplit(".", 1)[1]]:
+                        raise ValueError("image contents do not match the filename extension")
+                    image.verify()
+                with Image.open(image_path) as image:
+                    image.load()
+        except (
+            OSError,
+            ValueError,
+            SyntaxError,
+            UnidentifiedImageError,
+            Image.DecompressionBombError,
+            Image.DecompressionBombWarning,
+        ) as error:
+            report(image_path, f"invalid {label}: {error}")
+
     if projects.is_symlink() or not projects.is_dir():
         report(projects, "must be a project directory, not a symbolic link")
         return errors
@@ -79,8 +109,8 @@ def validate_projects(root):
         if not isinstance(data, dict):
             report(metadata, "must be a JSON object")
             continue
-        if set(data) != FIELDS:
-            report(metadata, f"must contain only these required fields: {', '.join(sorted(FIELDS))}")
+        if not FIELDS.issubset(data) or set(data) - FIELDS - {"gallery"}:
+            report(metadata, f"must contain only these required fields: {', '.join(sorted(FIELDS))}; gallery is optional")
         for field in ("title", "type", "description", "location"):
             if not nonempty_text(data.get(field)):
                 report(metadata, f"{field} must be nonempty text")
@@ -98,33 +128,21 @@ def validate_projects(root):
         if not nonempty_text(cover["alt"]):
             report(metadata, "cover.alt must be nonempty text")
         filename = cover["file"]
-        if not isinstance(filename, str) or not COVER_FILE.fullmatch(filename):
-            report(metadata, "cover.file must be a supported lowercase image filename in this folder")
+        check_image(folder, filename, "cover")
+        if "gallery" not in data:
             continue
-        image_path = folder / filename
-        try:
-            if image_path.is_symlink() or not image_path.is_file():
-                raise ValueError("cover must be an existing regular file, not a symbolic link")
-            size = image_path.stat().st_size
-            if size > MAX_COVER_BYTES:
-                report(image_path, f"cover is {size} bytes; maximum is {MAX_COVER_BYTES} bytes (250 KiB)")
-            with warnings.catch_warnings():
-                warnings.simplefilter("error", Image.DecompressionBombWarning)
-                with Image.open(image_path) as image:
-                    if image.format != FORMATS[filename.rsplit(".", 1)[1]]:
-                        raise ValueError("image contents do not match the filename extension")
-                    image.verify()
-                with Image.open(image_path) as image:
-                    image.load()
-        except (
-            OSError,
-            ValueError,
-            SyntaxError,
-            UnidentifiedImageError,
-            Image.DecompressionBombError,
-            Image.DecompressionBombWarning,
-        ) as error:
-            report(image_path, f"invalid cover: {error}")
+        gallery = data["gallery"]
+        if not isinstance(gallery, list):
+            report(metadata, "gallery must be an array")
+            continue
+        seen = {filename} if isinstance(filename, str) else set()
+        for index, filename in enumerate(gallery):
+            label = f"gallery[{index}]"
+            if isinstance(filename, str):
+                if filename in seen:
+                    report(metadata, f"{label} must be unique and different from the cover")
+                seen.add(filename)
+            check_image(folder, filename, label)
     return errors
 
 
@@ -134,7 +152,7 @@ def main():
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print("Project catalogue, metadata, and covers are valid.")
+    print("Project catalogue, metadata, covers, and gallery images are valid.")
     return 0
 
 

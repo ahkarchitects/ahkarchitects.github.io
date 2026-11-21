@@ -44,13 +44,13 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 ## Portfolio images
 
-The five covers are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. No additional images or galleries have been added. Every card and detail cover is captioned "Concept illustration"; project types also identify the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
+The five covers are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. Each project also has five additional themed JPGs prepared for future use: 25 new images in total. Their metadata lists only filenames, without per-image titles, descriptions, or alt text. They are not displayed by the current website; gallery rendering and navigation are deferred to a separate change. Every card and detail cover is captioned "Concept illustration"; project types also identify the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
 
 When replacing a cover, update its descriptive `alt` text in the project's metadata. No width or height fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
 
 ## Updating projects without editing HTML
 
-Each project is a folder containing `metadata.json` and one cover image:
+Each project is a folder containing `metadata.json`, one cover image, and any optional gallery images:
 
 ```text
 projects/
@@ -58,6 +58,8 @@ projects/
   01-courtyard-house/
     metadata.json
     cover.jpg
+    courtyard-exterior.jpg
+    courtyard-layout.jpg
 ```
 
 To add a project, copy an existing project folder on your computer, rename it with lowercase letters, numbers, and hyphens, replace its cover, and edit `metadata.json` with a plain-text editor. In GitHub, open the repository's `projects` folder, choose **Add file → Upload files**, and upload the new project folder. Then edit `projects/index.json` to include that folder's exact name and commit both changes to `main` (or open a pull request). No HTML editing is needed.
@@ -88,14 +90,15 @@ Metadata fields:
 | `location` | City and country. |
 | `scope` | Included services from `Architecture & planning`, `Interior design`, and `Turnkey execution`. Use `[]` if none apply. |
 | `cover` | Object with `file` and descriptive `alt`. Image dimensions are handled by CSS. |
+| `gallery` | Optional ordered array of image filenames, such as `["courtyard-exterior.jpg", "courtyard-layout.jpg"]`. Currently validated but not displayed. Omit it or use `[]` when no extra images are supplied. Files must be in the same project folder and unique, excluding the cover. |
 
 Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. There is no `order` field to maintain.
 
 ### Automated project validation
 
-`.github/workflows/validate-projects.yml` runs on every pull request targeting `main`, every push to `main`, and manual runs from the Actions tab. It checks that the list contains unique valid folder names and matches the project directories, that every project has valid `metadata.json` with exactly the fields above, and that scopes contain only supported services without duplicates. Unknown metadata fields (including `order`), duplicate JSON keys, missing files, and symbolic links used for required project files or directories are rejected. No separate project HTML page is required.
+`.github/workflows/validate-projects.yml` runs on every pull request targeting `main`, every push to `main`, and manual runs from the Actions tab. It checks that the list contains unique valid folder names and matches the project directories, that every project has valid `metadata.json` with the required fields above and an optional `gallery`, and that scopes contain only supported services without duplicates. Gallery entries must be unique supported image filenames different from the cover. Unknown metadata fields (including `order`), duplicate JSON keys, missing files, and symbolic links used for referenced project files or directories are rejected. No separate project HTML page is required.
 
-Each referenced cover must decode as its declared image format and be **at most 250 KiB (256,000 bytes)**. Additional images are ignored. The workflow reports file-specific errors and never edits, compresses, or publishes content.
+Each referenced cover and gallery image must decode as its declared image format and be **at most 250 KiB (256,000 bytes)**. Unreferenced images are ignored. The workflow reports file-specific errors and never edits, compresses, or publishes content.
 
 To run the same checks locally, use Python 3.12 or newer and install the validation-only dependency (preferably in a virtual environment):
 
@@ -107,7 +110,7 @@ python scripts/validate_projects.py
 
 The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
-The main page's layout and hero load immediately. JavaScript fetches the small folder list and each listed project's metadata to render cards; covers use native lazy loading. Metadata is cached for the visit, and **View project** opens an accessible same-page dialog with location and scope, reusing that metadata and the same cover. There are no galleries or additional detail images yet. Links such as `/?project=01-courtyard-house` support direct opening, refresh, and browser Back/Forward. JavaScript and a working HTTP connection are required for project cards and details; the rest of the page remains available without JavaScript.
+The main page's layout and hero load immediately. JavaScript fetches the small folder list and each listed project's metadata to render cards; covers use native lazy loading. Metadata is cached for the visit, and **View project** opens an accessible same-page dialog with location and scope, reusing that metadata and the same cover. Additional gallery images are prepared in the repository but are not requested or displayed by the current website. Gallery rendering and navigation will be handled separately; the HTML, JavaScript, CSS, and existing detail-view behavior are unchanged. Images remain standard `<img>` elements, so the browser's right-click image menu is available; no custom open-in-new-tab link is added. Links such as `/?project=01-courtyard-house` support direct opening, refresh, and browser Back/Forward. JavaScript and a working HTTP connection are required for project cards and details; the rest of the page remains available without JavaScript.
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 

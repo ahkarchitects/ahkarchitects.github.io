@@ -7,5 +7,12 @@
   "cover": {
     "file": "cover.jpg",
     "alt": "Cartoon-style concept illustration of a sage apartment with a curved cream sofa, cane chair, and soft curtains; not a photograph"
-  }
+  },
+  "gallery": [
+    "soft-bedroom.jpg",
+    "sage-kitchen.jpg",
+    "reading-corner.jpg",
+    "calm-bathroom.jpg",
+    "quiet-dining.jpg"
+  ]
 }
