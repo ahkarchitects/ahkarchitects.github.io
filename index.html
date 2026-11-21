@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f4f1eb" />
+    <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
       content="AHK Interiors creates thoughtful homes and spaces through architecture, interior design, and turnkey execution."
@@ -26,6 +27,8 @@
     <meta name="twitter:title" content="AHK Interiors | Thoughtful spaces, made personal" />
     <meta name="twitter:description" content="Architecture, interior design, and turnkey spaces by Arishella Harish Kumar." />
     <meta name="twitter:image" content="https://ahkdesign.github.io/assets/social-preview.png?v=3" />
+    <link rel="stylesheet" href="./theme.css" />
+    <script src="./theme.js"></script>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./contact-links.js" defer></script>
     <script src="./projects.js" defer></script>
@@ -48,6 +51,23 @@
 
     <main>
       <section class="hero" id="home" aria-labelledby="hero-title">
+        <div class="theme-toolbar" hidden>
+          <fieldset class="theme-control">
+            <legend class="sr-only">Theme</legend>
+            <label>
+              <input class="sr-only" type="radio" name="theme" value="system" checked />
+              <span>System</span>
+            </label>
+            <label>
+              <input class="sr-only" type="radio" name="theme" value="light" />
+              <span>Light</span>
+            </label>
+            <label>
+              <input class="sr-only" type="radio" name="theme" value="dark" />
+              <span>Dark</span>
+            </label>
+          </fieldset>
+        </div>
         <div class="hero-copy">
           <p class="eyebrow">Arishella Harish Kumar <span>·</span> Interior architect</p>
           <h1 id="hero-title">Spaces that feel<br />like <em>you.</em></h1>

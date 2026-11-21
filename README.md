@@ -4,7 +4,7 @@ Official static portfolio website for AHK Interiors (Arishella Harish Kumar), bu
 
 ## Local development
 
-Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, and appearance in `styles.css`. No build script, package installation, or custom GitHub Actions workflow is required.
+Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, layout and typography in `styles.css`, and theme colors in `theme.css`. No build script, package installation, or custom GitHub Actions workflow is required.
 
 Preview the repository over HTTP using any static web server. If Python is already installed, this optional command starts a local preview server; Python is not a site or deployment dependency:
 
@@ -15,6 +15,14 @@ python -m http.server 4321 --bind 127.0.0.1
 Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished. Use HTTP rather than opening the file directly: browsers restrict fetching project metadata from `file://` URLs.
 
 Content edits take effect after refreshing the preview. There are no generated files to update.
+
+## Light and dark themes
+
+The site follows the visitor's system appearance by default. A compact **System / Light / Dark** segmented control sits just below the header on the right, positioned within the hero's existing top padding without adding a row or changing content spacing. The top bar stays reserved for branding and contact links. The control uses native radio buttons, supporting Tab and arrow-key navigation without a dropdown. Explicit choices are saved in this site's browser local storage; choosing System clears the override and follows future system changes. If storage is unavailable, switching still works for the current visit and a warning appears in the browser console.
+
+Maintain both palettes in `theme.css`: each `light-dark(light, dark)` value pairs the original warm light appearance with a darker earth-toned equivalent. This uses the native CSS `light-dark()` function supported by current Chrome, Edge, Firefox, and Safari. Layout, fonts, and image sizing stay in `styles.css`; photographs and contact icon brand colors are not recolored. The logo keeps its original black-and-white artwork in both modes, with a small white backing in dark mode for clarity.
+
+`theme.js` applies a saved preference before the page renders and keeps the browser toolbar color in sync with the background. Without JavaScript, the selector stays hidden and CSS still follows the system theme.
 
 ## GitHub Pages deployment
 
@@ -95,7 +103,7 @@ The footer defines a single contact group in `index.html` under `data-contact-li
 
 WhatsApp links directly to the business chat using `wa.me` with the Indian country code (`91`). Email uses `mailto:arishellaharish@gmail.com` and opens the visitor's configured email application, not necessarily Gmail. The supplied dotted address reaches the same inbox: [Google confirms that dots do not matter in personal `gmail.com` addresses](https://support.google.com/mail/answer/7436150?hl=en). This does not apply to custom-domain Google Workspace addresses.
 
-The WhatsApp and Gmail icons load from the Simple Icons CDN using `https://cdn.simpleicons.org/whatsapp/25D366` and `https://cdn.simpleicons.org/gmail/EA4335`. Links use the matching green and red colors. Icon updates follow the CDN's releases and caching, but are not guaranteed to appear immediately.
+The WhatsApp and Gmail icons load from the Simple Icons CDN using `https://cdn.simpleicons.org/whatsapp/25D366` and `https://cdn.simpleicons.org/gmail/EA4335`. Link text uses theme-specific green and red shades for readability while the icons retain their brand colors. Icon updates follow the CDN's releases and caching, but are not guaranteed to appear immediately.
 
 There is no hosted contact widget or third-party script. Loading an icon makes a request to the Simple Icons CDN, exposing the visitor's IP address to the CDN; `referrerpolicy="no-referrer"` prevents sending the page URL. If the CDN is unavailable or changes an icon path, the text contact links remain usable. The CDN does not manage the contact details.
 
