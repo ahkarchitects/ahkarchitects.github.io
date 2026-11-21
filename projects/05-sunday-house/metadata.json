@@ -9,35 +9,10 @@
     "alt": "Cartoon-style concept illustration of a sunny family living and dining room with a teak table, cream sofa, and garden views; not a photograph"
   },
   "gallery": [
-    {
-      "file": "family-exterior.jpg",
-      "alt": "Cartoon 3D family house with stepped roof volumes, warm walls, and a planted entrance",
-      "title": "A welcoming family home",
-      "description": "Stepped roof volumes and a planted arrival explore a generous residence with a clear, welcoming entrance and garden connections."
-    },
-    {
-      "file": "family-layout.jpg",
-      "alt": "Isometric family-house concept layout with separate sleeping, living, kitchen, and dining zones",
-      "title": "Space for togetherness and privacy",
-      "description": "A diagrammatic cutaway balances shared rooms with quieter sleeping areas. The illustration explores zoning, not measured construction details."
-    },
-    {
-      "file": "shared-dining.jpg",
-      "alt": "Cartoon family dining room with a shared teak-toned table, warm pendant, and garden views",
-      "title": "A table for shared moments",
-      "description": "A generous table, warm lighting, and easy access to storage make shared meals a natural center of family life."
-    },
-    {
-      "file": "family-kitchen.jpg",
-      "alt": "Cartoon family kitchen with warm wood cabinets, a preparation island, and soft green accents",
-      "title": "Cooking together",
-      "description": "Continuous counters and a central island explore space for preparing food together, with warm finishes linking the kitchen to the dining room."
-    },
-    {
-      "file": "sunny-bedroom.jpg",
-      "alt": "Cartoon family bedroom with cream bedding, green textiles, wood storage, and a bright window",
-      "title": "An easy morning bedroom",
-      "description": "Cream textiles, green accents, and simple wood furniture create a comfortable private room that belongs to the home's shared warm palette."
-    }
+    "family-exterior.jpg",
+    "family-layout.jpg",
+    "shared-dining.jpg",
+    "family-kitchen.jpg",
+    "sunny-bedroom.jpg"
   ]
 }

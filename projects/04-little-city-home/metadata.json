@@ -9,35 +9,10 @@
     "alt": "Cartoon-style concept illustration of a compact apartment with wood storage, a terracotta sofa, and a window-side dining nook; not a photograph"
   },
   "gallery": [
-    {
-      "file": "entry-storage.jpg",
-      "alt": "Cartoon apartment entry with built-in storage, a cushioned bench, mirror, and wall hooks",
-      "title": "An entry that works harder",
-      "description": "A bench, tall shelving, and wall hooks gather everyday belongings in one compact zone so the rest of the home can stay uncluttered."
-    },
-    {
-      "file": "compact-kitchen.jpg",
-      "alt": "Cartoon compact kitchen with fitted cabinets, pale counters, and a small preparation station",
-      "title": "A compact cooking space",
-      "description": "Fitted storage and clear work surfaces explore how a small kitchen can feel useful and welcoming rather than crowded."
-    },
-    {
-      "file": "space-saving-bedroom.jpg",
-      "alt": "Cartoon compact bedroom with a fitted wardrobe, pale bedding, and a small bedside table",
-      "title": "A neatly organized bedroom",
-      "description": "A fitted wardrobe and modest bedside furniture keep storage close at hand while preserving a calm, simple resting space."
-    },
-    {
-      "file": "window-workspace.jpg",
-      "alt": "Cartoon window-side workspace with a laptop desk, bookcase, green chair, and low bench",
-      "title": "A window-side work nook",
-      "description": "A slim desk uses window light for focused work, with vertical shelving and a low bench making the surrounding corner useful."
-    },
-    {
-      "file": "dining-nook.jpg",
-      "alt": "Cartoon apartment dining nook with a small wood table, muted chairs, and pendant lighting",
-      "title": "Room for everyday meals",
-      "description": "A small table and neatly arranged seating establish a dedicated meal zone without overwhelming the apartment's living space."
-    }
+    "entry-storage.jpg",
+    "compact-kitchen.jpg",
+    "space-saving-bedroom.jpg",
+    "window-workspace.jpg",
+    "dining-nook.jpg"
   ]
 }

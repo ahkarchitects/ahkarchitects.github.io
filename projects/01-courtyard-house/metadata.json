@@ -9,35 +9,10 @@
     "alt": "Cartoon-style concept illustration of a peach living room with rounded seating opening onto a leafy courtyard; not a photograph"
   },
   "gallery": [
-    {
-      "file": "courtyard-exterior.jpg",
-      "alt": "Cartoon 3D house concept with peach walls, flat roof wings, and a planted central opening",
-      "title": "A home around a green heart",
-      "description": "Low roof wings frame a planted opening, exploring how a courtyard can bring daylight and greenery into the heart of a private residence."
-    },
-    {
-      "file": "courtyard-layout.jpg",
-      "alt": "Isometric concept layout showing bedroom, living, and kitchen zones around a green courtyard",
-      "title": "Courtyard-led planning",
-      "description": "A diagrammatic cutaway connects everyday rooms around a small garden. It is a spatial concept, not a measured construction plan."
-    },
-    {
-      "file": "garden-bedroom.jpg",
-      "alt": "Cartoon bedroom with a green bedspread, warm wood storage, and a garden-facing window",
-      "title": "A quieter bedroom",
-      "description": "Warm timber, a soft green textile palette, and garden-facing daylight extend the calm of the courtyard into a private resting space."
-    },
-    {
-      "file": "warm-kitchen.jpg",
-      "alt": "Cartoon kitchen with warm wood cabinetry, a pale island, and green planting",
-      "title": "Everyday kitchen rituals",
-      "description": "Continuous counters, a central preparation island, and warm finishes make room for cooking, conversation, and unhurried mornings."
-    },
-    {
-      "file": "green-courtyard.jpg",
-      "alt": "Cartoon planted courtyard with a central tree, pergola beams, and a built-in bench",
-      "title": "The planted courtyard",
-      "description": "A leafy center, filtered overhead light, and a shaded bench create a place to pause between the home's daily routines."
-    }
+    "courtyard-exterior.jpg",
+    "courtyard-layout.jpg",
+    "garden-bedroom.jpg",
+    "warm-kitchen.jpg",
+    "green-courtyard.jpg"
   ]
 }

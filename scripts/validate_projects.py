@@ -45,7 +45,8 @@ def validate_projects(root):
 
     def check_image(folder, filename, label):
         if not isinstance(filename, str) or not COVER_FILE.fullmatch(filename):
-            report(folder / "metadata.json", f"{label}.file must be a supported lowercase image filename in this folder")
+            field = "cover.file" if label == "cover" else label
+            report(folder / "metadata.json", f"{field} must be a supported lowercase image filename in this folder")
             return
         image_path = folder / filename
         try:
@@ -135,18 +136,11 @@ def validate_projects(root):
             report(metadata, "gallery must be an array")
             continue
         seen = {filename} if isinstance(filename, str) else set()
-        for index, item in enumerate(gallery):
+        for index, filename in enumerate(gallery):
             label = f"gallery[{index}]"
-            if not isinstance(item, dict) or set(item) != {"file", "alt", "title", "description"}:
-                report(metadata, f"{label} must contain only file, alt, title, and description")
-                continue
-            for field in ("alt", "title", "description"):
-                if not nonempty_text(item[field]):
-                    report(metadata, f"{label}.{field} must be nonempty text")
-            filename = item["file"]
             if isinstance(filename, str):
                 if filename in seen:
-                    report(metadata, f"{label}.file must be unique and different from the cover")
+                    report(metadata, f"{label} must be unique and different from the cover")
                 seen.add(filename)
             check_image(folder, filename, label)
     return errors

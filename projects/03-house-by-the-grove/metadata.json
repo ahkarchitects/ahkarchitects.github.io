@@ -9,35 +9,10 @@
     "alt": "Cartoon-style concept illustration of a cozy timber living room and shaded veranda surrounded by forest trees; not a photograph"
   },
   "gallery": [
-    {
-      "file": "grove-exterior.jpg",
-      "alt": "Cartoon 3D timber cabin with a pitched roof, shaded entrance, and surrounding trees",
-      "title": "A simple forest retreat",
-      "description": "A pitched roof, timber-like cladding, and a planted approach explore a modest weekend home that sits comfortably beside the grove."
-    },
-    {
-      "file": "shaded-veranda.jpg",
-      "alt": "Cartoon shaded veranda with timber pergola beams, a reading chair, and leafy plants",
-      "title": "Living at the shaded edge",
-      "description": "An open timber canopy and easy seating extend everyday living outdoors, creating a sheltered place to enjoy the surrounding greenery."
-    },
-    {
-      "file": "forest-reading.jpg",
-      "alt": "Cartoon reading room with a green chair, timber bookcase, warm lighting, and a forest-facing window",
-      "title": "Reading beside the grove",
-      "description": "Timber shelving, a quiet chair, and green views make space for slower afternoons without adding unnecessary furniture."
-    },
-    {
-      "file": "timber-bedroom.jpg",
-      "alt": "Cartoon cabin bedroom with timber furniture, forest-green bedding, and leafy window views",
-      "title": "A restful timber bedroom",
-      "description": "Natural-looking wood tones and forest greens tie the sleeping space to the retreat's nature-led material palette."
-    },
-    {
-      "file": "weekend-dining.jpg",
-      "alt": "Cartoon timber dining room with green chairs, a shared table, and a pendant lamp",
-      "title": "Long weekend meals",
-      "description": "A shared timber table and gentle overhead light support relaxed meals, with garden-facing daylight keeping the room connected to its setting."
-    }
+    "grove-exterior.jpg",
+    "shaded-veranda.jpg",
+    "forest-reading.jpg",
+    "timber-bedroom.jpg",
+    "weekend-dining.jpg"
   ]
 }

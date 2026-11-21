@@ -9,35 +9,10 @@
     "alt": "Cartoon-style concept illustration of a sage apartment with a curved cream sofa, cane chair, and soft curtains; not a photograph"
   },
   "gallery": [
-    {
-      "file": "soft-bedroom.jpg",
-      "alt": "Cartoon bedroom with a sage bedspread, cream bedding, and soft wood furniture",
-      "title": "A softer place to rest",
-      "description": "Cream bedding and muted greens carry the apartment's gentle palette into the bedroom, with storage kept visually quiet."
-    },
-    {
-      "file": "sage-kitchen.jpg",
-      "alt": "Cartoon apartment kitchen with pale counters, sage accents, and warm wood cabinets",
-      "title": "A considered kitchen palette",
-      "description": "Pale worktops, warm cabinetry, and restrained sage accents explore an interior refresh without introducing an architectural redesign."
-    },
-    {
-      "file": "reading-corner.jpg",
-      "alt": "Cartoon reading corner with a sage armchair, bookcase, side table, and floor lamp",
-      "title": "A corner to slow down",
-      "description": "A comfortable chair, nearby books, and a dedicated reading light turn an unused corner into a small daily retreat."
-    },
-    {
-      "file": "calm-bathroom.jpg",
-      "alt": "Cartoon bathroom with a pale bathtub, wood vanity, round mirror, and folded towels",
-      "title": "Calm morning routines",
-      "description": "Soft tile tones, a timber vanity, and simple open towel storage bring the same sense of calm to a practical everyday room."
-    },
-    {
-      "file": "quiet-dining.jpg",
-      "alt": "Cartoon dining room with a wood table, sage chairs, pendant light, and greenery",
-      "title": "A quiet dining setting",
-      "description": "A compact shared table and warm pendant light create an inviting setting for meals while keeping the apartment palette cohesive."
-    }
+    "soft-bedroom.jpg",
+    "sage-kitchen.jpg",
+    "reading-corner.jpg",
+    "calm-bathroom.jpg",
+    "quiet-dining.jpg"
   ]
 }

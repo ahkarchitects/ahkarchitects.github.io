@@ -116,13 +116,7 @@ class ProjectValidationTests(unittest.TestCase):
     def add_gallery(self):
         self.gallery_image = self.folder / "bedroom.png"
         Image.new("RGB", (4, 4)).save(self.gallery_image)
-        self.item = {
-            "file": "bedroom.png",
-            "alt": "Illustrated bedroom",
-            "title": "A quiet bedroom",
-            "description": "Soft materials for a restful room.",
-        }
-        self.data["gallery"] = [self.item]
+        self.data["gallery"] = ["bedroom.png"]
         self.write_metadata()
 
     def test_valid_optional_gallery(self):
@@ -138,13 +132,12 @@ class ProjectValidationTests(unittest.TestCase):
             None,
             {},
             [None],
-            [{**self.item, "file": "../bedroom.png"}],
-            [{**self.item, "alt": ""}],
-            [{**self.item, "title": " "}],
-            [{**self.item, "description": 1}],
-            [{**self.item, "extra": True}],
-            [self.item, self.item],
-            [{**self.item, "file": "cover.png"}],
+            [1],
+            [""],
+            ["../bedroom.png"],
+            [{"file": "bedroom.png"}],
+            ["bedroom.png", "bedroom.png"],
+            ["cover.png"],
         ):
             with self.subTest(gallery=gallery):
                 self.data["gallery"] = gallery
