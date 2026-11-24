@@ -2,3 +2,8 @@ node_modules/
 dist/
 .astro/
 __pycache__/
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.bundle/
+vendor/

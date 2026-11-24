@@ -1,0 +1,9 @@
+url: https://ahkarchitects.github.io
+baseurl: ""
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - scripts
+  - tests
+  - vendor

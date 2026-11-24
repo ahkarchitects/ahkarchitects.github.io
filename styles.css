@@ -572,6 +572,12 @@ h1 em {
   color: var(--muted);
 }
 
+.service-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .scroll-hint {
   flex-shrink: 0;
   margin: 0 0 0.5rem;
