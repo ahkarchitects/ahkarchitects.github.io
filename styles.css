@@ -24,7 +24,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 2rem;
+  scroll-padding-top: 12rem;
 }
 
 body {
@@ -133,12 +133,17 @@ a {
 }
 
 .site-header {
-  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1.65rem 5.5vw;
   border-bottom: 1px solid var(--line);
+  background: var(--paper);
 }
 
 .brand {
@@ -192,10 +197,94 @@ a {
   min-width: 10rem;
 }
 
-.theme-toolbar {
+.header-tools {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-menu {
+  margin-left: auto;
+}
+
+.site-menu summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 5.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font-size: 0.75rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.site-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu-close-label,
+.site-menu[open] .menu-open-label,
+.site-menu[open] .menu-open-icon {
+  display: none;
+}
+
+.site-menu[open] .menu-close-label {
+  display: inline;
+}
+
+.menu-panel {
   position: absolute;
-  top: 0.55rem;
-  right: 5.5vw;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: calc(100vh - 12rem);
+  max-height: calc(100dvh - 12rem);
+  overflow-y: auto;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: 0 1rem 1.5rem #00000012;
+}
+
+.menu-panel > a,
+.menu-panel > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding: 1rem 5.5vw;
+  border-top: 1px solid var(--line);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.menu-panel > a:hover,
+.menu-panel > a[aria-current="page"] {
+  color: var(--accent);
+  background: var(--section-background);
+}
+
+.menu-panel > span {
+  color: var(--muted);
+}
+
+.menu-panel small {
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+}
+
+.site-menu summary:focus-visible,
+.menu-panel > a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
 }
 
 .theme-control {
@@ -220,7 +309,7 @@ a {
   align-items: center;
   justify-content: center;
   min-width: 3rem;
-  min-height: 1.5rem;
+  min-height: 2.4rem;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
 }
@@ -292,6 +381,74 @@ a {
 
 .contact-details .contact-links {
   margin-bottom: 1.5rem;
+}
+
+.contact-page {
+  min-height: 65vh;
+  padding: 5rem 10vw;
+}
+
+.contact-page h1 {
+  margin: 1.5rem 0 3rem;
+}
+
+.contact-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4rem;
+  max-width: 65rem;
+}
+
+.contact-page h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.contact-page p {
+  max-width: 30rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.contact-facts {
+  margin: 0 0 1.5rem;
+}
+
+.contact-facts div {
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.contact-facts dt {
+  margin-bottom: 0.6rem;
+  color: var(--muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+}
+
+.contact-facts a {
+  display: inline-block;
+  padding-block: 0.5rem;
+  text-underline-offset: 0.25em;
+}
+
+.contact-facts a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.contact-page-footer {
+  padding: 0 10vw 2rem;
 }
 
 .hero {
@@ -887,8 +1044,26 @@ button.text-link {
     min-width: 4.75rem;
   }
 
-  .theme-toolbar {
-    right: 1rem;
+  .menu-panel > a,
+  .menu-panel > span {
+    padding-inline: 1rem;
+  }
+
+  .contact-page {
+    padding: 3rem 1.5rem;
+  }
+
+  .contact-page h1 {
+    font-size: clamp(3.5rem, 14vw, 6rem);
+  }
+
+  .contact-page-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .contact-page-footer {
+    padding: 0 1.5rem 1.5rem;
   }
 
   .header-contacts .contact-links {
