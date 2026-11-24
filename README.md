@@ -16,6 +16,29 @@ Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished. Us
 
 Content edits take effect after refreshing the preview. There are no generated files to update.
 
+## Architecture projects
+
+`architecture.html` is live with Courtyard House and The Still House, moved from Home along with all twelve images. Home now lists the remaining three projects. Interiors and Landscape still show **Coming soon**.
+
+Architecture uses the same `projects.js`, shared CSS, project cards, and image-gallery dialog as Home, but reads its own `architecture/index.json` and project folders. Each Architecture project's `metadata.json` contains only:
+
+```json
+{
+  "title": "Courtyard House",
+  "location": "Bengaluru, India",
+  "images": [
+    "cover.jpg",
+    "courtyard-exterior.jpg"
+  ]
+}
+```
+
+The first image is the card cover; the remaining filenames follow in gallery order. All images live beside that project's metadata. Titles and locations must be nonempty; `images` must be a nonempty list of unique supported image filenames. No type, description, scope, cover object, or per-image metadata is needed. Accessible image labels are derived from the project title and filename; the existing **Concept illustration** caption is retained so sample work is not presented as completed client work.
+
+Add Architecture projects by uploading a folder into `architecture/` and adding its name to `architecture/index.json`. List entries are sorted by folder name, just like Home. Architecture cards show title and location; **View project** opens the same image gallery with location, without description or scope. Direct links use `architecture.html?project=01-courtyard-house`. Old Home links to the moved projects no longer open them; update saved links to the Architecture URL.
+
+The existing validation command checks both catalogues and all referenced images, including the 250 KiB limit. Home's remaining projects retain their existing richer metadata format. No new dependencies, build step, or publishing changes are required.
+
 The standalone service pages intentionally duplicate HTML to avoid template engines, extra site dependencies, and a build step. Keep their markup consistent and use `styles.css` for shared visual changes. Repository AI guidance in `.github/copilot-instructions.md` requires explicit approval before adding dependencies or changing the development or publishing process.
 
 ## Opening animation
@@ -56,7 +79,7 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 ## Portfolio images
 
-The five covers are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. Each project also has five additional themed JPGs: 25 new images in total. Their metadata lists only filenames, without per-image titles, descriptions, or alt text. They appear after the cover in the View project gallery; accessible image labels are derived from the project name and filename. Every card and detail image is captioned "Concept illustration"; project types also identify the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
+The five covers across Home and Architecture are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. Each project also has five additional themed JPGs: 25 additional images in total. They appear after the cover in the View project gallery; accessible gallery labels are derived from the project name and filename. Every card and detail image is captioned "Concept illustration", identifying the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
 
 When replacing a cover, update its descriptive `alt` text in the project's metadata. No width or height fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
 
@@ -80,8 +103,6 @@ To add a project, copy an existing project folder on your computer, rename it wi
 
 ```json
 [
-  "01-courtyard-house",
-  "02-the-still-house",
   "03-house-by-the-grove",
   "04-little-city-home",
   "05-sunday-house"
@@ -128,11 +149,11 @@ All content and uploaded files are public. The site keeps its homepage SEO and s
 
 ## Header and contact links
 
-The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available on all six pages. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows and a close control. The three service pages each show their own heading and **Coming soon** until content is supplied. Edit their corresponding HTML files; they are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
+The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available on all six pages. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows and a close control. Architecture loads its own project catalogue; Interiors and Landscape show **Coming soon**. They are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
 `about.html` contains the original introduction: Arishella Harish Kumar's interior architect identity, "Spaces that feel like you," and the thoughtful-homes description. The homepage starts directly with Selected projects and retains only a compact copyright footer, without the introduction or large enquiry block.
 
-`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation or load the homepage's project scripts. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
+`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation. Only Home and Architecture load `projects.js`. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
 
 The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Landscape on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it. Existing project scope metadata still describes each project's work independently of these navigation labels.
 

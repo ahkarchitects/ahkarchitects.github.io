@@ -36,9 +36,9 @@ def nonempty_text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
-def validate_projects(root):
+def validate_projects(root, directory="projects", simple=False):
     errors = []
-    projects = root / "projects"
+    projects = root / directory
 
     def report(path, message):
         errors.append(f"{path.relative_to(root)}: {message}")
@@ -109,6 +109,24 @@ def validate_projects(root):
         if not isinstance(data, dict):
             report(metadata, "must be a JSON object")
             continue
+        if simple:
+            if set(data) != {"title", "location", "images"}:
+                report(metadata, "must contain only title, location, and images")
+            for field in ("title", "location"):
+                if not nonempty_text(data.get(field)):
+                    report(metadata, f"{field} must be nonempty text")
+            images = data.get("images")
+            if not isinstance(images, list) or not images:
+                report(metadata, "images must be a nonempty array")
+                continue
+            seen = set()
+            for position, filename in enumerate(images):
+                if isinstance(filename, str):
+                    if filename in seen:
+                        report(metadata, f"images[{position}] must be unique")
+                    seen.add(filename)
+                check_image(folder, filename, f"images[{position}]")
+            continue
         if not FIELDS.issubset(data) or set(data) - FIELDS - {"gallery"}:
             report(metadata, f"must contain only these required fields: {', '.join(sorted(FIELDS))}; gallery is optional")
         for field in ("title", "type", "description", "location"):
@@ -147,12 +165,13 @@ def validate_projects(root):
 
 
 def main():
-    errors = validate_projects(Path(__file__).resolve().parents[1])
+    root = Path(__file__).resolve().parents[1]
+    errors = validate_projects(root) + validate_projects(root, "architecture", simple=True)
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print("Project catalogue, metadata, covers, and gallery images are valid.")
+    print("Home and Architecture project catalogues, metadata, and images are valid.")
     return 0
 
 

@@ -1,3 +1,4 @@
+import json
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
@@ -94,16 +95,38 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(link, contact.links)
         self.assertEqual(contact.content("main").count("Tell us about your space."), 1)
 
-    def test_services_have_separate_placeholder_pages_not_home_sections(self):
+    def test_services_have_separate_pages_not_home_sections(self):
         home = self.pages["index.html"]
         for service in ("architecture", "interiors", "landscape"):
             with self.subTest(service=service):
                 page = self.pages[service + ".html"]
                 self.assertEqual(page.content("h1"), service.title())
-                self.assertEqual(page.content("main"), service.title() + " Coming soon.")
                 self.assertNotIn(service, home.ids)
                 self.assertNotIn(service.title(), home.content("main"))
-                self.assertNotIn("./projects.js", page.scripts)
+                if service == "architecture":
+                    self.assertIn("./projects.js", page.scripts)
+                    self.assertIn("project-list", page.ids)
+                    self.assertIn("project-dialog", page.ids)
+                    self.assertNotIn("Coming soon.", page.content("main"))
+                else:
+                    self.assertEqual(page.content("main"), service.title() + " Coming soon.")
+                    self.assertNotIn("./projects.js", page.scripts)
+
+    def test_first_two_projects_live_only_in_architecture_with_simple_metadata(self):
+        home = json.loads((ROOT / "projects/index.json").read_text())
+        architecture = json.loads((ROOT / "architecture/index.json").read_text())
+        self.assertEqual(architecture, ["01-courtyard-house", "02-the-still-house"])
+        self.assertEqual(len(home), 3)
+        self.assertFalse(set(home) & set(architecture))
+        for slug in architecture:
+            with self.subTest(project=slug):
+                self.assertFalse((ROOT / "projects" / slug).exists())
+                folder = ROOT / "architecture" / slug
+                metadata = json.loads((folder / "metadata.json").read_text())
+                self.assertEqual(set(metadata), {"title", "location", "images"})
+                self.assertEqual(len(metadata["images"]), 6)
+                for image in metadata["images"]:
+                    self.assertTrue((folder / image).is_file())
 
     def test_all_menus_reach_separate_pages(self):
         for filename, page in self.pages.items():
