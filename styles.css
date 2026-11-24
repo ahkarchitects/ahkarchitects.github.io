@@ -33,6 +33,99 @@ body {
   background: var(--paper);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
+  animation: intro-scroll-lock 3s;
+}
+
+.site-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  background: var(--paper);
+  animation: intro-dismiss 3s ease-in-out forwards;
+}
+
+.intro-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.intro-logo {
+  width: clamp(5rem, 15vw, 7rem);
+  height: auto;
+  background: var(--logo-background);
+  border-radius: 2px;
+  box-shadow: 0 0 0 0.18rem var(--logo-background);
+  animation: intro-reveal 0.8s ease-out both;
+}
+
+.intro-name {
+  padding-left: 0.18em;
+  font-family: var(--serif);
+  font-size: clamp(2.25rem, 7vw, 3rem);
+  letter-spacing: 0.18em;
+  line-height: 1;
+  animation: intro-reveal 0.8s ease-out 0.3s both;
+}
+
+.intro-services {
+  padding-left: 0.35em;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  animation: intro-reveal 0.8s ease-out 0.6s both;
+}
+
+@keyframes intro-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes intro-dismiss {
+  0%, 80% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes intro-scroll-lock {
+  from, to {
+    overflow: hidden;
+  }
+}
+
+/* Keyboard navigation and direct project links bypass the decorative intro. */
+body:has(:focus-visible):not(.project-open) {
+  overflow: visible !important;
+}
+
+body:has(:focus-visible, .project-dialog[open]) .site-intro {
+  visibility: hidden !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+
+  .site-intro {
+    display: none;
+  }
 }
 
 a {
