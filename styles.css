@@ -553,7 +553,7 @@ h1 em {
 
 .section-heading h1,
 .section-heading h2,
-.service-section h2 {
+.service-page h1 {
   margin: 0.6rem 0 0;
   font-family: var(--serif);
   font-size: clamp(2.6rem, 5vw, 4.5rem);
@@ -562,12 +562,13 @@ h1 em {
   line-height: normal;
 }
 
-.service-section {
+.service-page {
+  min-height: 65vh;
   padding: 4rem 10vw;
   border-top: 1px solid var(--line);
 }
 
-.service-section p {
+.service-page p {
   color: var(--muted);
 }
 
@@ -1100,11 +1101,11 @@ button.text-link {
 
   .section-heading h1,
   .section-heading h2,
-  .service-section h2 {
+  .service-page h1 {
     font-size: 3rem;
   }
 
-  .service-section {
+  .service-page {
     padding: 3rem 1.5rem;
   }
 

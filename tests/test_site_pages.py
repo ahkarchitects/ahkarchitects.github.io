@@ -51,7 +51,12 @@ class Page(HTMLParser):
 
 class SitePageTests(unittest.TestCase):
     def setUp(self):
-        self.pages = {name: Page(name) for name in ("index.html", "about.html", "contact.html")}
+        self.pages = {
+            name: Page(name) for name in (
+                "index.html", "about.html", "contact.html",
+                "architecture.html", "interiors.html", "landscape.html",
+            )
+        }
 
     def test_only_home_has_an_intro_and_all_pages_record_the_visit(self):
         for filename, page in self.pages.items():
@@ -89,7 +94,18 @@ class SitePageTests(unittest.TestCase):
             self.assertIn(link, contact.links)
         self.assertEqual(contact.content("main").count("Tell us about your space."), 1)
 
-    def test_all_menus_reach_pages_and_service_sections(self):
+    def test_services_have_separate_placeholder_pages_not_home_sections(self):
+        home = self.pages["index.html"]
+        for service in ("architecture", "interiors", "landscape"):
+            with self.subTest(service=service):
+                page = self.pages[service + ".html"]
+                self.assertEqual(page.content("h1"), service.title())
+                self.assertEqual(page.content("main"), service.title() + " Coming soon.")
+                self.assertNotIn(service, home.ids)
+                self.assertNotIn(service.title(), home.content("main"))
+                self.assertNotIn("./projects.js", page.scripts)
+
+    def test_all_menus_reach_separate_pages(self):
         for filename, page in self.pages.items():
             with self.subTest(page=filename):
                 self.assertEqual(len(page.ids), len(set(page.ids)))
@@ -100,8 +116,11 @@ class SitePageTests(unittest.TestCase):
                 )
                 self.assertIn("./about.html", [link["href"] for link in page.menu])
                 self.assertIn("./contact.html", [link["href"] for link in page.menu])
+                for service in ("architecture", "interiors", "landscape"):
+                    self.assertIn("./" + service + ".html", [link["href"] for link in page.menu])
                 for link in page.menu:
                     url = urlsplit(link["href"])
+                    self.assertEqual(url.fragment, "")
                     target = url.path.removeprefix("./") or (
                         filename if url.fragment else "index.html"
                     )
