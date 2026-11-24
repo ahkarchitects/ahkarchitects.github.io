@@ -17,7 +17,7 @@ class Page(HTMLParser):
         self.ids = []
         self.scripts = []
         self.intro_count = 0
-        self.feed((ROOT / "_site" / filename).read_text(encoding="utf-8"))
+        self.feed((ROOT / filename).read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)

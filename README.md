@@ -1,50 +1,22 @@
 # AHK Architects
 
-Official static portfolio website for AHK Architects (Arishella Harish Kumar), built with HTML, CSS, a shared Jekyll service-page layout, and a small JavaScript project-detail view for GitHub Pages. The organization is `ahkarchitects` and the repository is `ahkarchitects/ahkarchitects.github.io`. Project content lives in repository folders; no CMS, private credentials, or separate project HTML pages are required.
+Official static portfolio website for AHK Architects (Arishella Harish Kumar), built with plain HTML, CSS, and a small JavaScript project-detail view for GitHub Pages. The organization is `ahkarchitects` and the repository is `ahkarchitects/ahkarchitects.github.io`. Project content lives in repository folders; no CMS, private credentials, or separate project HTML pages are required.
 
 ## Local development
 
-Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, service content in `services/<service>/index.md`, the shared service layout in `_layouts/service.html`, layout and typography in `styles.css`, and theme colors in `theme.css`.
+Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, layout and typography in `styles.css`, and theme colors in `theme.css`. No build script or package installation is required to preview or publish the site. A GitHub Actions workflow validates project submissions separately.
 
-Install Ruby 3.3 or newer and Bundler, then build and preview the generated site:
+Preview the repository over HTTP using any static web server. If Python is already installed, this optional command starts a local preview server; Python is not a site or deployment dependency:
 
 ```sh
-bundle install
-bundle exec jekyll build --strict_front_matter
-python -m http.server 4321 --bind 127.0.0.1 --directory _site
+python -m http.server 4321 --bind 127.0.0.1
 ```
 
-Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished. Use HTTP rather than opening the file directly: browsers restrict fetching project metadata from `file://` URLs. Alternatively, `bundle exec jekyll serve --port 4321` rebuilds when source files change.
+Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished. Use HTTP rather than opening the file directly: browsers restrict fetching project metadata from `file://` URLs.
 
-Rebuild after editing content, then refresh the preview. `_site/` contains generated HTML and copied assets; it is ignored by Git and must not be edited or committed. Preview `_site/`, not the source directory, because service HTML pages are generated from templates. Python is only an optional preview server and validation dependency, not a publishing dependency.
+Content edits take effect after refreshing the preview. There are no generated files to update.
 
-## Shared service pages
-
-Architecture, Interiors, and Landscape work like one view with three models. `_layouts/service.html` is the single layout for their header, menu, title, content area, metadata, and footer. Shared styling stays in `styles.css`. Each service owns its content and assets:
-
-```text
-_layouts/service.html
-services/
-  architecture/
-    index.md
-    assets/
-  interiors/
-    index.md
-    assets/
-  landscape/
-    index.md
-    assets/
-```
-
-The YAML fields at the top of each `index.md` supply `title`, `description`, `service` (the active menu item), `permalink` (the existing public URL), and `assets` (the service's asset folder). The Markdown beneath those fields is the page content, currently **Coming soon**. Change one service's data without copying or editing the shared layout; change the layout once to update all three.
-
-Upload future images into that service's `assets/` folder and reference them in its Markdown, for example:
-
-```liquid
-![Describe the architecture image]({{ page.assets | relative_url }}/courtyard.jpg)
-```
-
-Jekyll resolves this to `/services/architecture/assets/courtyard.jpg` on the Architecture page and copies the original image when publishing. Provide descriptive alt text and optimized files. The existing public URLs remain `/architecture.html`, `/interiors.html`, and `/landscape.html`; all content is rendered at build time, so these pages work without JavaScript.
+The standalone service pages intentionally duplicate HTML to avoid template engines, extra site dependencies, and a build step. Keep their markup consistent and use `styles.css` for shared visual changes. Repository AI guidance in `.github/copilot-instructions.md` requires explicit approval before adding dependencies or changing the development or publishing process.
 
 ## Opening animation
 
@@ -68,7 +40,7 @@ Maintain both palettes in `theme.css`: each `light-dark(light, dark)` value pair
 
 In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **Deploy from a branch**, then select **main** and **/ (root)** and save. If you switched the source to GitHub Actions while trying the earlier build-based approach, switch it back.
 
-Merge the website changes into `main`. GitHub Pages runs its built-in Jekyll build and publishes the generated static site at `https://ahkarchitects.github.io/`; subsequent commits to `main` update the site automatically. `_config.yml` supplies the public URL and excludes development files. Keep the repository name `ahkarchitects.github.io` to serve the organization site at this root address. Do not add a `.nojekyll` file, because it would disable service-page generation. No custom publishing workflow or Pages settings change is needed; the validation workflow builds the same layout before running tests.
+Merge the website changes into `main`. GitHub Pages publishes the repository's static files at `https://ahkarchitects.github.io/`; subsequent commits to `main` update the site automatically. Keep the repository name `ahkarchitects.github.io` to serve the organization site at this root address. This project does not need a Python build script or a custom publishing workflow. GitHub may show its own managed Pages deployment in the Actions tab; that does not mean you need to maintain an Actions workflow.
 
 To use a custom domain you own, configure it in GitHub Pages and add the corresponding DNS records. That makes the custom domain the address of this site, not a separate production deployment alongside staging.
 
@@ -80,7 +52,7 @@ The sharing card uses the logo, AHK Architects name, Architecture, Interiors, an
 
 There is no Apple-specific home-screen icon. Without one, iOS may use a page snapshot or generic icon depending on the browser/version; the PNG favicon is not a guaranteed home-screen fallback. The website itself is unaffected.
 
-When changing the public domain, update `url` in `_config.yml`, the hardcoded preview-image URLs in `_layouts/service.html`, and the canonical, Open Graph, and preview-image URLs in `index.html`, `about.html`, and `contact.html`, as well as the repository About website and organization profile website. Service canonical and Open Graph URLs are generated from configuration and each service's permalink. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
+When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in all six HTML pages, as well as the repository About website and organization profile website. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
 
 ## Portfolio images
 
@@ -144,7 +116,6 @@ To run the same checks locally, use Python 3.12 or newer and install the validat
 
 ```sh
 python -m pip install -r scripts/requirements-validation.txt
-bundle exec jekyll build --strict_front_matter
 python -m unittest discover -s tests
 python scripts/validate_projects.py
 ```
@@ -157,17 +128,17 @@ All content and uploaded files are public. The site keeps its homepage SEO and s
 
 ## Header and contact links
 
-The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available on all six pages. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows and a close control. The three service pages each show their own heading and **Coming soon** until content is supplied. Edit their corresponding `services/<service>/index.md` files; they are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
+The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available on all six pages. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows and a close control. The three service pages each show their own heading and **Coming soon** until content is supplied. Edit their corresponding HTML files; they are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
 `about.html` contains the original introduction: Arishella Harish Kumar's interior architect identity, "Spaces that feel like you," and the thoughtful-homes description. The homepage starts directly with Selected projects and retains only a compact copyright footer, without the introduction or large enquiry block.
 
-`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation or load the homepage's project scripts. Header markup is maintained in `index.html`, `about.html`, `contact.html`, and `_layouts/service.html`; keep those four sources in sync and retain each page's own active-menu marker. Service headers are generated at publish time, and all page headers remain available without JavaScript.
+`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation or load the homepage's project scripts. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
 
 The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Landscape on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it. Existing project scope metadata still describes each project's work independently of these navigation labels.
 
-Each page defines a single contact group under `data-contact-links-source`: in the main contact section on Contact Us and directly in the header on all other pages. Only Contact Us loads `contact-links.js`, which copies that group into its header so both locations use the same links, labels, icons, and styles. Keep contact details consistent across the four header/content sources; changing the service layout updates all three service pages together. On mobile, the header stacks the compact WhatsApp and Email links alongside the brand, while the services remain on one line. Without JavaScript, Contact Us retains a header fallback link and its main contact group; all other pages show their header contact links directly.
+Each page defines a single contact group under `data-contact-links-source`: in the main contact section on Contact Us and directly in the header on all other pages. Only Contact Us loads `contact-links.js`, which copies that group into its header so both locations use the same links, labels, icons, and styles. Keep contact details consistent across all six source groups. On mobile, the header stacks the compact WhatsApp and Email links alongside the brand, while the services remain on one line. Without JavaScript, Contact Us retains a header fallback link and its main contact group; all other pages show their header contact links directly.
 
-After a Jekyll build, `python -m unittest discover -s tests` also checks the generated pages: moved copy stays on the correct page, service placeholders are absent from Home, and every menu links to the correct separate page. A focused build test verifies that different content and asset paths render through the same shared layout.
+`python -m unittest discover -s tests` also checks that the moved copy stays on the correct page, service placeholders are absent from Home, and every menu links to the correct separate page.
 
 WhatsApp links directly to the business chat using `wa.me` with the Indian country code (`91`). Email uses `mailto:arishellaharish@gmail.com` and opens the visitor's configured email application, not necessarily Gmail. The supplied dotted address reaches the same inbox: [Google confirms that dots do not matter in personal `gmail.com` addresses](https://support.google.com/mail/answer/7436150?hl=en). This does not apply to custom-domain Google Workspace addresses.
 
