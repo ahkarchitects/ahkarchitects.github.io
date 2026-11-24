@@ -18,9 +18,13 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 ## Opening animation
 
-Each page load starts with a centered logo, **AHK**, and **Architects** on the site's theme background. The branding appears in staggered fades, holds until 2.4 seconds, then fades away over 0.6 seconds to reveal the homepage. The three-second intro uses only CSS, so it dismisses even without JavaScript and never waits for project images or external contact icons. The homepage and project metadata load behind it.
+Only a first direct homepage visit in a browser-tab session starts with a centered logo, **AHK**, and **Architects** on the site's theme background. `site-intro.js` runs before rendering on all three pages and records the visit in session storage. Internal navigation, reloads, Back/Forward, direct section or project links, About Us, and Contact Us skip the intro. Without JavaScript or session storage, content appears immediately.
+
+The branding appears in staggered fades, holds until 2.4 seconds, then fades away over 0.6 seconds to reveal the homepage. Once enabled, the three-second intro dismisses using CSS and never waits for project images or external contact icons. The homepage and project metadata load behind it.
 
 The decorative overlay is hidden from assistive technology. Reduced-motion visitors skip it entirely; keyboard focus and direct project dialogs also bypass it immediately. Scrolling is locked only while the intro runs. Maintain its timing and typography in the `intro-*` rules in `styles.css`, and its stacked branding in `index.html`.
+
+Run the opening-animation regression tests with `node --test tests/site-intro.test.cjs` (Node.js is only needed for these tests, not for the site).
 
 ## Light and dark themes
 
@@ -122,11 +126,11 @@ All content and uploaded files are public. The site keeps its homepage SEO and s
 
 ## Header and contact links
 
-The sticky top bar, left-aligned theme picker, and right-aligned Menu remain available while scrolling on Home, About Us, and Contact Us. The native expandable menu lists Home, About Us (`./about.html`), Architecture, Interiors, Landscape, and Contact Us (`./contact.html`) with full-width divided rows and a close control. Architecture, Interiors, and Landscape link to the homepage's corresponding sections (`#architecture`, `#interiors`, and `#landscape`), currently labeled **Coming soon** until content is supplied. Edit these sections in `index.html`; there is no Turnkey section. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
+The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available while scrolling on Home, About Us, and Contact Us. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture, Interiors, Landscape, and Contact Us (`./contact.html`) with full-width divided rows and a close control. Architecture, Interiors, and Landscape link to the homepage's corresponding sections (`#architecture`, `#interiors`, and `#landscape`), currently labeled **Coming soon** until content is supplied. Edit these sections in `index.html`; there is no Turnkey section. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
 `about.html` contains the original introduction: Arishella Harish Kumar's interior architect identity, "Spaces that feel like you," and the thoughtful-homes description. The homepage starts directly with Selected projects and retains only a compact copyright footer, without the introduction or large enquiry block.
 
-`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. About and Contact use the same theme storage and opening animation as the homepage; neither loads the homepage's project scripts. Header markup is kept explicitly in all three HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all three in sync and retain each page's own active-menu marker.
+`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. About and Contact use the same theme storage as the homepage but never show an opening animation; neither loads the homepage's project scripts. Header markup is kept explicitly in all three HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all three in sync and retain each page's own active-menu marker.
 
 The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Landscape on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it. Existing project scope metadata still describes each project's work independently of these navigation labels.
 

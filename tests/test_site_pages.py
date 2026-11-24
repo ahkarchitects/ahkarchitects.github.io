@@ -15,10 +15,16 @@ class Page(HTMLParser):
         self.links = []
         self.menu = []
         self.ids = []
+        self.scripts = []
+        self.intro_count = 0
         self.feed((ROOT / filename).read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "script" and "src" in attrs:
+            self.scripts.append(attrs["src"])
+        if "site-intro" in attrs.get("class", "").split():
+            self.intro_count += 1
         if "id" in attrs:
             self.ids.append(attrs["id"])
         if tag == "a":
@@ -46,6 +52,12 @@ class Page(HTMLParser):
 class SitePageTests(unittest.TestCase):
     def setUp(self):
         self.pages = {name: Page(name) for name in ("index.html", "about.html", "contact.html")}
+
+    def test_only_home_has_an_intro_and_all_pages_record_the_visit(self):
+        for filename, page in self.pages.items():
+            with self.subTest(page=filename):
+                self.assertIn("./site-intro.js", page.scripts)
+                self.assertEqual(page.intro_count, 1 if filename == "index.html" else 0)
 
     def test_home_starts_with_projects_without_moved_copy(self):
         home = self.pages["index.html"]
