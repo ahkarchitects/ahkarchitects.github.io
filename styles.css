@@ -33,10 +33,17 @@ body {
   background: var(--paper);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
+}
+
+.has-intro body {
   animation: intro-scroll-lock 3s;
 }
 
 .site-intro {
+  display: none;
+}
+
+.has-intro .site-intro {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -119,11 +126,11 @@ body:has(:focus-visible, .project-dialog[open]) .site-intro {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body {
+  .has-intro body {
     animation: none;
   }
 
-  .site-intro {
+  .has-intro .site-intro {
     display: none;
   }
 }
@@ -214,7 +221,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  min-width: 5.5rem;
+  min-width: 2.75rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--line);
