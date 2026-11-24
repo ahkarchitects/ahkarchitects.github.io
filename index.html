@@ -30,7 +30,6 @@
     <link rel="stylesheet" href="./theme.css" />
     <script src="./theme.js"></script>
     <link rel="stylesheet" href="./styles.css" />
-    <script src="./contact-links.js" defer></script>
     <script src="./site-navigation.js" defer></script>
     <script src="./projects.js" defer></script>
   </head>
@@ -52,8 +51,17 @@
           </span>
         </span>
       </a>
-      <div class="header-contacts" data-contact-links-copy>
-        <a class="header-contact-fallback" href="./contact.html">Contact</a>
+      <div class="header-contacts">
+        <nav class="contact-links" data-contact-links-source aria-label="Contact AHK Architects">
+          <a class="contact-link whatsapp-link" href="https://wa.me/917780412526" target="_blank" rel="noopener noreferrer" aria-label="Contact AHK Architects on WhatsApp (opens in a new tab)">
+            <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" width="24" height="24" referrerpolicy="no-referrer" />
+            WhatsApp
+          </a>
+          <a class="contact-link email-link" href="mailto:arishellaharish@gmail.com" aria-label="Email AHK Architects">
+            <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="" width="24" height="24" referrerpolicy="no-referrer" />
+            Email
+          </a>
+        </nav>
       </div>
       <div class="header-tools">
         <div class="theme-toolbar" hidden>
@@ -81,7 +89,7 @@
           </summary>
           <nav class="menu-panel" aria-label="Main navigation">
             <a href="./" aria-current="page">Home</a>
-            <span aria-disabled="true">About us <small>Coming soon</small></span>
+            <a href="./about.html">About us</a>
             <a href="#architecture">Architecture</a>
             <a href="#interiors">Interiors</a>
             <a href="#landscape">Landscape</a>
@@ -91,23 +99,12 @@
       </div>
     </header>
 
-    <main>
-      <section class="hero" id="home" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="eyebrow">Arishella Harish Kumar <span>·</span> Interior architect</p>
-          <h1 id="hero-title">Spaces that feel<br />like <em>you.</em></h1>
-          <p class="hero-description">
-            Thoughtful homes, shaped around the way you live. From the first sketch to the final detail,
-            every space is made with clarity, warmth, and purpose.
-          </p>
-        </div>
-      </section>
-
+    <main id="home">
       <section class="projects-section" id="projects" aria-labelledby="projects-title">
         <div class="section-heading">
           <div>
             <p class="eyebrow">A few ideas, brought to life</p>
-            <h2 id="projects-title">Selected projects</h2>
+            <h1 id="projects-title">Selected projects</h1>
           </div>
           <p class="scroll-hint"><span aria-hidden="true">←</span> Scroll to explore <span aria-hidden="true">→</span></p>
         </div>
@@ -145,26 +142,7 @@
       <div id="project-detail-content" hidden></div>
     </dialog>
 
-    <footer class="site-footer" id="contact">
-      <div>
-        <p class="eyebrow">Have a space in mind?</p>
-        <h2>Let’s make it<br /><em>feel like home.</em></h2>
-      </div>
-      <div class="contact-details">
-        <p class="contact-prompt">Project enquiries<br />Tell us about your space.</p>
-        <nav class="contact-links" data-contact-links-source aria-label="Contact AHK Architects">
-          <a class="contact-link whatsapp-link" href="https://wa.me/917780412526" target="_blank" rel="noopener noreferrer" aria-label="Contact AHK Architects on WhatsApp (opens in a new tab)">
-            <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" width="24" height="24" referrerpolicy="no-referrer" />
-            WhatsApp
-          </a>
-          <a class="contact-link email-link" href="mailto:arishellaharish@gmail.com" aria-label="Email AHK Architects">
-            <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="" width="24" height="24" referrerpolicy="no-referrer" />
-            Email
-          </a>
-        </nav>
-        <p>Arishella Harish Kumar<br />Interior architecture &amp; design</p>
-        <a class="back-to-top" href="#home">Back to top ↑</a>
-      </div>
+    <footer class="site-footer">
       <p class="footer-note">© <span id="year">2026</span> AHK Architects <span>·</span> Thoughtfully designed, beautifully lived.</p>
     </footer>
   </body>
