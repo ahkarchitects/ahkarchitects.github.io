@@ -7,14 +7,13 @@
   const content = document.getElementById("project-detail-content");
   const projectList = document.getElementById("project-list");
   const projectSource = projectList.dataset.source || "./projects";
-  const simpleMetadata = projectList.dataset.metadata === "simple";
+  const featured = projectList.dataset.featured === "true";
   const catalogueLoading = document.getElementById("catalogue-loading");
   const catalogueError = document.getElementById("catalogue-error");
   const catalogueRetry = document.getElementById("catalogue-retry");
   const knownProjects = new Set();
   const cache = new Map();
   const pendingMetadata = new Map();
-  const scopes = ["Architecture & planning", "Interior design", "Turnkey execution"];
   let detailRequest = 0;
   let activeSlug = null;
   let opener = null;
@@ -34,60 +33,30 @@
 
   function validateMetadata(data) {
     if (!data || typeof data !== "object") throw new Error("Invalid project metadata.");
-    if (simpleMetadata) {
-      if (
-        Object.keys(data).length !== 3 ||
-        typeof data.title !== "string" || !data.title.trim() ||
-        typeof data.location !== "string" || !data.location.trim() ||
-        !Array.isArray(data.images) || !data.images.length ||
-        data.images.some((file) => !validImageFile(file)) ||
-        new Set(data.images).size !== data.images.length
-      ) {
-        throw new Error("Project metadata must contain only title, location, and a nonempty list of unique image filenames.");
-      }
-      return {
-        title: data.title,
-        location: data.location,
-        cover: { file: data.images[0], alt: imageAlt(data.title, data.images[0]) },
-        gallery: data.images.slice(1)
-      };
-    }
-    for (const field of ["title", "type", "description", "location"]) {
-      if (typeof data[field] !== "string" || !data[field].trim()) {
-        throw new Error(`Missing project ${field}.`);
-      }
-    }
     if (
-      !Array.isArray(data.scope) ||
-      data.scope.some((scope) => !scopes.includes(scope)) ||
-      new Set(data.scope).size !== data.scope.length
+      Object.keys(data).length !== 3 ||
+      typeof data.title !== "string" || !data.title.trim() ||
+      typeof data.location !== "string" || !data.location.trim() ||
+      !Array.isArray(data.images) || !data.images.length ||
+      data.images.some((file) => !validImageFile(file)) ||
+      new Set(data.images).size !== data.images.length
     ) {
-      throw new Error("Invalid project scope.");
+      throw new Error("Project metadata must contain only title, location, and a nonempty list of unique image filenames.");
     }
-    const cover = data.cover;
-    if (
-      !cover ||
-      !validImageFile(cover.file) ||
-      typeof cover.alt !== "string" ||
-      !cover.alt.trim()
-    ) {
-      throw new Error("Invalid project cover.");
-    }
-    if (
-      data.gallery !== undefined &&
-      (
-        !Array.isArray(data.gallery) ||
-        data.gallery.some((file) => !validImageFile(file)) ||
-        new Set([cover.file, ...data.gallery]).size !== data.gallery.length + 1
-      )
-    ) {
-      throw new Error("Invalid project gallery.");
-    }
-    return data;
+    return {
+      title: data.title,
+      location: data.location,
+      cover: { file: data.images[0], alt: imageAlt(data.title, data.images[0]) },
+      gallery: data.images.slice(1)
+    };
   }
 
   function imageAlt(projectTitle, file) {
     return `${projectTitle}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")} concept illustration`;
+  }
+
+  function projectFolder(slug) {
+    return `${featured ? "." : projectSource}/${slug}`;
   }
 
   async function readJson(path) {
@@ -105,7 +74,7 @@
   function getMetadata(slug) {
     if (cache.has(slug)) return Promise.resolve(cache.get(slug));
     if (!pendingMetadata.has(slug)) {
-      const request = readJson(`${projectSource}/${slug}/metadata.json`)
+      const request = readJson(`${projectFolder(slug)}/metadata.json`)
         .then(validateMetadata)
         .then((data) => {
           cache.set(slug, data);
@@ -132,7 +101,7 @@
       caption.setAttribute("role", "status");
       console.error(`Could not load the cover for project "${slug}".`);
     });
-    image.src = new URL(`${projectSource}/${slug}/${data.cover.file}`, window.location.href).href;
+    image.src = new URL(`${projectFolder(slug)}/${data.cover.file}`, window.location.href).href;
     figure.append(image, caption);
     return figure;
   }
@@ -142,26 +111,25 @@
     const count = element("p", `${number} `, "project-number");
     count.append(element("span", `/ ${total}`));
     const link = element("a", "View project ", "text-link project-details-link");
-    link.href = `?project=${slug}`;
+    if (featured) {
+      const [section, project] = slug.split("/");
+      link.href = `./${section}.html?project=${project}`;
+    } else {
+      link.href = `?project=${slug}`;
+    }
     link.dataset.project = slug;
     const arrow = element("span", "\u2192");
     arrow.setAttribute("aria-hidden", "true");
     link.append(arrow, element("span", `: ${data.title}`, "sr-only"));
     link.addEventListener("click", (event) => {
-      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (featured || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       const url = new URL(window.location.href);
       url.searchParams.set("project", slug);
       window.history.pushState({ ...window.history.state, portfolioProject: true }, "", url);
       loadDetails(slug);
     });
-    info.append(count);
-    if (!simpleMetadata) info.append(element("p", data.type, "project-type"));
-    info.append(element("h3", data.title));
-    info.append(simpleMetadata
-      ? element("p", data.location, "project-description")
-      : element("p", data.description, "project-description"));
-    info.append(link);
+    info.append(count, element("h3", data.title), element("p", data.location, "project-description"), link);
     card.replaceChildren(info, coverFigure(slug, data, "project-image", number));
     return link;
   }
@@ -198,14 +166,17 @@
     projectList.setAttribute("aria-busy", "true");
     try {
       const folders = await readJson(`${projectSource}/index.json`);
+      const folderPattern = featured
+        ? /^(architecture|interiors|landscape)\/[a-z0-9]+(?:-[a-z0-9]+)*$/
+        : /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
       if (
         !Array.isArray(folders) ||
-        folders.some((slug) => typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) ||
+        folders.some((slug) => typeof slug !== "string" || !folderPattern.test(slug)) ||
         new Set(folders).size !== folders.length
       ) {
-        throw new Error(`${projectSource}/index.json must list unique lowercase, hyphen-separated folder names.`);
+        throw new Error(`${projectSource}/index.json must list unique ${featured ? "section/project references" : "lowercase, hyphen-separated folder names"}.`);
       }
-      folders.sort();
+      if (!featured) folders.sort();
       projectList.replaceChildren();
       knownProjects.clear();
       const cards = folders.map((slug, index) => {
@@ -234,26 +205,11 @@
   function renderDetails(slug, data) {
     title.textContent = data.title;
     const details = element("div", undefined, "detail-copy");
-    if (!simpleMetadata) {
-      details.append(
-        element("p", data.type, "project-type"),
-        element("p", data.description, "project-description")
-      );
-    }
     const facts = element("dl", undefined, "project-facts");
     const location = element("div");
     location.append(element("dt", "Location"), element("dd", data.location));
     facts.append(location);
     details.append(facts);
-    if (!simpleMetadata) {
-      details.append(element("h3", "Scope"));
-      const list = element("ul", undefined, "scope-list");
-      list.setAttribute("aria-label", "Project scope");
-      for (const scope of scopes) {
-        list.append(element("li", scope, data.scope.includes(scope) ? "included" : undefined));
-      }
-      details.append(list);
-    }
 
     content.replaceChildren(
       details,
@@ -318,7 +274,7 @@
         retryImage.hidden = false;
         console.error(`Could not load gallery image "${file}" for project "${slug}".`);
       });
-      image.src = new URL(`${projectSource}/${slug}/${file}`, window.location.href).href;
+      image.src = new URL(`${projectFolder(slug)}/${file}`, window.location.href).href;
     }
 
     const arrows = [
@@ -399,7 +355,7 @@
   }
 
   function syncWithUrl() {
-    if (!catalogueReady) return;
+    if (!catalogueReady || featured) return;
     const slug = new URL(window.location.href).searchParams.get("project");
     if (slug !== null) {
       loadDetails(slug);
@@ -419,23 +375,25 @@
     }
   }
 
-  dialog.querySelector(".dialog-close").addEventListener("click", closeDetails);
-  dialog.addEventListener("cancel", (event) => {
-    event.preventDefault();
-    closeDetails();
-  });
-  dialog.addEventListener("keydown", (event) => {
-    if (
-      !navigateGallery ||
-      event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
-      event.target.closest("input, textarea, select, [contenteditable]") ||
-      !["ArrowLeft", "ArrowRight"].includes(event.key)
-    ) return;
-    event.preventDefault();
-    navigateGallery(event.key === "ArrowLeft" ? -1 : 1);
-  });
-  retry.addEventListener("click", () => loadDetails(activeSlug));
+  if (!featured) {
+    dialog.querySelector(".dialog-close").addEventListener("click", closeDetails);
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeDetails();
+    });
+    dialog.addEventListener("keydown", (event) => {
+      if (
+        !navigateGallery ||
+        event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+        event.target.closest("input, textarea, select, [contenteditable]") ||
+        !["ArrowLeft", "ArrowRight"].includes(event.key)
+      ) return;
+      event.preventDefault();
+      navigateGallery(event.key === "ArrowLeft" ? -1 : 1);
+    });
+    retry.addEventListener("click", () => loadDetails(activeSlug));
+    window.addEventListener("popstate", syncWithUrl);
+  }
   catalogueRetry.addEventListener("click", loadCatalogue);
-  window.addEventListener("popstate", syncWithUrl);
   loadCatalogue();
 })();
