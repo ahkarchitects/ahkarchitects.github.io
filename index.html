@@ -31,6 +31,7 @@
     <script src="./theme.js"></script>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./contact-links.js" defer></script>
+    <script src="./site-navigation.js" defer></script>
     <script src="./projects.js" defer></script>
   </head>
   <body>
@@ -42,7 +43,7 @@
       </div>
     </div>
     <header class="site-header">
-      <a class="brand" href="#home" aria-label="AHK Interiors home">
+      <a class="brand" href="./" aria-label="AHK Interiors home">
         <img class="brand-logo" src="./assets/ahk-logo.svg" alt="" width="640" height="662" />
         <span class="brand-copy">
           <span class="wordmark">AHK Interiors<span>.</span></span>
@@ -52,12 +53,9 @@
         </span>
       </a>
       <div class="header-contacts" data-contact-links-copy>
-        <a class="header-contact-fallback" href="#contact">Contact</a>
+        <a class="header-contact-fallback" href="./contact.html">Contact</a>
       </div>
-    </header>
-
-    <main>
-      <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="header-tools">
         <div class="theme-toolbar" hidden>
           <fieldset class="theme-control">
             <legend class="sr-only">Theme</legend>
@@ -75,6 +73,26 @@
             </label>
           </fieldset>
         </div>
+        <details class="site-menu">
+          <summary>
+            <svg class="menu-open-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4h16M2 10h16M2 16h16" /></svg>
+            <span class="menu-open-label">Menu</span>
+            <span class="menu-close-label">Close <span aria-hidden="true">&times;</span></span>
+          </summary>
+          <nav class="menu-panel" aria-label="Main navigation">
+            <a href="./" aria-current="page">Home</a>
+            <span aria-disabled="true">About us <small>Coming soon</small></span>
+            <span aria-disabled="true">Architecture <small>Coming soon</small></span>
+            <span aria-disabled="true">Interiors <small>Coming soon</small></span>
+            <span aria-disabled="true">Landscape <small>Coming soon</small></span>
+            <a href="./contact.html">Contact us</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="home" aria-labelledby="hero-title">
         <div class="hero-copy">
           <p class="eyebrow">Arishella Harish Kumar <span>·</span> Interior architect</p>
           <h1 id="hero-title">Spaces that feel<br />like <em>you.</em></h1>
