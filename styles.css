@@ -386,10 +386,6 @@ a {
   border-radius: 2px;
 }
 
-.contact-details .contact-links {
-  margin-bottom: 1.5rem;
-}
-
 .contact-page {
   min-height: 65vh;
   padding: 5rem 10vw;
@@ -411,6 +407,16 @@ a {
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 400;
   letter-spacing: -0.035em;
+}
+
+.contact-page .contact-invitation {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.contact-invitation em {
+  color: var(--accent);
 }
 
 .contact-page p {
@@ -454,7 +460,7 @@ a {
   outline-offset: 4px;
 }
 
-.contact-page-footer {
+.site-footer {
   padding: 0 10vw 2rem;
 }
 
@@ -492,8 +498,7 @@ p {
   margin-top: 0;
 }
 
-h1,
-.site-footer h2 {
+h1 {
   font-family: var(--serif);
   font-weight: 400;
 }
@@ -505,8 +510,7 @@ h1 {
   line-height: 0.88;
 }
 
-h1 em,
-.site-footer h2 em {
+h1 em {
   color: var(--accent);
   font-weight: 400;
 }
@@ -547,6 +551,7 @@ h1 em,
   padding: 0 10vw 2.5rem;
 }
 
+.section-heading h1,
 .section-heading h2,
 .service-section h2 {
   margin: 0.6rem 0 0;
@@ -554,6 +559,7 @@ h1 em,
   font-size: clamp(2.6rem, 5vw, 4.5rem);
   font-weight: 400;
   letter-spacing: -0.06em;
+  line-height: normal;
 }
 
 .service-section {
@@ -979,41 +985,6 @@ button.text-link {
   line-height: 1.7;
 }
 
-.site-footer {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 3rem 2rem;
-  padding: 6rem 10vw 2rem;
-}
-
-.site-footer h2 {
-  margin: 1rem 0 0;
-  font-size: clamp(3rem, 6vw, 5.5rem);
-  letter-spacing: -0.065em;
-  line-height: 0.98;
-}
-
-.contact-details {
-  align-self: end;
-  min-width: 15rem;
-  padding-bottom: 0.35rem;
-}
-
-.contact-details p,
-.back-to-top {
-  color: var(--muted);
-  font-size: 0.68rem;
-  line-height: 1.8;
-}
-
-.contact-details p {
-  margin-bottom: 1.5rem;
-}
-
-.back-to-top {
-  text-decoration: none;
-}
-
 .footer-note {
   grid-column: 1 / -1;
   margin: 3rem 0 0;
@@ -1079,7 +1050,7 @@ button.text-link {
     gap: 2rem;
   }
 
-  .contact-page-footer {
+  .site-footer {
     padding: 0 1.5rem 1.5rem;
   }
 
@@ -1127,6 +1098,7 @@ button.text-link {
     padding: 0 1.5rem 1.5rem;
   }
 
+  .section-heading h1,
   .section-heading h2,
   .service-section h2 {
     font-size: 3rem;
@@ -1198,20 +1170,6 @@ button.text-link {
 
   .disclaimer {
     margin: 0.7rem 1.5rem 0;
-  }
-
-  .site-footer {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-    padding: 4.5rem 1.5rem 1.5rem;
-  }
-
-  .site-footer h2 {
-    font-size: 3.8rem;
-  }
-
-  .contact-details {
-    min-width: 0;
   }
 
   .footer-note {

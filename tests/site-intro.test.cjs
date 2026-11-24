@@ -51,10 +51,12 @@ test("plays on the first direct homepage visit only", () => {
   assert.equal(visit({ storage }).enabled(), false);
 });
 
-test("landing on Contact Us also prevents an intro on a later homepage visit", () => {
-  const storage = new Map();
-  assert.equal(visit({ path: "/contact.html", storage }).enabled(), false);
-  assert.equal(visit({ storage }).enabled(), false);
+test("landing on either subpage also prevents an intro on a later homepage visit", () => {
+  for (const path of ["/about.html", "/contact.html"]) {
+    const storage = new Map();
+    assert.equal(visit({ path, storage }).enabled(), false);
+    assert.equal(visit({ storage }).enabled(), false);
+  }
 });
 
 test("supports a direct index.html landing and an external referral", () => {
