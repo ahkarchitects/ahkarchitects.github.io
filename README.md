@@ -1,6 +1,6 @@
-# AHK Interiors
+# AHK Architects
 
-Official static portfolio website for AHK Interiors (Arishella Harish Kumar), built with plain HTML, CSS, and a small JavaScript project-detail view for GitHub Pages. Project content lives in repository folders; no CMS, private credentials, or separate project HTML pages are required.
+Official static portfolio website for AHK Architects (Arishella Harish Kumar), built with plain HTML, CSS, and a small JavaScript project-detail view for GitHub Pages. The organization is `ahkarchitects` and the repository is `ahkarchitects/ahkarchitects.github.io`. Project content lives in repository folders; no CMS, private credentials, or separate project HTML pages are required.
 
 ## Local development
 
@@ -34,7 +34,7 @@ Maintain both palettes in `theme.css`: each `light-dark(light, dark)` value pair
 
 In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **Deploy from a branch**, then select **main** and **/ (root)** and save. If you switched the source to GitHub Actions while trying the earlier build-based approach, switch it back.
 
-Merge the website changes into `main`. GitHub Pages publishes the repository's static files at `https://ahkdesign.github.io/`; subsequent commits to `main` update the site automatically. This project does not need a Python build script or a custom publishing workflow. GitHub may show its own managed Pages deployment in the Actions tab; that does not mean you need to maintain an Actions workflow.
+Merge the website changes into `main`. GitHub Pages publishes the repository's static files at `https://ahkarchitects.github.io/`; subsequent commits to `main` update the site automatically. Keep the repository name `ahkarchitects.github.io` to serve the organization site at this root address. This project does not need a Python build script or a custom publishing workflow. GitHub may show its own managed Pages deployment in the Actions tab; that does not mean you need to maintain an Actions workflow.
 
 To use a custom domain you own, configure it in GitHub Pages and add the corresponding DNS records. That makes the custom domain the address of this site, not a separate production deployment alongside staging.
 
@@ -42,11 +42,11 @@ To use a custom domain you own, configure it in GitHub Pages and add the corresp
 
 The north-arrow logo is drawn as vector paths in `assets/ahk-logo.svg`, shared by the page and SVG-capable browser tabs so it stays sharp at any size. `assets/favicon-32.png` is a fallback for browsers without SVG favicon support. The 1200-by-630 `assets/social-preview.png` is a raster sharing card referenced by Open Graph and Twitter card metadata; many sharing services do not accept SVG preview images.
 
-The sharing card uses the logo, AHK Interiors name, services, and "By Arishella Harish Kumar" byline without contact links or the old coming-soon message. It is a manually maintained PNG, not a live rendering of the header, so it needs no image-generation pipeline. The `?v=3` query in both preview-image URLs distinguishes the updated image for caches; bump that version when replacing the card again. Sharing platforms can also cache the page metadata, so existing shares may still need a preview refresh after deployment.
+The sharing card uses the logo, AHK Architects name, Architecture, Interiors, and Landscape labels, and "By Arishella Harish Kumar" byline without contact links or the old coming-soon message. It is a manually maintained PNG, not a live rendering of the header, so it needs no image-generation pipeline. The `?v=5` query in both pages' preview-image URLs distinguishes the updated image for caches; bump that version when replacing the card again. Sharing platforms can also cache the page metadata, so existing shares may still need a preview refresh after deployment.
 
 There is no Apple-specific home-screen icon. Without one, iOS may use a page snapshot or generic icon depending on the browser/version; the PNG favicon is not a guaranteed home-screen fallback. The website itself is unaffected.
 
-When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in `index.html`. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
+When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in both `index.html` and `contact.html`, as well as the repository About website and organization profile website. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
 
 ## Portfolio images
 
@@ -122,11 +122,11 @@ All content and uploaded files are public. The site keeps its homepage SEO and s
 
 ## Header and contact links
 
-The sticky top bar, left-aligned theme picker, and right-aligned Menu remain available while scrolling on Home and Contact Us. The native expandable menu lists Home, About Us, Architecture, Interiors, Landscape, and Contact Us with full-width divided rows and a close control. Only Home (`./`) and Contact Us (`./contact.html`) are implemented; the other entries are non-interactive and marked **Coming soon**, not broken links or empty pages. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
+The sticky top bar, left-aligned theme picker, and right-aligned Menu remain available while scrolling on Home and Contact Us. The native expandable menu lists Home, About Us, Architecture, Interiors, Landscape, and Contact Us with full-width divided rows and a close control. Home (`./`) and Contact Us (`./contact.html`) are implemented. Architecture, Interiors, and Landscape link to the homepage's corresponding sections (`#architecture`, `#interiors`, and `#landscape`), currently labeled **Coming soon** until content is supplied. Edit these sections in `index.html`; there is no Turnkey section. About Us remains non-interactive and marked **Coming soon**. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
 `contact.html` contains the existing Arishella Harish Kumar identity, a clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. It uses the same theme storage and opening animation as the homepage; it does not load the homepage's project scripts. Header markup is kept explicitly in both HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep `index.html` and `contact.html` in sync and retain each page's own active-menu marker.
 
-The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Turnkey spaces on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it.
+The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Landscape on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it. Existing project scope metadata still describes each project's work independently of these navigation labels.
 
 Each page defines a single contact group under `data-contact-links-source`: the footer in `index.html` and the main contact section in `contact.html`. The small local `contact-links.js` script copies that group into the header, so both locations use the same links, labels, icons, and styles. Edit the source group once to update both locations. On mobile, the header stacks the compact WhatsApp and Email links alongside the brand, while the services remain on one line. Without JavaScript, the header's Contact link leads to the Contact Us page; each page's original contact group still works.
 
