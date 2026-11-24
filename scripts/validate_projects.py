@@ -15,6 +15,7 @@ COVER_FILE = re.compile(r"[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)")
 FIELDS = {"title", "type", "description", "location", "scope", "cover"}
 SCOPES = {"Architecture & planning", "Interior design", "Turnkey execution"}
 FORMATS = {"jpg": "JPEG", "jpeg": "JPEG", "png": "PNG", "webp": "WEBP", "avif": "AVIF"}
+SECTIONS = ("architecture", "interiors", "landscape")
 
 
 def unique_object(pairs):
@@ -164,14 +165,53 @@ def validate_projects(root, directory="projects", simple=False):
     return errors
 
 
+def validate_featured(root):
+    errors = []
+    projects = root / "projects"
+    index = projects / "index.json"
+    if projects.is_symlink() or not projects.is_dir():
+        return ["projects: must be a regular directory, not a symbolic link"]
+    if any(path.is_dir() for path in projects.iterdir()):
+        errors.append("projects: featured content must reference section folders, not contain project folders")
+    try:
+        references = read_json(index)
+    except (OSError, ValueError) as error:
+        return errors + [f"projects/index.json: {error}"]
+    pattern = re.compile(r"(architecture|interiors|landscape)/[a-z0-9]+(?:-[a-z0-9]+)*")
+    if not isinstance(references, list) or any(
+        not isinstance(reference, str) or not pattern.fullmatch(reference)
+        for reference in references
+    ):
+        return errors + ["projects/index.json: must be an array of section/project references"]
+    if len(set(references)) != len(references):
+        errors.append("projects/index.json: references must be unique")
+    for reference in references:
+        section, slug = reference.split("/")
+        try:
+            if (root / section).is_symlink():
+                raise ValueError("section must not be a symbolic link")
+            catalogue = read_json(root / section / "index.json")
+            folder = root / reference
+            if (
+                not isinstance(catalogue, list) or slug not in catalogue
+                or folder.is_symlink() or not folder.is_dir()
+            ):
+                raise ValueError("must refer to a project published in its section catalogue")
+        except (OSError, ValueError) as error:
+            errors.append(f"projects/index.json: {reference}: {error}")
+    return errors
+
+
 def main():
     root = Path(__file__).resolve().parents[1]
-    errors = validate_projects(root) + validate_projects(root, "architecture", simple=True)
+    errors = validate_featured(root)
+    for section in SECTIONS:
+        errors.extend(validate_projects(root, section, simple=True))
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print("Home and Architecture project catalogues, metadata, and images are valid.")
+    print("Featured references and all three section catalogues, metadata, and images are valid.")
     return 0
 
 

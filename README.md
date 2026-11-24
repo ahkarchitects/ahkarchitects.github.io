@@ -4,7 +4,7 @@ Official static portfolio website for AHK Architects (Arishella Harish Kumar), b
 
 ## Local development
 
-Edit project content in `projects/<project-name>/metadata.json`, the manual folder list in `projects/index.json`, shared layout in `index.html`, layout and typography in `styles.css`, and theme colors in `theme.css`. No build script or package installation is required to preview or publish the site. A GitHub Actions workflow validates project submissions separately.
+Edit project content in `<section>/<project-name>/metadata.json`, the section's manual folder list in `<section>/index.json`, and homepage featured references in `projects/index.json`. Sections are `architecture`, `interiors`, and `landscape`. Layout and typography live in `styles.css`, and theme colors in `theme.css`. No build script or package installation is required to preview or publish the site. A GitHub Actions workflow validates project submissions separately.
 
 Preview the repository over HTTP using any static web server. If Python is already installed, this optional command starts a local preview server; Python is not a site or deployment dependency:
 
@@ -16,11 +16,11 @@ Visit `http://127.0.0.1:4321/` and stop the server with Ctrl+C when finished. Us
 
 Content edits take effect after refreshing the preview. There are no generated files to update.
 
-## Architecture projects
+## Section projects and homepage features
 
-`architecture.html` is live with Courtyard House and The Still House, moved from Home along with all twelve images. Home now lists the remaining three projects. Interiors and Landscape still show **Coming soon**.
+All five projects and their images live in their own sections: Architecture has Courtyard House and The Still House; Interiors has House by the Grove and Little City Home; Landscape has Sunday House. None of these pages shows **Coming soon**.
 
-Architecture uses the same `projects.js`, shared CSS, project cards, and image-gallery dialog as Home, but reads its own `architecture/index.json` and project folders. Each Architecture project's `metadata.json` contains only:
+All sections use the same `projects.js`, CSS, cards, and image-gallery dialog. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
 
 ```json
 {
@@ -35,9 +35,21 @@ Architecture uses the same `projects.js`, shared CSS, project cards, and image-g
 
 The first image is the card cover; the remaining filenames follow in gallery order. All images live beside that project's metadata. Titles and locations must be nonempty; `images` must be a nonempty list of unique supported image filenames. No type, description, scope, cover object, or per-image metadata is needed. Accessible image labels are derived from the project title and filename; the existing **Concept illustration** caption is retained so sample work is not presented as completed client work.
 
-Add Architecture projects by uploading a folder into `architecture/` and adding its name to `architecture/index.json`. List entries are sorted by folder name, just like Home. Architecture cards show title and location; **View project** opens the same image gallery with location, without description or scope. Direct links use `architecture.html?project=01-courtyard-house`. Old Home links to the moved projects no longer open them; update saved links to the Architecture URL.
+Section cards show title and location; **View project** opens a same-page image gallery with location, without description or scope. Direct links use the owning section, for example `architecture.html?project=01-courtyard-house` or `interiors.html?project=03-house-by-the-grove`. Update old Home links to their section URLs.
 
-The existing validation command checks both catalogues and all referenced images, including the 250 KiB limit. Home's remaining projects retain their existing richer metadata format. No new dependencies, build step, or publishing changes are required.
+Home shows **Featured projects** using references only. `projects/index.json` selects the first existing project from each section:
+
+```json
+[
+  "architecture/01-courtyard-house",
+  "interiors/03-house-by-the-grove",
+  "landscape/05-sunday-house"
+]
+```
+
+The list order is the display order. To change the selection, edit these references; nothing is copied or synchronized. Titles, locations, and cover URLs come directly from the section's metadata and original images, so edits there immediately affect the homepage too. Homepage **View project** links open the owning section's project dialog. The `projects/` folder contains only this reference list, never duplicate metadata or images.
+
+The existing validation command checks all three catalogues, featured references, and referenced images, including the 250 KiB limit. No new dependencies, build step, or publishing changes are required.
 
 The standalone service pages intentionally duplicate HTML to avoid template engines, extra site dependencies, and a build step. Keep their markup consistent and use `styles.css` for shared visual changes. Repository AI guidance in `.github/copilot-instructions.md` requires explicit approval before adding dependencies or changing the development or publishing process.
 
@@ -79,37 +91,38 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 ## Portfolio images
 
-The five covers across Home and Architecture are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. Each project also has five additional themed JPGs: 25 additional images in total. They appear after the cover in the View project gallery; accessible gallery labels are derived from the project name and filename. Every card and detail image is captioned "Concept illustration", identifying the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
+The five covers across Architecture, Interiors, and Landscape are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. Each project also has five additional themed JPGs: 25 additional images in total. They appear after the cover in the View project gallery; accessible gallery labels are derived from the project name and filename. Every card and detail image is captioned "Concept illustration", identifying the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
 
-When replacing a cover, update its descriptive `alt` text in the project's metadata. No width or height fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
+The first filename in `images` is the cover; accessible image labels come from the title and filename. No alt, width, or height metadata fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
 
 ## Updating projects without editing HTML
 
-Each project is a folder containing `metadata.json`, one cover image, and any optional gallery images:
+Each section owns its catalogue and project folders:
 
 ```text
-projects/
+interiors/
   index.json
-  01-courtyard-house/
+  03-house-by-the-grove/
     metadata.json
     cover.jpg
-    courtyard-exterior.jpg
-    courtyard-layout.jpg
+    grove-exterior.jpg
+  04-little-city-home/
+    metadata.json
+    cover.jpg
 ```
 
-To add a project, copy an existing project folder on your computer, rename it with lowercase letters, numbers, and hyphens, replace its cover, and edit `metadata.json` with a plain-text editor. In GitHub, open the repository's `projects` folder, choose **Add file → Upload files**, and upload the new project folder. Then edit `projects/index.json` to include that folder's exact name and commit both changes to `main` (or open a pull request). No HTML editing is needed.
+To add a project, copy an existing project folder on your computer, rename it with lowercase letters, numbers, and hyphens, replace its images, and edit `metadata.json` with a plain-text editor. In GitHub, open the appropriate section folder, choose **Add file → Upload files**, and upload the new project folder. Then edit that section's `index.json` to include the folder's exact name and commit both changes to `main` (or open a pull request). No HTML editing is needed.
 
-`projects/index.json` is the only manual discovery list:
+For example, `interiors/index.json` lists:
 
 ```json
 [
   "03-house-by-the-grove",
-  "04-little-city-home",
-  "05-sunday-house"
+  "04-little-city-home"
 ]
 ```
 
-When adding, renaming, or removing a project folder, update this list too. Unlisted folders are not displayed. Keep the JSON quotes and commas intact, with no trailing comma after the last entry. Folder names must be unique.
+When adding, renaming, or removing a project folder, update its section list too. If featured on Home, update its reference in `projects/index.json` as well. Unlisted folders are not displayed. Keep JSON quotes and commas intact, with no trailing comma after the last entry. Folder names must be unique within a section.
 
 Listed projects are sorted alphabetically by their full folder names, regardless of the list's entry order. There are no hardcoded project names in the JavaScript. Keep numeric prefixes zero-padded to the same width: `02-...` sorts before `10-...`. To insert between `01-...` and `02-...` without renaming everything, use `01a-new-project`; to append, use `06-new-project`. Renaming a folder changes its position and its project URL, so previously shared links using the old name will no longer open that project. The display name comes from metadata `title` and does not need the numeric prefix. Card numbers and totals are calculated from the resulting order.
 
@@ -118,18 +131,14 @@ Metadata fields:
 | Field | Content |
 | --- | --- |
 | `title` | Project name. |
-| `type` | Existing category/status, such as `Private residence · Concept`. |
-| `description` | Plain-text project description; use `\n` for line breaks. |
 | `location` | City and country. |
-| `scope` | Included services from `Architecture & planning`, `Interior design`, and `Turnkey execution`. Use `[]` if none apply. |
-| `cover` | Object with `file` and descriptive `alt`. Image dimensions are handled by CSS. |
-| `gallery` | Optional ordered array of image filenames, such as `["courtyard-exterior.jpg", "courtyard-layout.jpg"]`, displayed after the cover in View project. Omit it or use `[]` for the original cover-only detail view. Files must be in the same project folder and unique, excluding the cover. |
+| `images` | Nonempty ordered array of unique image filenames in this project folder; first is the cover. |
 
-Keep JSON quotation marks and commas intact. Cover filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. There is no `order` field to maintain.
+Keep JSON quotation marks and commas intact. Image filenames must be lowercase letters, numbers, and hyphens with a `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` extension, and must refer to a file in that same project folder. Invalid list entries show a project-list error; missing or malformed metadata shows an error on the affected card with a retry button. Missing covers show an image-loading error. There is no `order` field to maintain.
 
 ### Automated project validation
 
-`.github/workflows/validate-projects.yml` runs on every pull request targeting `main`, every push to `main`, and manual runs from the Actions tab. It checks that the list contains unique valid folder names and matches the project directories, that every project has valid `metadata.json` with the required fields above and an optional `gallery`, and that scopes contain only supported services without duplicates. Gallery entries must be unique supported image filenames different from the cover. Unknown metadata fields (including `order`), duplicate JSON keys, missing files, and symbolic links used for referenced project files or directories are rejected. No separate project HTML page is required.
+`.github/workflows/validate-projects.yml` runs on every pull request targeting `main`, every push to `main`, and manual runs from the Actions tab. It checks all section lists against their project directories, validates the simple metadata, and ensures featured references point to published section projects. Duplicate references, copied project folders in `projects/`, unknown metadata fields, duplicate JSON keys, missing files, and symbolic links used for referenced project files or directories are rejected. No separate project HTML page is required.
 
 Each referenced cover and gallery image must decode as its declared image format and be **at most 250 KiB (256,000 bytes)**. Unreferenced images are ignored. The workflow reports file-specific errors and never edits, compresses, or publishes content.
 
@@ -143,19 +152,19 @@ python scripts/validate_projects.py
 
 The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
-The main page's layout and project heading load immediately behind the opening animation. JavaScript fetches the small folder list and each listed project's metadata to render cards; covers use native lazy loading. Metadata is cached for the visit, and **View project** opens an accessible same-page dialog with location, scope, and an image gallery beginning with the cover. Left/right icons overlay the image, and compact clickable dots along its bottom edge mark the current image. An announced image counter sits below the image; there are no text Previous/Next buttons or between-project navigation controls. Left/Right arrow keys browse images while the dialog is open; navigation stops at the first and last image. Opening another project resets to its cover. Only the active gallery image is requested, so additional images do not download with the homepage. A failed image shows an explicit error and Retry image button. The controls use native buttons without a carousel library or automatic playback. Images remain standard `<img>` elements, so the browser's right-click image menu is available; no custom open-in-new-tab link is added. Links such as `/?project=01-courtyard-house` support direct opening, refresh, and browser Back/Forward. JavaScript and a working HTTP connection are required for project cards and details; the rest of the page remains available without JavaScript.
+The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage **View project** links navigate to the section page and open its accessible dialog with title, location, and image gallery. Left/right arrows, compact dots, an announced image counter, and Left/Right keyboard navigation browse images without automatic playback. Navigation stops at the first and last image; each project starts at its cover. Only the active gallery image is requested. Failed images show an explicit error and Retry image button. Standard `<img>` elements retain the browser's image context menu. Section URLs such as `landscape.html?project=05-sunday-house` support direct opening, refresh, and Back/Forward. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
 ## Header and contact links
 
-The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available on all six pages. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows and a close control. Architecture loads its own project catalogue; Interiors and Landscape show **Coming soon**. They are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
+The sticky top bar, left-aligned theme picker, and right-aligned icon-only menu toggle remain available on all six pages. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows and a close control. All three service pages load their own project catalogues. They are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
-`about.html` contains the original introduction: Arishella Harish Kumar's interior architect identity, "Spaces that feel like you," and the thoughtful-homes description. The homepage starts directly with Selected projects and retains only a compact copyright footer, without the introduction or large enquiry block.
+`about.html` contains the original introduction: Arishella Harish Kumar's interior architect identity, "Spaces that feel like you," and the thoughtful-homes description. The homepage starts directly with Featured projects and retains only a compact copyright footer, without the introduction or large enquiry block.
 
-`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation. Only Home and Architecture load `projects.js`. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
+`contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation. Home and all three service pages load `projects.js`. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
 
-The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Landscape on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it. Existing project scope metadata still describes each project's work independently of these navigation labels.
+The header contains the larger AHK logo and wordmark, with Architecture, Interiors, and Landscape on one line beneath the name. The hero no longer repeats the logo, services, or a shortcut to the project section immediately below it.
 
 Each page defines a single contact group under `data-contact-links-source`: in the main contact section on Contact Us and directly in the header on all other pages. Only Contact Us loads `contact-links.js`, which copies that group into its header so both locations use the same links, labels, icons, and styles. Keep contact details consistent across all six source groups. On mobile, the header stacks the compact WhatsApp and Email links alongside the brand, while the services remain on one line. Without JavaScript, Contact Us retains a header fallback link and its main contact group; all other pages show their header contact links directly.
 

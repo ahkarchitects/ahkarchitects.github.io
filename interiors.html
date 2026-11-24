@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f4f1eb" />
     <meta name="color-scheme" content="light dark" />
-    <meta name="description" content="Interiors by AHK Architects. Coming soon." />
+    <meta name="description" content="Explore interior concepts by AHK Architects, with project locations and image galleries." />
     <title>Interiors | AHK Architects</title>
     <link rel="canonical" href="https://ahkarchitects.github.io/interiors.html" />
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
@@ -13,19 +13,20 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AHK Architects" />
     <meta property="og:title" content="Interiors | AHK Architects" />
-    <meta property="og:description" content="Interiors by AHK Architects. Coming soon." />
+    <meta property="og:description" content="Explore interior concepts by AHK Architects, with project locations and image galleries." />
     <meta property="og:url" content="https://ahkarchitects.github.io/interiors.html" />
     <meta property="og:image" content="https://ahkarchitects.github.io/assets/social-preview.png?v=5" />
     <meta property="og:image:alt" content="AHK Architects — Architecture, Interiors, Landscape. By Arishella Harish Kumar." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Interiors | AHK Architects" />
-    <meta name="twitter:description" content="Interiors by AHK Architects. Coming soon." />
+    <meta name="twitter:description" content="Explore interior concepts by AHK Architects, with project locations and image galleries." />
     <meta name="twitter:image" content="https://ahkarchitects.github.io/assets/social-preview.png?v=5" />
     <link rel="stylesheet" href="./theme.css" />
     <script src="./theme.js"></script>
     <script src="./site-intro.js"></script>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./site-navigation.js" defer></script>
+    <script src="./projects.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -86,10 +87,34 @@
       </div>
     </header>
 
-    <main class="service-page" aria-labelledby="service-title">
-      <h1 id="service-title">Interiors</h1>
-      <p>Coming soon.</p>
+    <main>
+      <section class="projects-section" aria-labelledby="service-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">A few ideas, brought to life</p>
+            <h1 id="service-title">Interiors</h1>
+          </div>
+          <p class="scroll-hint"><span aria-hidden="true">&larr;</span> Scroll to explore <span aria-hidden="true">&rarr;</span></p>
+        </div>
+        <div class="catalogue-status">
+          <p id="catalogue-loading" class="detail-message" role="status" hidden>Loading projects...</p>
+          <p id="catalogue-error" class="detail-message" role="alert" hidden></p>
+          <button id="catalogue-retry" class="text-link" type="button" hidden>Try again</button>
+        </div>
+        <div class="project-list" id="project-list" data-source="./interiors" aria-label="Interior concepts"></div>
+        <noscript><p class="disclaimer">Enable JavaScript to load project summaries and open project details.</p></noscript>
+      </section>
     </main>
+    <dialog class="project-dialog" id="project-dialog" aria-labelledby="project-dialog-title">
+      <div class="dialog-header">
+        <h2 id="project-dialog-title" tabindex="-1">Project details</h2>
+        <button class="dialog-close" type="button" autofocus aria-label="Close project details">Close &times;</button>
+      </div>
+      <p id="project-loading" class="detail-message" role="status" hidden>Loading project details...</p>
+      <p id="project-error" class="detail-message" role="alert" hidden></p>
+      <button id="project-retry" class="text-link" type="button" hidden>Try again</button>
+      <div id="project-detail-content" hidden></div>
+    </dialog>
     <footer class="site-footer">
       <p class="footer-note">&copy; 2026 AHK Architects <span>&middot;</span> Thoughtfully designed, beautifully lived.</p>
     </footer>

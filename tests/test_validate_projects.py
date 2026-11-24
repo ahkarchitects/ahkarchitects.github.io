@@ -5,7 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from scripts.validate_projects import MAX_COVER_BYTES, validate_projects
+from scripts.validate_projects import MAX_COVER_BYTES, validate_featured, validate_projects
 
 
 class ProjectValidationTests(unittest.TestCase):
@@ -207,6 +207,42 @@ class ProjectValidationTests(unittest.TestCase):
         self.assertIn("invalid images[0]", "\n".join(
             validate_projects(self.root, simple=True)
         ))
+
+
+class FeaturedValidationTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        (self.root / "projects").mkdir()
+        self.index = self.root / "projects/index.json"
+        (self.root / "architecture/01-house").mkdir(parents=True)
+        (self.root / "architecture/index.json").write_text('["01-house"]')
+        self.index.write_text('["architecture/01-house"]')
+
+    def test_featured_references_existing_section_content(self):
+        self.assertEqual(validate_featured(self.root), [])
+
+    def test_invalid_missing_duplicate_and_unlisted_references(self):
+        for references in (
+            {}, [None], ["../01-house"], ["other/01-house"],
+            ["architecture/01-house", "architecture/01-house"],
+            ["architecture/missing"], ["interiors/01-house"],
+        ):
+            with self.subTest(references=references):
+                self.index.write_text(json.dumps(references))
+                self.assertTrue(validate_featured(self.root))
+        (self.root / "architecture/index.json").write_text("[]")
+        self.index.write_text('["architecture/01-house"]')
+        self.assertTrue(validate_featured(self.root))
+
+    def test_featured_rejects_copied_project_folders_and_symlinks(self):
+        (self.root / "projects/01-house").mkdir()
+        self.assertIn("not contain project folders", "\n".join(validate_featured(self.root)))
+        folder = self.root / "architecture/01-house"
+        folder.rmdir()
+        folder.symlink_to(self.root / "projects/01-house", target_is_directory=True)
+        self.assertIn("must refer to a project", "\n".join(validate_featured(self.root)))
 
 
 if __name__ == "__main__":

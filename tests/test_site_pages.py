@@ -67,7 +67,7 @@ class SitePageTests(unittest.TestCase):
 
     def test_home_starts_with_projects_without_moved_copy(self):
         home = self.pages["index.html"]
-        self.assertEqual(home.content("h1"), "Selected projects")
+        self.assertEqual(home.content("h1"), "Featured projects")
         for text in ("Spaces that feel", "Thoughtful homes", "Have a space in mind?",
                      "Let’s make it", "Project enquiries", "Tell us about your space."):
             with self.subTest(text=text):
@@ -103,30 +103,33 @@ class SitePageTests(unittest.TestCase):
                 self.assertEqual(page.content("h1"), service.title())
                 self.assertNotIn(service, home.ids)
                 self.assertNotIn(service.title(), home.content("main"))
-                if service == "architecture":
-                    self.assertIn("./projects.js", page.scripts)
-                    self.assertIn("project-list", page.ids)
-                    self.assertIn("project-dialog", page.ids)
-                    self.assertNotIn("Coming soon.", page.content("main"))
-                else:
-                    self.assertEqual(page.content("main"), service.title() + " Coming soon.")
-                    self.assertNotIn("./projects.js", page.scripts)
+                self.assertIn("./projects.js", page.scripts)
+                self.assertIn("project-list", page.ids)
+                self.assertIn("project-dialog", page.ids)
+                self.assertNotIn("Coming soon.", page.content("main"))
 
-    def test_first_two_projects_live_only_in_architecture_with_simple_metadata(self):
+    def test_projects_live_only_in_their_sections_with_simple_metadata(self):
         home = json.loads((ROOT / "projects/index.json").read_text())
-        architecture = json.loads((ROOT / "architecture/index.json").read_text())
-        self.assertEqual(architecture, ["01-courtyard-house", "02-the-still-house"])
-        self.assertEqual(len(home), 3)
-        self.assertFalse(set(home) & set(architecture))
-        for slug in architecture:
-            with self.subTest(project=slug):
-                self.assertFalse((ROOT / "projects" / slug).exists())
-                folder = ROOT / "architecture" / slug
-                metadata = json.loads((folder / "metadata.json").read_text())
-                self.assertEqual(set(metadata), {"title", "location", "images"})
-                self.assertEqual(len(metadata["images"]), 6)
-                for image in metadata["images"]:
-                    self.assertTrue((folder / image).is_file())
+        expected = {
+            "architecture": ["01-courtyard-house", "02-the-still-house"],
+            "interiors": ["03-house-by-the-grove", "04-little-city-home"],
+            "landscape": ["05-sunday-house"],
+        }
+        self.assertEqual(home, [
+            f"{section}/{slugs[0]}" for section, slugs in expected.items()
+        ])
+        self.assertEqual(list((ROOT / "projects").iterdir()), [ROOT / "projects/index.json"])
+        for section, slugs in expected.items():
+            catalogue = json.loads((ROOT / section / "index.json").read_text())
+            self.assertEqual(catalogue, slugs)
+            for slug in slugs:
+                with self.subTest(section=section, project=slug):
+                    folder = ROOT / section / slug
+                    metadata = json.loads((folder / "metadata.json").read_text())
+                    self.assertEqual(set(metadata), {"title", "location", "images"})
+                    self.assertEqual(len(metadata["images"]), 6)
+                    for image in metadata["images"]:
+                        self.assertTrue((folder / image).is_file())
 
     def test_all_menus_reach_separate_pages(self):
         for filename, page in self.pages.items():
