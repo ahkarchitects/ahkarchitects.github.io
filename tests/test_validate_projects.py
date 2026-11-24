@@ -165,6 +165,49 @@ class ProjectValidationTests(unittest.TestCase):
         self.gallery_image.write_bytes(self.gallery_image.read_bytes() + b"\0")
         self.assertIn("maximum is 256000 bytes", self.errors())
 
+    def test_simple_metadata_in_separate_catalogue(self):
+        self.projects.rename(self.root / "architecture")
+        folder = self.root / "architecture/01-house"
+        metadata = folder / "metadata.json"
+        data = {"title": "House", "location": "Bengaluru", "images": ["cover.png"]}
+        metadata.write_text(json.dumps(data))
+        self.assertEqual(validate_projects(self.root, "architecture", simple=True), [])
+        data["description"] = "Not part of the simple schema"
+        metadata.write_text(json.dumps(data))
+        self.assertIn("only title, location, and images", "\n".join(
+            validate_projects(self.root, "architecture", simple=True)
+        ))
+
+    def test_simple_metadata_rejects_invalid_images_and_missing_text(self):
+        for images in ([], None, ["cover.png", "cover.png"], ["../outside.png"],
+                       ["missing.png"], [False]):
+            with self.subTest(images=images):
+                self.data = {"title": "House", "location": "Bengaluru", "images": images}
+                self.write_metadata()
+                self.assertTrue(validate_projects(self.root, simple=True))
+        for field in ("title", "location"):
+            self.data = {"title": "House", "location": "Bengaluru", "images": ["cover.png"]}
+            self.data[field] = " "
+            self.write_metadata()
+            self.assertIn(f"{field} must be nonempty text", "\n".join(
+                validate_projects(self.root, simple=True)
+            ))
+
+    def test_simple_images_keep_image_validation_and_size_limit(self):
+        self.data = {"title": "House", "location": "Bengaluru", "images": ["cover.png"]}
+        self.write_metadata()
+        original = self.cover.read_bytes()
+        self.cover.write_bytes(original + b"\0" * (MAX_COVER_BYTES - len(original)))
+        self.assertEqual(validate_projects(self.root, simple=True), [])
+        self.cover.write_bytes(self.cover.read_bytes() + b"\0")
+        self.assertIn("maximum is 256000 bytes", "\n".join(
+            validate_projects(self.root, simple=True)
+        ))
+        self.cover.write_bytes(b"not an image")
+        self.assertIn("invalid images[0]", "\n".join(
+            validate_projects(self.root, simple=True)
+        ))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,8 @@
   const retry = document.getElementById("project-retry");
   const content = document.getElementById("project-detail-content");
   const projectList = document.getElementById("project-list");
+  const projectSource = projectList.dataset.source || "./projects";
+  const simpleMetadata = projectList.dataset.metadata === "simple";
   const catalogueLoading = document.getElementById("catalogue-loading");
   const catalogueError = document.getElementById("catalogue-error");
   const catalogueRetry = document.getElementById("catalogue-retry");
@@ -32,6 +34,24 @@
 
   function validateMetadata(data) {
     if (!data || typeof data !== "object") throw new Error("Invalid project metadata.");
+    if (simpleMetadata) {
+      if (
+        Object.keys(data).length !== 3 ||
+        typeof data.title !== "string" || !data.title.trim() ||
+        typeof data.location !== "string" || !data.location.trim() ||
+        !Array.isArray(data.images) || !data.images.length ||
+        data.images.some((file) => !validImageFile(file)) ||
+        new Set(data.images).size !== data.images.length
+      ) {
+        throw new Error("Project metadata must contain only title, location, and a nonempty list of unique image filenames.");
+      }
+      return {
+        title: data.title,
+        location: data.location,
+        cover: { file: data.images[0], alt: imageAlt(data.title, data.images[0]) },
+        gallery: data.images.slice(1)
+      };
+    }
     for (const field of ["title", "type", "description", "location"]) {
       if (typeof data[field] !== "string" || !data[field].trim()) {
         throw new Error(`Missing project ${field}.`);
@@ -66,6 +86,10 @@
     return data;
   }
 
+  function imageAlt(projectTitle, file) {
+    return `${projectTitle}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")} concept illustration`;
+  }
+
   async function readJson(path) {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15000);
@@ -81,7 +105,7 @@
   function getMetadata(slug) {
     if (cache.has(slug)) return Promise.resolve(cache.get(slug));
     if (!pendingMetadata.has(slug)) {
-      const request = readJson(`./projects/${slug}/metadata.json`)
+      const request = readJson(`${projectSource}/${slug}/metadata.json`)
         .then(validateMetadata)
         .then((data) => {
           cache.set(slug, data);
@@ -108,7 +132,7 @@
       caption.setAttribute("role", "status");
       console.error(`Could not load the cover for project "${slug}".`);
     });
-    image.src = new URL(`./projects/${slug}/${data.cover.file}`, window.location.href).href;
+    image.src = new URL(`${projectSource}/${slug}/${data.cover.file}`, window.location.href).href;
     figure.append(image, caption);
     return figure;
   }
@@ -131,13 +155,13 @@
       window.history.pushState({ ...window.history.state, portfolioProject: true }, "", url);
       loadDetails(slug);
     });
-    info.append(
-      count,
-      element("p", data.type, "project-type"),
-      element("h3", data.title),
-      element("p", data.description, "project-description"),
-      link
-    );
+    info.append(count);
+    if (!simpleMetadata) info.append(element("p", data.type, "project-type"));
+    info.append(element("h3", data.title));
+    info.append(simpleMetadata
+      ? element("p", data.location, "project-description")
+      : element("p", data.description, "project-description"));
+    info.append(link);
     card.replaceChildren(info, coverFigure(slug, data, "project-image", number));
     return link;
   }
@@ -173,13 +197,13 @@
     catalogueRetry.hidden = true;
     projectList.setAttribute("aria-busy", "true");
     try {
-      const folders = await readJson("./projects/index.json");
+      const folders = await readJson(`${projectSource}/index.json`);
       if (
         !Array.isArray(folders) ||
         folders.some((slug) => typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) ||
         new Set(folders).size !== folders.length
       ) {
-        throw new Error("projects/index.json must list unique lowercase, hyphen-separated folder names.");
+        throw new Error(`${projectSource}/index.json must list unique lowercase, hyphen-separated folder names.`);
       }
       folders.sort();
       projectList.replaceChildren();
@@ -199,7 +223,7 @@
     } catch (error) {
       console.error("Could not load the project list.", error);
       catalogueLoading.hidden = true;
-      catalogueError.textContent = "Projects could not be loaded. Check projects/index.json or try again.";
+      catalogueError.textContent = `Projects could not be loaded. Check ${projectSource}/index.json or try again.`;
       catalogueError.hidden = false;
       catalogueRetry.hidden = false;
     } finally {
@@ -210,21 +234,26 @@
   function renderDetails(slug, data) {
     title.textContent = data.title;
     const details = element("div", undefined, "detail-copy");
-    details.append(
-      element("p", data.type, "project-type"),
-      element("p", data.description, "project-description")
-    );
+    if (!simpleMetadata) {
+      details.append(
+        element("p", data.type, "project-type"),
+        element("p", data.description, "project-description")
+      );
+    }
     const facts = element("dl", undefined, "project-facts");
     const location = element("div");
     location.append(element("dt", "Location"), element("dd", data.location));
     facts.append(location);
-    details.append(facts, element("h3", "Scope"));
-    const list = element("ul", undefined, "scope-list");
-    list.setAttribute("aria-label", "Project scope");
-    for (const scope of scopes) {
-      list.append(element("li", scope, data.scope.includes(scope) ? "included" : undefined));
+    details.append(facts);
+    if (!simpleMetadata) {
+      details.append(element("h3", "Scope"));
+      const list = element("ul", undefined, "scope-list");
+      list.setAttribute("aria-label", "Project scope");
+      for (const scope of scopes) {
+        list.append(element("li", scope, data.scope.includes(scope) ? "included" : undefined));
+      }
+      details.append(list);
     }
-    details.append(list);
 
     content.replaceChildren(
       details,
@@ -261,8 +290,7 @@
       index = destination;
       const file = files[index];
       const image = element("img");
-      const name = file.replace(/\.[^.]+$/, "").replace(/-/g, " ");
-      image.alt = index === 0 ? data.cover.alt : `${data.title}: ${name} concept illustration`;
+      image.alt = index === 0 ? data.cover.alt : imageAlt(data.title, file);
       image.decoding = "async";
       image.loading = "eager";
       imageSlot.replaceChildren(image);
@@ -290,7 +318,7 @@
         retryImage.hidden = false;
         console.error(`Could not load gallery image "${file}" for project "${slug}".`);
       });
-      image.src = new URL(`./projects/${slug}/${file}`, window.location.href).href;
+      image.src = new URL(`${projectSource}/${slug}/${file}`, window.location.href).href;
     }
 
     const arrows = [
