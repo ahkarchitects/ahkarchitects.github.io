@@ -8,6 +8,7 @@
   const projectList = document.getElementById("project-list");
   const projectSource = projectList.dataset.source || "./projects";
   const featured = projectList.dataset.featured === "true";
+  const spotlight = document.getElementById("home-spotlight");
   const catalogueLoading = document.getElementById("catalogue-loading");
   const catalogueError = document.getElementById("catalogue-error");
   const catalogueRetry = document.getElementById("catalogue-retry");
@@ -106,6 +107,31 @@
     return figure;
   }
 
+  function spotlightStatus(message) {
+    if (!spotlight) return;
+    const status = element("p", message, "spotlight-status");
+    status.setAttribute("role", "status");
+    spotlight.replaceChildren(status);
+    spotlight.setAttribute("aria-busy", "false");
+  }
+
+  function renderSpotlight(slug, data, href) {
+    if (!spotlight) return;
+    const link = element("a", undefined, "spotlight-project");
+    link.href = href;
+    link.setAttribute("aria-label", `View project: ${data.title}`);
+    const figure = coverFigure(slug, data, "spotlight-cover");
+    figure.querySelector("img").fetchPriority = "high";
+    figure.querySelector("figcaption").replaceChildren(
+      element("span", "Concept illustration", "spotlight-label"),
+      element("span", data.title, "spotlight-title"),
+      element("span", data.location, "spotlight-location")
+    );
+    link.append(figure);
+    spotlight.replaceChildren(link);
+    spotlight.setAttribute("aria-busy", "false");
+  }
+
   function renderCard(card, slug, data, number, total) {
     const info = element("div", undefined, "project-info");
     const count = element("p", `${number} `, "project-number");
@@ -131,6 +157,7 @@
     });
     info.append(count, element("h3", data.title), element("p", data.location, "project-description"), link);
     card.replaceChildren(info, coverFigure(slug, data, "project-image", number));
+    if (featured && number === "01") renderSpotlight(slug, data, link.href);
     return link;
   }
 
@@ -147,6 +174,7 @@
       if (restoreFocus) link.focus({ preventScroll: true });
     } catch (error) {
       console.error(`Could not load project card "${slug}".`, error);
+      if (featured && number === "01") spotlightStatus("The featured image could not be loaded. Retry the first project below.");
       message.textContent = "This project's content could not be loaded. Check its metadata or try again.";
       message.setAttribute("role", "alert");
       const button = element("button", "Try again", "text-link");
@@ -159,6 +187,8 @@
 
   async function loadCatalogue() {
     catalogueReady = false;
+    spotlightStatus("Loading featured image...");
+    if (spotlight) spotlight.setAttribute("aria-busy", "true");
     catalogueLoading.textContent = "Loading projects...";
     catalogueLoading.hidden = false;
     catalogueError.hidden = true;
@@ -188,11 +218,15 @@
       });
       catalogueReady = true;
       catalogueLoading.hidden = folders.length > 0;
-      if (!folders.length) catalogueLoading.textContent = "No projects published yet.";
+      if (!folders.length) {
+        catalogueLoading.textContent = "No projects published yet.";
+        spotlightStatus("No featured projects published yet.");
+      }
       syncWithUrl();
       await Promise.all(cards);
     } catch (error) {
       console.error("Could not load the project list.", error);
+      spotlightStatus("The featured image could not be loaded. Try loading the projects below again.");
       catalogueLoading.hidden = true;
       catalogueError.textContent = `Projects could not be loaded. Check ${projectSource}/index.json or try again.`;
       catalogueError.hidden = false;

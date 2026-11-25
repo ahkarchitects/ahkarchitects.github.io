@@ -30,7 +30,7 @@ class Page(HTMLParser):
             self.ids.append(attrs["id"])
         if tag == "a":
             self.links.append(attrs["href"])
-            if any("menu-panel" in entry.get("class", "").split() for _, entry in self.stack):
+            if self.stack and "menu-panel" in self.stack[-1][1].get("class", "").split():
                 self.menu.append(attrs)
         if tag not in {"meta", "link", "img", "input", "br", "path"}:
             self.stack.append((tag, attrs))

@@ -29,11 +29,11 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     const control = document.querySelector(".theme-control");
-    const options = control.querySelectorAll('input[name="theme"]');
-    for (const option of options) option.checked = option.value === preference;
+    const select = control.querySelector('select[name="theme"]');
+    select.value = preference;
     control.closest(".theme-toolbar").hidden = false;
     control.addEventListener("change", () => {
-      preference = control.querySelector("input:checked").value;
+      preference = select.value;
       applyTheme();
       try {
         if (preference === "system") {
