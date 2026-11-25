@@ -34,40 +34,19 @@
         <img class="brand-logo" src="./assets/ahk-logo.svg" alt="" width="640" height="662" />
         <span class="brand-copy">
           <span class="wordmark">AHK Architects<span>.</span></span>
-          <span class="brand-services">
-            Architecture <span aria-hidden="true">·</span> Interiors <span aria-hidden="true">·</span> Landscape
-          </span>
         </span>
       </a>
-      <div class="header-contacts">
-        <nav class="contact-links" data-contact-links-source aria-label="Contact AHK Architects">
-          <a class="contact-link whatsapp-link" href="https://wa.me/917780412526" target="_blank" rel="noopener noreferrer" aria-label="Contact AHK Architects on WhatsApp (opens in a new tab)">
-            <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" width="24" height="24" referrerpolicy="no-referrer" />
-            WhatsApp
-          </a>
-          <a class="contact-link email-link" href="mailto:arishellaharish@gmail.com" aria-label="Email AHK Architects">
-            <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="" width="24" height="24" referrerpolicy="no-referrer" />
-            Email
-          </a>
-        </nav>
-      </div>
       <div class="header-tools">
         <div class="theme-toolbar" hidden>
-          <fieldset class="theme-control">
-            <legend class="sr-only">Theme</legend>
-            <label>
-              <input class="sr-only" type="radio" name="theme" value="system" checked />
-              <span>System</span>
-            </label>
-            <label>
-              <input class="sr-only" type="radio" name="theme" value="light" />
-              <span>Light</span>
-            </label>
-            <label>
-              <input class="sr-only" type="radio" name="theme" value="dark" />
-              <span>Dark</span>
-            </label>
-          </fieldset>
+          <label class="theme-control" title="Appearance">
+            <span class="sr-only">Appearance</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M10 3a7 7 0 0 1 0 14Z" fill="currentColor" /></svg>
+            <select name="theme">
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
         </div>
         <details class="site-menu">
           <summary>
@@ -82,6 +61,12 @@
             <a href="./interiors.html" aria-current="page">Interiors</a>
             <a href="./landscape.html">Landscape</a>
             <a href="./contact.html">Contact us</a>
+            <div class="header-contacts">
+              <nav class="contact-links" data-contact-links-source aria-label="Contact AHK Architects">
+                <a class="contact-link whatsapp-link" href="https://wa.me/917780412526" target="_blank" rel="noopener noreferrer" aria-label="Contact AHK Architects on WhatsApp (opens in a new tab)">WhatsApp</a>
+                <a class="contact-link email-link" href="mailto:arishellaharish@gmail.com" aria-label="Email AHK Architects">Email</a>
+              </nav>
+            </div>
           </nav>
         </details>
       </div>
