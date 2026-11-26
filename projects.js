@@ -9,6 +9,13 @@
   const projectSource = projectList.dataset.source || "./projects";
   const featured = projectList.dataset.featured === "true";
   const spotlight = document.getElementById("home-spotlight");
+  const spotlightSlides = new Map();
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const spotlightControls = document.querySelector(".spotlight-controls");
+  let spotlightIndex = 0;
+  let spotlightTimer = null;
+  let spotlightPaused = reducedMotion.matches;
+  let spotlightHovered = false;
   const catalogueLoading = document.getElementById("catalogue-loading");
   const catalogueError = document.getElementById("catalogue-error");
   const catalogueRetry = document.getElementById("catalogue-retry");
@@ -109,6 +116,11 @@
 
   function spotlightStatus(message) {
     if (!spotlight) return;
+    window.clearInterval(spotlightTimer);
+    spotlightTimer = null;
+    spotlightSlides.clear();
+    spotlightIndex = 0;
+    spotlightControls.hidden = true;
     const status = element("p", message, "spotlight-status");
     status.setAttribute("role", "status");
     spotlight.replaceChildren(status);
@@ -121,15 +133,48 @@
     link.href = href;
     link.setAttribute("aria-label", `View project: ${data.title}`);
     const figure = coverFigure(slug, data, "spotlight-cover");
-    figure.querySelector("img").fetchPriority = "high";
+    figure.querySelector("img").fetchPriority = spotlightSlides.size ? "auto" : "high";
     figure.querySelector("figcaption").replaceChildren(
       element("span", "Concept illustration", "spotlight-label"),
       element("span", data.title, "spotlight-title"),
       element("span", data.location, "spotlight-location")
     );
     link.append(figure);
-    spotlight.replaceChildren(link);
+    spotlightSlides.get(slug)?.remove();
+    spotlightSlides.set(slug, link);
+    const orderedSlides = [...knownProjects].flatMap(project => {
+      const slide = spotlightSlides.get(project);
+      return slide ? [slide] : [];
+    });
+    spotlight.replaceChildren(...orderedSlides);
     spotlight.setAttribute("aria-busy", "false");
+    spotlightControls.hidden = orderedSlides.length < 2;
+    showSpotlight(0);
+    scheduleSpotlight();
+  }
+
+  function showSpotlight(index) {
+    const slides = [...spotlight.children];
+    if (!spotlightSlides.size) return;
+    spotlightIndex = (index + slides.length) % slides.length;
+    slides.forEach((slide, position) => {
+      const active = position === spotlightIndex;
+      slide.classList.toggle("is-active", active);
+      slide.setAttribute("aria-hidden", String(!active));
+      slide.tabIndex = active ? 0 : -1;
+    });
+  }
+
+  function scheduleSpotlight() {
+    window.clearInterval(spotlightTimer);
+    spotlightTimer = null;
+    if (!spotlight) return;
+    const pause = document.getElementById("spotlight-pause");
+    pause.textContent = spotlightPaused ? "Play" : "Pause";
+    pause.setAttribute("aria-label", `${spotlightPaused ? "Play" : "Pause"} featured slideshow`);
+    if (spotlightSlides.size < 2 || spotlightPaused || spotlightHovered ||
+        document.hidden || document.querySelector(".home-hero").contains(document.activeElement)) return;
+    spotlightTimer = window.setInterval(() => showSpotlight(spotlightIndex + 1), 5000);
   }
 
   function renderCard(card, slug, data, number, total) {
@@ -157,7 +202,7 @@
     });
     info.append(count, element("h3", data.title), element("p", data.location, "project-description"), link);
     card.replaceChildren(info, coverFigure(slug, data, "project-image", number));
-    if (featured && number === "01") renderSpotlight(slug, data, link.href);
+    if (featured) renderSpotlight(slug, data, link.href);
     return link;
   }
 
@@ -174,7 +219,7 @@
       if (restoreFocus) link.focus({ preventScroll: true });
     } catch (error) {
       console.error(`Could not load project card "${slug}".`, error);
-      if (featured && number === "01") spotlightStatus("The featured image could not be loaded. Retry the first project below.");
+      if (featured && number === "01" && !spotlightSlides.size) spotlightStatus("The featured image could not be loaded. Retry the first project below.");
       message.textContent = "This project's content could not be loaded. Check its metadata or try again.";
       message.setAttribute("role", "alert");
       const button = element("button", "Try again", "text-link");
@@ -409,6 +454,36 @@
     }
   }
 
+  if (spotlight) {
+    const hero = document.querySelector(".home-hero");
+    document.getElementById("spotlight-previous").addEventListener("click", () => {
+      showSpotlight(spotlightIndex - 1);
+      scheduleSpotlight();
+    });
+    document.getElementById("spotlight-next").addEventListener("click", () => {
+      showSpotlight(spotlightIndex + 1);
+      scheduleSpotlight();
+    });
+    document.getElementById("spotlight-pause").addEventListener("click", () => {
+      spotlightPaused = !spotlightPaused;
+      scheduleSpotlight();
+    });
+    hero.addEventListener("mouseenter", () => {
+      spotlightHovered = true;
+      scheduleSpotlight();
+    });
+    hero.addEventListener("mouseleave", () => {
+      spotlightHovered = false;
+      scheduleSpotlight();
+    });
+    hero.addEventListener("focusin", scheduleSpotlight);
+    hero.addEventListener("focusout", () => window.setTimeout(scheduleSpotlight, 0));
+    document.addEventListener("visibilitychange", scheduleSpotlight);
+    reducedMotion.addEventListener("change", () => {
+      spotlightPaused = reducedMotion.matches;
+      scheduleSpotlight();
+    });
+  }
   if (!featured) {
     dialog.querySelector(".dialog-close").addEventListener("click", closeDetails);
     dialog.addEventListener("cancel", (event) => {

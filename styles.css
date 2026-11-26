@@ -1195,6 +1195,42 @@ button.text-link {
   margin: 0;
 }
 
+.spotlight-project {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 800ms ease;
+}
+
+.spotlight-project.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spotlight-controls {
+  position: absolute;
+  z-index: 2;
+  right: 6%;
+  bottom: 1.5rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.spotlight-controls button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid #ffffff80;
+  color: #fff;
+  background: #18171380;
+  font: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.spotlight-controls button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 .spotlight-cover img {
   object-fit: cover;
 }
@@ -1341,6 +1377,19 @@ button.text-link {
 
   .home-page .project-info h3 {
     font-size: 1.8rem;
+  }
+
+  .hero-explore {
+    bottom: 4.5rem;
+  }
+
+  .spotlight-cover figcaption {
+    bottom: 8rem;
+  }
+
+  .spotlight-controls {
+    left: 6%;
+    right: auto;
   }
 }
 
