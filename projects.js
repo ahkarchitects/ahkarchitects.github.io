@@ -102,10 +102,12 @@
     image.alt = data.cover.alt;
     image.decoding = "async";
     image.loading = className === "project-image" ? "lazy" : "eager";
-    const caption = element(
-      "figcaption",
-      `${number ? `${number} / ` : ""}${data.title}`
+    const caption = element("figcaption", undefined, className === "spotlight-cover" ? undefined : "project-caption");
+    caption.append(
+      element("span", data.title, "project-title"),
+      element("span", data.location, "project-location")
     );
+    if (number) figure.append(element("p", number, "project-number"));
     image.addEventListener("error", () => {
       caption.textContent = `${data.title}: cover image could not be loaded.`;
       caption.setAttribute("role", "status");
@@ -225,10 +227,8 @@
   }
 
   function renderCard(card, slug, data, number, total) {
-    const info = element("div", undefined, "project-info");
-    const count = element("p", `${number} `, "project-number");
-    count.append(element("span", `/ ${total}`));
-    const link = element("a", "View project ", "text-link project-details-link");
+    const link = element("a", undefined, "project-details-link");
+    link.setAttribute("aria-label", `View project: ${data.title}, ${data.location}`);
     if (featured) {
       const [section, project] = slug.split("/");
       link.href = `./${section}.html?project=${project}`;
@@ -236,9 +236,7 @@
       link.href = `?project=${slug}`;
     }
     link.dataset.project = slug;
-    const arrow = element("span", "\u2192");
-    arrow.setAttribute("aria-hidden", "true");
-    link.append(arrow, element("span", `: ${data.title}`, "sr-only"));
+    link.append(coverFigure(slug, data, "project-image", `${number} / ${total}`));
     link.addEventListener("click", (event) => {
       if (featured || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
@@ -247,8 +245,7 @@
       window.history.pushState({ ...window.history.state, portfolioProject: true }, "", url);
       loadDetails(slug);
     });
-    info.append(count, element("h3", data.title), element("p", data.location, "project-description"), link);
-    card.replaceChildren(info, coverFigure(slug, data, "project-image", number));
+    card.replaceChildren(link);
     if (featured) renderSpotlight(slug, data, link.href);
     return link;
   }
@@ -330,16 +327,8 @@
 
   function renderDetails(slug, data) {
     title.textContent = data.title;
-    const details = element("div", undefined, "detail-copy");
-    const facts = element("dl", undefined, "project-facts");
-    const location = element("div");
-    location.append(element("dt", "Location"), element("dd", data.location));
-    facts.append(location);
-    details.append(facts);
-
     content.replaceChildren(
-      details,
-      data.gallery?.length ? renderGallery(slug, data) : coverFigure(slug, data, "detail-cover")
+      data.gallery?.length ? renderGallery(slug, data) : coverFigure(slug, data, "detail-cover", "01 / 01")
     );
     content.hidden = false;
   }
@@ -353,7 +342,11 @@
     const stage = element("div", undefined, "gallery-stage");
     const imageSlot = element("div", undefined, "gallery-image");
     imageSlot.id = "project-gallery-image";
-    const caption = element("figcaption", data.title);
+    const caption = element("figcaption", undefined, "project-caption");
+    caption.append(
+      element("span", data.title, "project-title"),
+      element("span", data.location, "project-location")
+    );
     const count = element("p", undefined, "gallery-count");
     count.setAttribute("role", "status");
     count.setAttribute("aria-atomic", "true");
@@ -372,12 +365,14 @@
       index = destination;
       const file = files[index];
       const image = element("img");
+      if (index === 0) image.className = "gallery-cover-image";
       image.alt = index === 0 ? data.cover.alt : imageAlt(data.title, file);
       image.decoding = "async";
       image.loading = "eager";
       imageSlot.replaceChildren(image);
       imageSlot.setAttribute("aria-busy", "true");
-      count.textContent = `Image ${index + 1} of ${files.length}`;
+      count.textContent = `${String(index + 1).padStart(2, "0")} / ${String(files.length).padStart(2, "0")}`;
+      count.setAttribute("aria-label", `Image ${index + 1} of ${files.length}`);
       for (const { button, offset } of arrows) {
         button.disabled = offset < 0 ? index === 0 : index === files.length - 1;
       }
@@ -427,8 +422,9 @@
     }
     stage.prepend(imageSlot);
     stage.append(dots);
+    stage.append(count);
     figure.append(stage, caption);
-    gallery.append(figure, count, status, retryImage);
+    gallery.append(figure, status, retryImage);
     navigateGallery = (offset) => showImage(index + offset);
     retryImage.addEventListener("click", () => showImage(index));
     showImage(0);

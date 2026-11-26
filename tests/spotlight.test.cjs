@@ -105,10 +105,44 @@ test("hero cycles original featured covers and links in order, then wraps", asyn
     const slug = `0${index + 1}-house`;
     assert.equal(page.active().href, `./${section}.html?project=${slug}`);
     assert.equal(page.active().querySelector("img").src, `https://example.com/${section}/${slug}/cover.jpg`);
+    assert.equal(slides[index].querySelector(".project-number"), null);
+    assert.equal(slides[index].querySelector("figcaption").className, undefined);
     assert.equal(slides.filter(slide => slide.tabIndex === 0).length, 1);
     page.advance();
   }
   assert.equal(page.active(), slides[0]);
+});
+
+test("featured cards use one image link with a top count and title/location caption", async () => {
+  const page = await homepage();
+  for (const [index, card] of page.ids["project-list"].children.entries()) {
+    assert.equal(card.children.length, 1);
+    const link = card.children[0];
+    assert.equal(link.tag, "a");
+    assert.equal(link.href, page.ids["home-spotlight"].children[index].href);
+    assert.match(link.attributes["aria-label"], /^View project: .+, India$/);
+    assert.equal(link.querySelector(".project-number").textContent, `0${index + 1} / 03`);
+    const caption = link.querySelector("figcaption");
+    assert.equal(caption.children[0].className, "project-title");
+    assert.equal(caption.children[1].textContent, "India");
+    assert.equal(link.querySelector("img").loading, "lazy");
+  }
+});
+
+test("failed covers announce an explicit error inside the clickable image", async () => {
+  const page = await homepage();
+  const link = page.ids["project-list"].children[0].children[0];
+  const originalError = console.error;
+  const errors = [];
+  console.error = message => errors.push(message);
+  try {
+    link.querySelector("img").listeners.error();
+  } finally {
+    console.error = originalError;
+  }
+  assert.match(link.querySelector("figcaption").textContent, /cover image could not be loaded/);
+  assert.equal(link.querySelector("figcaption").attributes.role, "status");
+  assert.equal(errors.length, 1);
 });
 
 test("active indicator toggles autoplay and inactive indicators select projects", async () => {
