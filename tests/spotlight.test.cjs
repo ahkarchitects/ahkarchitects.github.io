@@ -38,6 +38,7 @@ class Node {
 async function portfolio({
   reduced = false, section = null, project = null,
   images = ["cover.jpg"], failures = new Set(), metadataReady = null,
+  references = null,
 } = {}) {
   const ids = Object.fromEntries([
     "project-list", "home-spotlight", "catalogue-loading", "catalogue-error",
@@ -64,7 +65,7 @@ async function portfolio({
     createElement: tag => new Node(tag),
     addEventListener(name, handler) { this.listeners[name] = handler; },
   };
-  const references = section ? ["01-house", "02-house"] :
+  references ??= section ? ["01-house", "02-house"] :
     ["architecture/01-house", "interiors/02-house", "landscape/03-house"];
   const requests = [];
   const errors = [];
@@ -148,6 +149,26 @@ test("featured cards use one image link with a top count and title/location capt
     assert.equal(caption.children[1].textContent, "India");
     assert.equal(link.querySelector("img").loading, "lazy");
   }
+});
+
+test("all six published projects appear in the autoplay loop and featured cards", async () => {
+  const references = JSON.parse(readFileSync(require.resolve("../projects/index.json"), "utf8"));
+  const page = await portfolio({ references });
+  assert.equal(references.length, 6);
+  assert.equal(page.ids["home-spotlight"].children.length, 6);
+  assert.equal(page.ids["spotlight-indicators"].children.length, 6);
+  assert.equal(page.ids["project-list"].children.length, 6);
+  for (const [index, reference] of references.entries()) {
+    const [section, slug] = reference.split("/");
+    const href = `./${section}.html?project=${slug}`;
+    assert.equal(page.active().href, href);
+    const card = page.ids["project-list"].children[index];
+    assert.equal(card.children[0].href, href);
+    assert.equal(card.querySelector(".project-number").textContent, `0${index + 1} / 06`);
+    assert.equal(page.intervals.size, 1);
+    page.advance();
+  }
+  assert.equal(page.active(), page.ids["home-spotlight"].children[0]);
 });
 
 test("failed covers announce an explicit error inside the clickable image", async () => {

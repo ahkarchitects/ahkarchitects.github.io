@@ -187,7 +187,7 @@ class SitePageTests(unittest.TestCase):
             "landscape": ["01-shatam-lake", "02-banda-cheruvu"],
         }
         self.assertEqual(home, [
-            f"{section}/{slugs[1]}" for section, slugs in expected.items()
+            f"{section}/{slug}" for section, slugs in expected.items() for slug in slugs
         ])
         self.assertEqual(list((ROOT / "projects").iterdir()), [ROOT / "projects/index.json"])
         for section, slugs in expected.items():
