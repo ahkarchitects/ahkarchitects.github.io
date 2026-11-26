@@ -117,8 +117,8 @@ class SitePageTests(unittest.TestCase):
         home = json.loads((ROOT / "projects/index.json").read_text())
         expected = {
             "architecture": ["01-jessy-duplex-residence", "02-sudeep-duplex-residence"],
-            "interiors": ["01-office-space"],
-            "landscape": ["01-shatam-lake"],
+            "interiors": ["01-office-space", "02-mr-karuna-rao"],
+            "landscape": ["01-shatam-lake", "02-banda-cheruvu"],
         }
         self.assertEqual(home, [
             f"{section}/{slugs[0]}" for section, slugs in expected.items()

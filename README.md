@@ -18,7 +18,7 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 ## Section projects and homepage features
 
-The projects and their images live in their own sections: Architecture has Jessy - Duplex Residence and Sudeep - Duplex Residence; Interiors has Office Space; Landscape has Shatam Lake.
+The projects and their images live in their own sections: Architecture has Jessy - Duplex Residence and Sudeep - Duplex Residence; Interiors has Office Space and Mr Karuna Rao; Landscape has Shatam Lake and Banda Cheruvu.
 
 All sections use the same `projects.js`, CSS, cards, and full-page image gallery. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
 
