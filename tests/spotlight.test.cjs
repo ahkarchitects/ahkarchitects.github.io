@@ -37,7 +37,7 @@ class Node {
 async function homepage(reduced = false) {
   const ids = Object.fromEntries([
     "project-list", "home-spotlight", "catalogue-loading", "catalogue-error",
-    "catalogue-retry", "spotlight-previous", "spotlight-pause", "spotlight-next",
+    "catalogue-retry", "spotlight-previous", "spotlight-pause", "spotlight-next", "spotlight-indicators",
   ].map(id => [id, new Node()]));
   ids["project-list"].dataset.featured = "true";
   const hero = new Node();
@@ -113,6 +113,25 @@ test("Pause stops autoplay while manual controls wrap in both directions", async
   assert.equal(page.active(), page.ids["home-spotlight"].children[0]);
   page.ids["spotlight-pause"].listeners.click();
   assert.equal(page.intervals.size, 1);
+});
+
+test("subtle indicators follow the active slide and only animate during autoplay", async () => {
+  const page = await homepage();
+  const indicators = page.ids["spotlight-indicators"];
+  const current = () => indicators.children.findIndex(node => node.classes.has("is-active"));
+  assert.equal(indicators.children.length, 3);
+  assert.equal(current(), 0);
+  assert.equal(indicators.dataset.running, "true");
+  page.advance();
+  assert.equal(current(), 1);
+  page.ids["spotlight-pause"].listeners.click();
+  assert.equal(indicators.dataset.running, "false");
+  page.ids["spotlight-next"].listeners.click();
+  assert.equal(current(), 2);
+  page.ids["spotlight-next"].listeners.click();
+  assert.equal(current(), 0);
+  const reduced = await homepage(true);
+  assert.equal(reduced.ids["spotlight-indicators"].dataset.running, "false");
 });
 
 test("hover, keyboard focus, and hidden tabs suspend autoplay; reduced motion starts paused", async () => {

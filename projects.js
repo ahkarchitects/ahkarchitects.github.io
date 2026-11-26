@@ -12,6 +12,7 @@
   const spotlightSlides = new Map();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const spotlightControls = document.querySelector(".spotlight-controls");
+  const spotlightIndicators = document.getElementById("spotlight-indicators");
   let spotlightIndex = 0;
   let spotlightTimer = null;
   let spotlightPaused = reducedMotion.matches;
@@ -121,6 +122,8 @@
     spotlightSlides.clear();
     spotlightIndex = 0;
     spotlightControls.hidden = true;
+    spotlightIndicators.hidden = true;
+    spotlightIndicators.replaceChildren();
     const status = element("p", message, "spotlight-status");
     status.setAttribute("role", "status");
     spotlight.replaceChildren(status);
@@ -149,6 +152,8 @@
     spotlight.replaceChildren(...orderedSlides);
     spotlight.setAttribute("aria-busy", "false");
     spotlightControls.hidden = orderedSlides.length < 2;
+    spotlightIndicators.hidden = orderedSlides.length < 2;
+    spotlightIndicators.replaceChildren(...orderedSlides.map(() => element("span", undefined, "spotlight-indicator")));
     showSpotlight(0);
     scheduleSpotlight();
   }
@@ -163,18 +168,30 @@
       slide.setAttribute("aria-hidden", String(!active));
       slide.tabIndex = active ? 0 : -1;
     });
+    updateSpotlightIndicators();
+  }
+
+  function updateSpotlightIndicators() {
+    if (!spotlightIndicators) return;
+    [...spotlightIndicators.children].forEach((indicator, position) => {
+      indicator.classList.toggle("is-active", position === spotlightIndex);
+      indicator.replaceChildren(element("span", undefined, "spotlight-indicator-fill"));
+    });
   }
 
   function scheduleSpotlight() {
     window.clearInterval(spotlightTimer);
     spotlightTimer = null;
     if (!spotlight) return;
+    spotlightIndicators.dataset.running = "false";
+    updateSpotlightIndicators();
     const pause = document.getElementById("spotlight-pause");
     pause.textContent = spotlightPaused ? "Play" : "Pause";
     pause.setAttribute("aria-label", `${spotlightPaused ? "Play" : "Pause"} featured slideshow`);
     if (spotlightSlides.size < 2 || spotlightPaused || spotlightHovered ||
         document.hidden || document.querySelector(".home-hero").contains(document.activeElement)) return;
     spotlightTimer = window.setInterval(() => showSpotlight(spotlightIndex + 1), 5000);
+    spotlightIndicators.dataset.running = "true";
   }
 
   function renderCard(card, slug, data, number, total) {
