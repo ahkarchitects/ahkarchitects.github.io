@@ -1,5 +1,7 @@
 import json
+import re
 import unittest
+import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -60,6 +62,40 @@ class SitePageTests(unittest.TestCase):
                 "architecture.html", "interiors.html", "landscape.html",
             )
         }
+
+    def test_logo_extends_the_arrow_silhouette_without_clipping(self):
+        svg = ET.parse(ROOT / "assets/ahk-logo.svg").getroot()
+        namespace = {"svg": "http://www.w3.org/2000/svg"}
+        self.assertEqual(svg.findall(".//svg:rect", namespace), [])
+        outline, artwork = svg.findall("svg:path", namespace)[:2]
+        self.assertEqual(outline.attrib["d"], artwork.attrib["d"])
+        self.assertEqual(outline.attrib["fill"], "#000")
+        self.assertEqual(outline.attrib["stroke"], "#000")
+        self.assertEqual(artwork.attrib["fill"], "#fff")
+        stroke = float(outline.attrib["stroke-width"])
+        self.assertGreater(stroke, float(artwork.attrib["stroke-width"]))
+        self.assertEqual(outline.attrib["stroke-linejoin"], "round")
+        self.assertEqual(set(re.findall(r"[A-Za-z]", outline.attrib["d"])), {"M", "Z"})
+        coordinates = [
+            float(value) for value in re.findall(r"-?\d+(?:\.\d+)?", outline.attrib["d"])
+        ]
+        left, top, width, height = map(float, svg.attrib["viewBox"].split())
+        self.assertGreaterEqual(min(coordinates[::2]) - stroke / 2, left)
+        self.assertLessEqual(max(coordinates[::2]) + stroke / 2, left + width)
+        self.assertGreaterEqual(min(coordinates[1::2]) - stroke / 2, top)
+        self.assertLessEqual(max(coordinates[1::2]) + stroke / 2, top + height)
+
+    def test_logo_styles_do_not_add_a_rectangular_backing(self):
+        for filename in ("styles.css", "theme.css"):
+            css = (ROOT / filename).read_text(encoding="utf-8")
+            for rule in re.finditer(r"([^{}]+)\{([^{}]*)\}", css):
+                selector, declarations = rule.groups()
+                if not re.search(r"\.(?:brand|intro)-logo\b", selector):
+                    continue
+                with self.subTest(stylesheet=filename, selector=selector.strip()):
+                    properties = re.findall(r"([\w-]+)\s*:", declarations)
+                    for property_name in ("background", "background-color", "box-shadow", "border"):
+                        self.assertNotIn(property_name, properties)
 
     def test_only_home_has_an_intro_and_all_pages_record_the_visit(self):
         for filename, page in self.pages.items():

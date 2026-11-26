@@ -64,9 +64,6 @@ body {
 .intro-logo {
   width: clamp(5rem, 15vw, 7rem);
   height: auto;
-  background: var(--logo-background);
-  border-radius: 2px;
-  box-shadow: 0 0 0 0.18rem var(--logo-background);
   animation: intro-reveal 0.8s ease-out both;
 }
 
@@ -169,9 +166,6 @@ a {
   flex: 0 0 auto;
   width: 2.4rem;
   height: auto;
-  border-radius: 2px;
-  background: var(--logo-background);
-  box-shadow: 0 0 0 0.18rem var(--logo-background);
 }
 
 .wordmark {
@@ -1031,11 +1025,6 @@ button.text-link {
 
 .home-page .wordmark span {
   color: inherit;
-}
-
-.home-page .brand-logo {
-  background: #fff;
-  box-shadow: 0 0 0 0.15rem #fff;
 }
 
 .home-hero {

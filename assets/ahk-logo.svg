@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 662" width="640" height="662">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -16 672 694" width="640" height="662">
   <title>AHK north-arrow monogram</title>
+  <path d="M320 6 636 656 320 503 4 656Z" fill="#000" stroke="#000" stroke-width="28" stroke-linejoin="round"/>
   <path d="M320 6 636 656 320 503 4 656Z" fill="#fff" stroke="#000" stroke-width="7" stroke-linejoin="round"/>
   <path d="M320 6 636 656 320 503Z" fill="#000"/>
   <path d="M184 319H230V384H274V319H320V495H274V425H230V495H184Z" fill="#000"/>
