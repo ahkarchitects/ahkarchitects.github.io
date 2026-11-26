@@ -443,6 +443,14 @@ a {
   max-width: 46rem;
 }
 
+.founder-portrait {
+  display: block;
+  width: 12rem;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
 .eyebrow {
   margin: 0;
   color: var(--muted);

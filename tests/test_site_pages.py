@@ -19,11 +19,14 @@ class Page(HTMLParser):
         self.menu = []
         self.ids = []
         self.scripts = []
+        self.images = []
         self.intro_count = 0
         self.feed((ROOT / filename).read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "img":
+            self.images.append(attrs)
         if tag == "script" and "src" in attrs:
             self.scripts.append(attrs["src"])
         if "site-intro" in attrs.get("class", "").split():
@@ -113,13 +116,32 @@ class SitePageTests(unittest.TestCase):
         self.assertNotIn("contact", home.ids)
         self.assertIn("AHK Architects", home.content("footer"))
 
-    def test_about_contains_original_introduction(self):
+    def test_about_contains_founder_biography(self):
         about = self.pages["about.html"]
         self.assertEqual(about.content("h1"), "Spaces that feel like you.")
         text = about.content("main")
-        self.assertIn("Arishella Harish Kumar · Interior architect", text)
-        self.assertIn("Thoughtful homes, shaped around the way you live.", text)
-        self.assertIn("every space is made with clarity, warmth, and purpose.", text)
+        self.assertIn("Arishella Harish Kumar · Founder and Principal Architect", text)
+        self.assertIn(
+            "Arishella Harish Kumar is the Founder and Principal Architect of AHK Architects.",
+            text,
+        )
+        self.assertIn("After graduating from CSIIT, Hyderabad, in 2015, he founded the studio", text)
+        self.assertIn("His work spans architecture, interiors, and landscape", text)
+        self.assertIn("allows every project to develop its own identity.", text)
+        self.assertNotIn("Interior architect", text)
+
+    def test_about_has_a_local_founder_portrait(self):
+        portraits = [
+            image for image in self.pages["about.html"].images
+            if "founder-portrait" in image.get("class", "").split()
+        ]
+        self.assertEqual(len(portraits), 1)
+        portrait = portraits[0]
+        self.assertIn("Arishella Harish Kumar", portrait["alt"])
+        self.assertTrue((ROOT / portrait["src"]).is_file())
+        self.assertFalse(any(
+            image["src"] == portrait["src"] for image in self.pages["index.html"].images
+        ))
 
     def test_contact_merges_invitation_and_preserves_contact_methods(self):
         contact = self.pages["contact.html"]
@@ -129,9 +151,17 @@ class SitePageTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIn(text, contact.content("main"))
         for link in ("tel:+917780412526", "https://wa.me/917780412526",
-                     "mailto:arishellaharish@gmail.com"):
+                     "mailto:ahk.architects.studio@gmail.com"):
             self.assertIn(link, contact.links)
         self.assertEqual(contact.content("main").count("Tell us about your space."), 1)
+
+    def test_all_pages_use_the_studio_email(self):
+        for filename, page in self.pages.items():
+            with self.subTest(page=filename):
+                emails = [link for link in page.links if link.startswith("mailto:")]
+                self.assertTrue(emails)
+                self.assertEqual(set(emails), {"mailto:ahk.architects.studio@gmail.com"})
+        self.assertIn("ahk.architects.studio@gmail.com", self.pages["contact.html"].content("main"))
 
     def test_services_have_separate_pages_not_home_sections(self):
         home = self.pages["index.html"]
@@ -157,7 +187,7 @@ class SitePageTests(unittest.TestCase):
             "landscape": ["01-shatam-lake", "02-banda-cheruvu"],
         }
         self.assertEqual(home, [
-            f"{section}/{slugs[0]}" for section, slugs in expected.items()
+            f"{section}/{slug}" for section, slugs in expected.items() for slug in slugs
         ])
         self.assertEqual(list((ROOT / "projects").iterdir()), [ROOT / "projects/index.json"])
         for section, slugs in expected.items():

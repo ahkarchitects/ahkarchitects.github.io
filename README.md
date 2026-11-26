@@ -37,13 +37,16 @@ The first image is the card cover; the remaining filenames follow in gallery ord
 
 Home and section cards are borderless image links, with a project counter at the top and the project title and location overlaid at the bottom. Tap anywhere on the image or activate its link with the keyboard to navigate to a regular project page, not a popup. The project page shows the existing title and location followed by every image in metadata order, including the cover. Desktop alternates paired images and full-width rows; mobile uses one vertical column. Images retain their natural proportions without cropping, including floor plans. Direct links use the owning section, for example `architecture.html?project=01-jessy-duplex-residence` or `interiors.html?project=01-office-space`. These existing URLs render the project view in the page's main content instead of the catalogue, so there is no separate HTML file to maintain per project.
 
-Home shows **Featured projects** using references only. `projects/index.json` selects the first existing project from each section:
+Home shows **Featured projects** using references only. `projects/index.json` includes all six published projects in both the background slideshow and the Featured projects cards:
 
 ```json
 [
   "architecture/01-jessy-duplex-residence",
+  "architecture/02-sudeep-duplex-residence",
   "interiors/01-office-space",
-  "landscape/01-shatam-lake"
+  "interiors/02-mr-karuna-rao",
+  "landscape/01-shatam-lake",
+  "landscape/02-banda-cheruvu"
 ]
 ```
 
@@ -166,7 +169,7 @@ All content and uploaded files are public. The site keeps its homepage SEO and s
 
 All six pages share the compact logo/name, appearance dropdown, and icon-only menu toggle. Home overlays the header on the spotlight image; other pages retain a sticky, theme-colored header. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows, contact shortcuts, and a close control. All three service pages load their own project catalogues. They are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
-`about.html` contains the original introduction: Arishella Harish Kumar's interior architect identity, "Spaces that feel like you," and the thoughtful-homes description. The homepage contains the image spotlight, Featured projects, and a compact copyright footer, without the introduction or large enquiry block.
+`about.html` introduces Arishella Harish Kumar as Founder and Principal Architect of AHK Architects. A small portrait (`assets/harish-kumar.jpg`) appears above his introduction, displayed at 12rem wide without cropping or enlargement. The biography describes his graduation from CSIIT, Hyderabad, and founding of the studio in 2015, his work across architecture, interiors, and landscape, and an approach that lets every project develop its own identity. It retains the "Spaces that feel like you" heading. The homepage contains the image spotlight, Featured projects, and a compact copyright footer, without the introduction or large enquiry block.
 
 `contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation. Home and all three service pages load `projects.js`. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
 
@@ -176,7 +179,7 @@ Each page defines a single contact group under `data-contact-links-source`: in t
 
 `python -m unittest discover -s tests` also checks that the moved copy stays on the correct page, service placeholders are absent from Home, and every menu links to the correct separate page. Logo regression checks ensure the expanded black silhouette fits inside the SVG viewBox and shared logo styles do not reintroduce a rectangular backing.
 
-WhatsApp links directly to the business chat using `wa.me` with the Indian country code (`91`). Email uses `mailto:arishellaharish@gmail.com` and opens the visitor's configured email application, not necessarily Gmail. The supplied dotted address reaches the same inbox: [Google confirms that dots do not matter in personal `gmail.com` addresses](https://support.google.com/mail/answer/7436150?hl=en). This does not apply to custom-domain Google Workspace addresses.
+WhatsApp links directly to the business chat using `wa.me` with the Indian country code (`91`). All email links use `mailto:ahk.architects.studio@gmail.com` and open the visitor's configured email application, not necessarily Gmail. Contact Us also displays this studio address.
 
 On Contact Us, the WhatsApp and Gmail icons load from the Simple Icons CDN using `https://cdn.simpleicons.org/whatsapp/25D366` and `https://cdn.simpleicons.org/gmail/EA4335`. Link text uses theme-specific green and red shades for readability while the icons retain their brand colors. Icon updates follow the CDN's releases and caching, but are not guaranteed to appear immediately.
 
