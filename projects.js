@@ -62,7 +62,7 @@
   }
 
   function imageAlt(projectTitle, file) {
-    return `${projectTitle}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")} concept illustration`;
+    return `${projectTitle}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")}`;
   }
 
   function projectFolder(slug) {
@@ -104,7 +104,7 @@
     image.loading = className === "project-image" ? "lazy" : "eager";
     const caption = element(
       "figcaption",
-      `${number ? `${number} / ` : ""}${data.title} · Concept illustration`
+      `${number ? `${number} / ` : ""}${data.title}`
     );
     image.addEventListener("error", () => {
       caption.textContent = `${data.title}: cover image could not be loaded.`;
@@ -353,7 +353,7 @@
     const stage = element("div", undefined, "gallery-stage");
     const imageSlot = element("div", undefined, "gallery-image");
     imageSlot.id = "project-gallery-image";
-    const caption = element("figcaption", `${data.title} · Concept illustration`);
+    const caption = element("figcaption", data.title);
     const count = element("p", undefined, "gallery-count");
     count.setAttribute("role", "status");
     count.setAttribute("aria-atomic", "true");

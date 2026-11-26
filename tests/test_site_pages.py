@@ -111,9 +111,9 @@ class SitePageTests(unittest.TestCase):
     def test_projects_live_only_in_their_sections_with_simple_metadata(self):
         home = json.loads((ROOT / "projects/index.json").read_text())
         expected = {
-            "architecture": ["01-courtyard-house", "02-the-still-house"],
-            "interiors": ["03-house-by-the-grove", "04-little-city-home"],
-            "landscape": ["05-sunday-house"],
+            "architecture": ["01-jessy-duplex-residence", "02-sudeep-duplex-residence"],
+            "interiors": ["01-office-space"],
+            "landscape": ["01-shatam-lake"],
         }
         self.assertEqual(home, [
             f"{section}/{slugs[0]}" for section, slugs in expected.items()
@@ -127,7 +127,7 @@ class SitePageTests(unittest.TestCase):
                     folder = ROOT / section / slug
                     metadata = json.loads((folder / "metadata.json").read_text())
                     self.assertEqual(set(metadata), {"title", "location", "images"})
-                    self.assertEqual(len(metadata["images"]), 6)
+                    self.assertTrue(metadata["images"])
                     for image in metadata["images"]:
                         self.assertTrue((folder / image).is_file())
 

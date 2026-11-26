@@ -68,7 +68,7 @@ test("skips internal links, deep links, reloads, history, and reduced motion", (
   for (const options of [
     { referrer: "https://example.com/contact.html" },
     { path: "/#architecture" },
-    { path: "/?project=01-courtyard-house" },
+    { path: "/?project=01-jessy-duplex-residence" },
     { type: "reload" },
     { type: "back_forward" },
     { reducedMotion: true },

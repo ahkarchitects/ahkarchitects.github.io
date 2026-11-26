@@ -18,38 +18,38 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 ## Section projects and homepage features
 
-All five projects and their images live in their own sections: Architecture has Courtyard House and The Still House; Interiors has House by the Grove and Little City Home; Landscape has Sunday House. None of these pages shows **Coming soon**.
+The projects and their images live in their own sections: Architecture has Jessy - Duplex Residence and Sudeep - Duplex Residence; Interiors has Office Space; Landscape has Shatam Lake.
 
 All sections use the same `projects.js`, CSS, cards, and image-gallery dialog. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
 
 ```json
 {
-  "title": "Courtyard House",
-  "location": "Bengaluru, India",
+  "title": "Jessy - Duplex Residence",
+  "location": "Karimnagar, Telangana",
   "images": [
-    "cover.jpg",
-    "courtyard-exterior.jpg"
+    "01-aerial-view.jpg",
+    "02-front-view.jpg"
   ]
 }
 ```
 
-The first image is the card cover; the remaining filenames follow in gallery order. All images live beside that project's metadata. Titles and locations must be nonempty; `images` must be a nonempty list of unique supported image filenames. No type, description, scope, cover object, or per-image metadata is needed. Accessible image labels are derived from the project title and filename; the existing **Concept illustration** caption is retained so sample work is not presented as completed client work.
+The first image is the card cover; the remaining filenames follow in gallery order. All images live beside that project's metadata. Titles and locations must be nonempty; `images` must be a nonempty list of unique supported image filenames. No type, description, scope, cover object, or per-image metadata is needed. Accessible image labels are derived from the project title and filename.
 
-Section cards show title and location; **View project** opens a same-page image gallery with location, without description or scope. Direct links use the owning section, for example `architecture.html?project=01-courtyard-house` or `interiors.html?project=03-house-by-the-grove`. Update old Home links to their section URLs.
+Section cards show title and location; **View project** opens a same-page image gallery with location, without description or scope. Direct links use the owning section, for example `architecture.html?project=01-jessy-duplex-residence` or `interiors.html?project=01-office-space`. Update old Home links to their section URLs.
 
 Home shows **Featured projects** using references only. `projects/index.json` selects the first existing project from each section:
 
 ```json
 [
-  "architecture/01-courtyard-house",
-  "interiors/03-house-by-the-grove",
-  "landscape/05-sunday-house"
+  "architecture/01-jessy-duplex-residence",
+  "interiors/01-office-space",
+  "landscape/01-shatam-lake"
 ]
 ```
 
 The list order is the display order. To change the selection, edit these references; nothing is copied or synchronized. Titles, locations, and cover URLs come directly from the section's metadata and original images, so edits there immediately affect the homepage too. Homepage **View project** links open the owning section's project dialog. The `projects/` folder contains only this reference list, never duplicate metadata or images.
 
-Home starts with an image-led spotlight cycling through the featured projects' original covers, titles, locations, and section links in reference-list order. It advances every five seconds, crossfades, and loops back to the first project. The hero shows only the image, title, location, and bottom indicators; no exploration prompt, concept caption, arrows, or separate Pause button. Concept disclosures remain on the featured cards and section galleries. Rotation pauses while hovering, while keyboard focus is inside the hero, and while the tab is hidden. Reduced-motion visitors start with autoplay off and no animated transition; they can navigate manually or explicitly choose Play. Failed metadata remains an explicit card error with retry, and only successfully loaded projects enter the slideshow.
+Home starts with an image-led spotlight cycling through the featured projects' covers, titles, locations, and section links in reference-list order. It advances every five seconds, crossfades, and loops back to the first project. The hero shows only the image, title, location, and bottom indicators; no exploration prompt, arrows, or separate Pause button. Rotation pauses while hovering, while keyboard focus is inside the hero, and while the tab is hidden. Reduced-motion visitors start with autoplay off and no animated transition; they can navigate manually or explicitly choose Play. Failed metadata remains an explicit card error with retry, and only successfully loaded projects enter the slideshow.
 
 Subtle indicators sit at the bottom center inside the hero image on mobile and desktop. Inactive projects are faded gray dots; the current project is a small, darker pill that fills over the five-second autoplay interval. Tap the active indicator to pause/play, or an inactive dot to select that project. Each has a 44px touch target, an accessible label, and keyboard support. Pausing, hovering, or focusing the hero freezes the partial fill and countdown; resuming continues where it stopped. Reduced motion disables the progress animation and shows a static current-project pill.
 
@@ -99,9 +99,9 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 ## Portfolio images
 
-The five covers across Architecture, Interiors, and Landscape are original cartoon-style illustrations, each stored as `cover.jpg` in its project folder, using the same file format as future project photos. They use pastel colors, outlined forms, and dollhouse cutaways to be visibly non-photographic; no stock photos or externally sourced project images are used. The illustrations are exported at 960 by 720 pixels as optimized progressive JPEGs at quality 90, with full-color chroma sampling to keep colored edges clear. Each project also has five additional themed JPGs: 25 additional images in total. They appear after the cover in the View project gallery; accessible gallery labels are derived from the project name and filename. Every card and detail image is captioned "Concept illustration", identifying the sample content as concepts, not completed client work. There is no separate disclaimer paragraph beneath the projects.
+The portfolio uses the supplied project images, including architectural views and plans, office interiors, and lake renderings. Each project folder contains its cover and gallery images as sequentially named JPEGs.
 
-The first filename in `images` is the cover; accessible image labels come from the title and filename. No alt, width, or height metadata fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images. Keep the concept disclosure unless the sample content is replaced with an actual project; when publishing real work, also update the shared caption in `projects.js`.
+The first filename in `images` is the cover; accessible image labels come from the title and filename. No alt, width, or height metadata fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images.
 
 ## Updating projects without editing HTML
 
@@ -110,13 +110,10 @@ Each section owns its catalogue and project folders:
 ```text
 interiors/
   index.json
-  03-house-by-the-grove/
+  01-office-space/
     metadata.json
-    cover.jpg
-    grove-exterior.jpg
-  04-little-city-home/
-    metadata.json
-    cover.jpg
+    01-office-overview.jpg
+    02-reception.jpg
 ```
 
 To add a project, copy an existing project folder on your computer, rename it with lowercase letters, numbers, and hyphens, replace its images, and edit `metadata.json` with a plain-text editor. In GitHub, open the appropriate section folder, choose **Add file → Upload files**, and upload the new project folder. Then edit that section's `index.json` to include the folder's exact name and commit both changes to `main` (or open a pull request). No HTML editing is needed.
@@ -125,8 +122,7 @@ For example, `interiors/index.json` lists:
 
 ```json
 [
-  "03-house-by-the-grove",
-  "04-little-city-home"
+  "01-office-space"
 ]
 ```
 
@@ -160,7 +156,7 @@ python scripts/validate_projects.py
 
 The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
-The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage **View project** links navigate to the section page and open its accessible dialog with title, location, and image gallery. Left/right arrows, compact dots, an announced image counter, and Left/Right keyboard navigation browse images without automatic playback. Navigation stops at the first and last image; each project starts at its cover. Only the active gallery image is requested. Failed images show an explicit error and Retry image button. Standard `<img>` elements retain the browser's image context menu. Section URLs such as `landscape.html?project=05-sunday-house` support direct opening, refresh, and Back/Forward. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
+The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage **View project** links navigate to the section page and open its accessible dialog with title, location, and image gallery. Left/right arrows, compact dots, an announced image counter, and Left/Right keyboard navigation browse images without automatic playback. Navigation stops at the first and last image; each project starts at its cover. Only the active gallery image is requested. Failed images show an explicit error and Retry image button. Standard `<img>` elements retain the browser's image context menu. Section URLs such as `landscape.html?project=01-shatam-lake` support direct opening, refresh, and Back/Forward. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
