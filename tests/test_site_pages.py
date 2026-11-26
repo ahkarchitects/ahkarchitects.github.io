@@ -42,6 +42,8 @@ class Page(HTMLParser):
                 break
 
     def handle_data(self, data):
+        if any("hidden" in attrs for _, attrs in self.stack):
+            return
         tags = {tag for tag, _ in self.stack}
         for tag in self.text.keys() & tags:
             self.text[tag].append(data)
@@ -105,7 +107,10 @@ class SitePageTests(unittest.TestCase):
                 self.assertNotIn(service.title(), home.content("main"))
                 self.assertIn("./projects.js", page.scripts)
                 self.assertIn("project-list", page.ids)
-                self.assertIn("project-dialog", page.ids)
+                self.assertIn("project-page", page.ids)
+                self.assertIn("project-catalogue", page.ids)
+                self.assertNotIn("project-dialog", page.ids)
+                self.assertIn(f"./{service}.html", page.links)
                 self.assertNotIn("Coming soon.", page.content("main"))
 
     def test_projects_live_only_in_their_sections_with_simple_metadata(self):

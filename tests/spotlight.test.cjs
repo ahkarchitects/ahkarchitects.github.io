@@ -21,6 +21,7 @@ class Node {
   append(...nodes) { this.children.push(...nodes); }
   replaceChildren(...nodes) { this.children = nodes; }
   setAttribute(name, value) { this.attributes[name] = value; }
+  removeAttribute(name) { delete this.attributes[name]; }
   addEventListener(name, handler) { this.listeners[name] = handler; }
   contains(node) { return node === this || this.children.some(child => child.contains(node)); }
   querySelector(tag) {
@@ -34,12 +35,19 @@ class Node {
   remove() {}
 }
 
-async function homepage(reduced = false) {
+async function portfolio({
+  reduced = false, section = null, project = null,
+  images = ["cover.jpg"], failures = new Set(), metadataReady = null,
+} = {}) {
   const ids = Object.fromEntries([
     "project-list", "home-spotlight", "catalogue-loading", "catalogue-error",
-    "catalogue-retry", "spotlight-indicators",
+    "catalogue-retry", "spotlight-indicators", "project-page", "project-catalogue",
+    "project-page-title", "project-page-location", "project-loading",
+    "project-error", "project-retry", "project-detail-content",
   ].map(id => [id, new Node()]));
-  ids["project-list"].dataset.featured = "true";
+  if (section) ids["project-list"].dataset.source = `./${section}`;
+  else ids["project-list"].dataset.featured = "true";
+  ids["project-page"].hidden = true;
   const hero = new Node();
   const controls = new Node();
   hero.append(ids["home-spotlight"], controls);
@@ -51,16 +59,21 @@ async function homepage(reduced = false) {
     activeElement: null,
     hidden: false,
     listeners: {},
-    getElementById: id => ids[id] || null,
+    getElementById: id => section && ["home-spotlight", "spotlight-indicators"].includes(id) ? null : ids[id] || null,
     querySelector: selector => selector === ".home-hero" ? hero : controls,
     createElement: tag => new Node(tag),
     addEventListener(name, handler) { this.listeners[name] = handler; },
   };
-  const references = ["architecture/01-house", "interiors/02-house", "landscape/03-house"];
+  const references = section ? ["01-house", "02-house"] :
+    ["architecture/01-house", "interiors/02-house", "landscape/03-house"];
+  const requests = [];
+  const errors = [];
+  const url = new URL(section ? `https://example.com/${section}.html` : "https://example.com/");
+  if (project !== null) url.searchParams.set("project", project);
   runInNewContext(source, {
     document,
     window: {
-      location: { href: "https://example.com/" },
+      location: { href: url.href },
       matchMedia: () => media,
       setTimeout: (handler, delay) => {
         if (delay <= 5000) intervals.set(++nextTimer, { handler, delay });
@@ -69,20 +82,26 @@ async function homepage(reduced = false) {
       },
       clearTimeout: id => intervals.delete(id),
     },
-    fetch: async url => ({
-      ok: true,
-      json: async () => url.pathname.endsWith("index.json") ? references : {
-        title: url.pathname.split("/")[2],
-        location: "India",
-        images: ["cover.jpg"],
-      },
-    }),
-    AbortController, URL, console, performance: { now: () => now },
+    fetch: async url => {
+      requests.push(url.pathname);
+      if (!url.pathname.endsWith("index.json")) await metadataReady;
+      return {
+        ok: !failures.has(url.pathname),
+        status: failures.has(url.pathname) ? 503 : 200,
+        json: async () => url.pathname.endsWith("index.json") ? references : {
+          title: url.pathname.split("/")[2],
+          location: "India",
+          images,
+        },
+      };
+    },
+    AbortController, URL, console: { ...console, error: (...args) => errors.push(args) },
+    performance: { now: () => now },
   });
   await new Promise(resolve => setImmediate(resolve));
   const active = () => ids["home-spotlight"].children.find(node => node.classes.has("is-active"));
   const indicators = () => ids["spotlight-indicators"].children;
-  return { ids, hero, controls, document, intervals, active,
+  return { ids, hero, controls, document, intervals, active, requests, errors,
     toggle() { indicators().find(node => node.classes.has("is-active")).listeners.click(); },
     select(index) { indicators()[index].listeners.click(); },
     elapse(ms) { now += ms; },
@@ -95,6 +114,8 @@ async function homepage(reduced = false) {
     },
   };
 }
+
+const homepage = reduced => portfolio({ reduced });
 
 test("hero cycles original featured covers and links in order, then wraps", async () => {
   const page = await homepage();
@@ -132,17 +153,96 @@ test("featured cards use one image link with a top count and title/location capt
 test("failed covers announce an explicit error inside the clickable image", async () => {
   const page = await homepage();
   const link = page.ids["project-list"].children[0].children[0];
-  const originalError = console.error;
-  const errors = [];
-  console.error = message => errors.push(message);
-  try {
-    link.querySelector("img").listeners.error();
-  } finally {
-    console.error = originalError;
-  }
+  link.querySelector("img").listeners.error();
   assert.match(link.querySelector("figcaption").textContent, /cover image could not be loaded/);
   assert.equal(link.querySelector("figcaption").attributes.role, "status");
-  assert.equal(errors.length, 1);
+  assert.equal(page.errors.length, 1);
+});
+
+test("section cards navigate normally instead of intercepting clicks for a popup", async () => {
+  const page = await portfolio({ section: "architecture" });
+  const link = page.ids["project-list"].children[0].children[0];
+  assert.equal(link.href, "?project=01-house");
+  assert.equal(link.listeners.click, undefined);
+  assert.equal(page.ids["project-page"].hidden, true);
+});
+
+test("project URLs show every original image in order without loading unrelated cards", async () => {
+  const images = ["cover.jpg", "front.jpg", "floor-plan.jpg", "detail.jpg"];
+  const page = await portfolio({ section: "architecture", project: "01-house", images });
+  assert.equal(page.ids["project-catalogue"].hidden, true);
+  assert.equal(page.ids["project-page"].hidden, false);
+  assert.equal(page.ids["project-loading"].hidden, true);
+  assert.equal(page.ids["project-page-title"].textContent, "01-house");
+  assert.equal(page.ids["project-page-location"].textContent, "India");
+  assert.deepEqual(page.requests, ["/architecture/index.json", "/architecture/01-house/metadata.json"]);
+  const gallery = page.ids["project-detail-content"].children[0];
+  assert.equal(gallery.children.length, images.length);
+  gallery.children.forEach((figure, index) => {
+    const image = figure.querySelector("img");
+    assert.equal(image.src, `https://example.com/architecture/01-house/${images[index]}`);
+    assert.equal(image.loading, index ? "lazy" : "eager");
+    assert.match(image.alt, /^01-house:/);
+  });
+});
+
+test("single-image projects still render an ordinary image list", async () => {
+  const page = await portfolio({ section: "interiors", project: "01-house" });
+  assert.equal(page.ids["project-detail-content"].children[0].children.length, 1);
+});
+
+test("the project loading status lasts only until its metadata is ready", async () => {
+  let finishLoading;
+  const metadataReady = new Promise(resolve => { finishLoading = resolve; });
+  const page = await portfolio({ section: "architecture", project: "01-house", metadataReady });
+  assert.equal(page.ids["project-page"].hidden, false);
+  assert.equal(page.ids["project-loading"].hidden, false);
+  assert.equal(page.ids["project-detail-content"].hidden, true);
+  finishLoading();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(page.ids["project-loading"].hidden, true);
+  assert.equal(page.ids["project-detail-content"].hidden, false);
+});
+
+test("invalid project URLs show an explicit error and never fetch unlisted metadata", async () => {
+  const page = await portfolio({ section: "architecture", project: "../unknown" });
+  assert.equal(page.ids["project-error"].hidden, false);
+  assert.match(page.ids["project-error"].textContent, /could not be found/);
+  assert.equal(page.ids["project-retry"].hidden, true);
+  assert.deepEqual(page.requests, ["/architecture/index.json"]);
+  assert.equal(page.errors.length, 1);
+});
+
+test("project catalogue and metadata failures can be retried on the page", async () => {
+  for (const path of ["/architecture/index.json", "/architecture/01-house/metadata.json"]) {
+    const failures = new Set([path]);
+    const page = await portfolio({ section: "architecture", project: "01-house", failures });
+    assert.equal(page.ids["project-loading"].hidden, true);
+    assert.equal(page.ids["project-error"].hidden, false);
+    assert.equal(page.ids["project-retry"].hidden, false);
+    failures.clear();
+    await page.ids["project-retry"].listeners.click();
+    assert.equal(page.ids["project-error"].hidden, true);
+    assert.equal(page.ids["project-detail-content"].hidden, false);
+  }
+});
+
+test("gallery image failures show a retry that clears after the image loads", async () => {
+  const page = await portfolio({ section: "architecture", project: "01-house" });
+  const figure = page.ids["project-detail-content"].children[0].children[0];
+  const image = figure.querySelector("img");
+  const retry = figure.querySelector("button");
+  const status = figure.querySelector("p");
+  image.listeners.error();
+  assert.equal(status.attributes.role, "alert");
+  assert.equal(retry.hidden, false);
+  retry.listeners.click();
+  assert.equal(status.textContent, "Loading image...");
+  assert.equal(figure.attributes["aria-busy"], "true");
+  image.listeners.load();
+  assert.equal(status.hidden, true);
+  assert.equal(retry.hidden, true);
+  assert.equal(figure.attributes["aria-busy"], "false");
 });
 
 test("active indicator toggles autoplay and inactive indicators select projects", async () => {

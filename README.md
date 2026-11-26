@@ -20,7 +20,7 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 The projects and their images live in their own sections: Architecture has Jessy - Duplex Residence and Sudeep - Duplex Residence; Interiors has Office Space; Landscape has Shatam Lake.
 
-All sections use the same `projects.js`, CSS, cards, and image-gallery dialog. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
+All sections use the same `projects.js`, CSS, cards, and full-page image gallery. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
 
 ```json
 {
@@ -35,7 +35,7 @@ All sections use the same `projects.js`, CSS, cards, and image-gallery dialog. E
 
 The first image is the card cover; the remaining filenames follow in gallery order. All images live beside that project's metadata. Titles and locations must be nonempty; `images` must be a nonempty list of unique supported image filenames. No type, description, scope, cover object, or per-image metadata is needed. Accessible image labels are derived from the project title and filename.
 
-Home and section cards are borderless image links, with a project counter at the top and the project title and location overlaid at the bottom. Tap anywhere on the image or activate its link with the keyboard to open project details. Section cards open a same-page image gallery with the same title/location overlay and an image counter at the top, without description or scope. Covers fill the frame; additional gallery images fit without cropping, including floor plans. Direct links use the owning section, for example `architecture.html?project=01-jessy-duplex-residence` or `interiors.html?project=01-office-space`. Update old Home links to their section URLs.
+Home and section cards are borderless image links, with a project counter at the top and the project title and location overlaid at the bottom. Tap anywhere on the image or activate its link with the keyboard to navigate to a regular project page, not a popup. The project page shows the existing title and location followed by every image in metadata order, including the cover. Desktop alternates paired images and full-width rows; mobile uses one vertical column. Images retain their natural proportions without cropping, including floor plans. Direct links use the owning section, for example `architecture.html?project=01-jessy-duplex-residence` or `interiors.html?project=01-office-space`. These existing URLs render the project view in the page's main content instead of the catalogue, so there is no separate HTML file to maintain per project.
 
 Home shows **Featured projects** using references only. `projects/index.json` selects the first existing project from each section:
 
@@ -47,7 +47,7 @@ Home shows **Featured projects** using references only. `projects/index.json` se
 ]
 ```
 
-The list order is the display order. To change the selection, edit these references; nothing is copied or synchronized. Titles, locations, and cover URLs come directly from the section's metadata and original images, so edits there immediately affect the homepage too. Homepage image links open the owning section's project dialog. The `projects/` folder contains only this reference list, never duplicate metadata or images.
+The list order is the display order. To change the selection, edit these references; nothing is copied or synchronized. Titles, locations, and cover URLs come directly from the section's metadata and original images, so edits there immediately affect the homepage too. Homepage image links open the owning section's project page. The `projects/` folder contains only this reference list, never duplicate metadata or images.
 
 Home starts with an image-led spotlight cycling through the featured projects' covers, titles, locations, and section links in reference-list order. It advances every five seconds, crossfades, and loops back to the first project. The hero shows only the image, title, location, and bottom indicators; no exploration prompt, arrows, or separate Pause button. Rotation pauses while hovering, while keyboard focus is inside the hero, and while the tab is hidden. Reduced-motion visitors start with autoplay off and no animated transition; they can navigate manually or explicitly choose Play. Failed metadata remains an explicit card error with retry, and only successfully loaded projects enter the slideshow.
 
@@ -65,7 +65,7 @@ Only a first direct homepage visit in a browser-tab session starts with a center
 
 The branding appears in staggered fades, holds until 2.4 seconds, then fades away over 0.6 seconds to reveal the homepage. Once enabled, the three-second intro dismisses using CSS and never waits for project images or external contact icons. The homepage and project metadata load behind it.
 
-The decorative overlay is hidden from assistive technology. Reduced-motion visitors skip it entirely; keyboard focus and direct project dialogs also bypass it immediately. Scrolling is locked only while the intro runs. Maintain its timing and typography in the `intro-*` rules in `styles.css`, and its stacked branding in `index.html`.
+The decorative overlay is hidden from assistive technology. Reduced-motion visitors skip it entirely; keyboard focus also bypasses it immediately, and project pages never show it. Scrolling is locked only while the intro runs. Maintain its timing and typography in the `intro-*` rules in `styles.css`, and its stacked branding in `index.html`.
 
 Run the opening-animation regression tests with `node --test tests/site-intro.test.cjs` (Node.js is only needed for these tests, not for the site).
 
@@ -156,7 +156,7 @@ python scripts/validate_projects.py
 
 The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
-The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage image links navigate to the section page and open its accessible dialog with title, location, and image gallery. Left/right arrows, compact dots, an announced image counter, and Left/Right keyboard navigation browse images without automatic playback. Navigation stops at the first and last image; each project starts at its cover. Only the active gallery image is requested. Failed images show an explicit error and Retry image button. Standard `<img>` elements retain the browser's image context menu. Section URLs such as `landscape.html?project=01-shatam-lake` support direct opening, refresh, and Back/Forward. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
+The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage and section image links use normal browser navigation to a full-page project view with title, location, and all project images. No project page replays the branded opening animation: a loading status is shown only while metadata or images are loading. The first gallery image loads eagerly and later images use native lazy loading as visitors scroll. Catalogue cards are not rendered, and unrelated project metadata is not fetched, on a project URL. Failed metadata and images show explicit errors and retry buttons; unknown projects link back to the section list. A Back to section link, standard browser Back/Forward, direct opening, and refresh all work with existing section URLs such as `landscape.html?project=01-shatam-lake`. Standard `<img>` elements retain the browser's image context menu. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
