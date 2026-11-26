@@ -24,7 +24,6 @@
   --image-shade: #18171365;
   --image-caption: #fff;
   --transparent: transparent;
-  --logo-background: light-dark(transparent, #fff);
 }
 
 :root[data-theme="light"] {
