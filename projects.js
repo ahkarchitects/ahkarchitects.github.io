@@ -1,6 +1,8 @@
 (() => {
-  const dialog = document.getElementById("project-dialog");
-  const title = document.getElementById("project-dialog-title");
+  const projectPage = document.getElementById("project-page");
+  const catalogueSection = document.getElementById("project-catalogue");
+  const title = document.getElementById("project-page-title");
+  const location = document.getElementById("project-page-location");
   const loading = document.getElementById("project-loading");
   const errorMessage = document.getElementById("project-error");
   const retry = document.getElementById("project-retry");
@@ -8,6 +10,7 @@
   const projectList = document.getElementById("project-list");
   const projectSource = projectList.dataset.source || "./projects";
   const featured = projectList.dataset.featured === "true";
+  const requestedProject = featured ? null : new URL(window.location.href).searchParams.get("project");
   const spotlight = document.getElementById("home-spotlight");
   const spotlightSlides = new Map();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -24,11 +27,6 @@
   const knownProjects = new Set();
   const cache = new Map();
   const pendingMetadata = new Map();
-  let detailRequest = 0;
-  let activeSlug = null;
-  let opener = null;
-  let catalogueReady = false;
-  let navigateGallery = null;
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
@@ -237,14 +235,6 @@
     }
     link.dataset.project = slug;
     link.append(coverFigure(slug, data, "project-image", `${number} / ${total}`));
-    link.addEventListener("click", (event) => {
-      if (featured || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      const url = new URL(window.location.href);
-      url.searchParams.set("project", slug);
-      window.history.pushState({ ...window.history.state, portfolioProject: true }, "", url);
-      loadDetails(slug);
-    });
     card.replaceChildren(link);
     if (featured) renderSpotlight(slug, data, link.href);
     return link;
@@ -275,7 +265,11 @@
   }
 
   async function loadCatalogue() {
-    catalogueReady = false;
+    if (requestedProject !== null) {
+      loading.hidden = false;
+      errorMessage.hidden = true;
+      retry.hidden = true;
+    }
     spotlightStatus("Loading featured image...");
     if (spotlight) spotlight.setAttribute("aria-busy", "true");
     catalogueLoading.textContent = "Loading projects...";
@@ -296,22 +290,24 @@
         throw new Error(`${projectSource}/index.json must list unique ${featured ? "section/project references" : "lowercase, hyphen-separated folder names"}.`);
       }
       if (!featured) folders.sort();
-      projectList.replaceChildren();
       knownProjects.clear();
+      folders.forEach((slug) => knownProjects.add(slug));
+      if (requestedProject !== null) {
+        await loadDetails(requestedProject);
+        return;
+      }
+      projectList.replaceChildren();
       const cards = folders.map((slug, index) => {
-        knownProjects.add(slug);
         const card = element("article", undefined, "project-card");
         card.id = `project-${String(index + 1).padStart(2, "0")}`;
         projectList.append(card);
         return loadCard(card, slug, String(index + 1).padStart(2, "0"), String(folders.length).padStart(2, "0"));
       });
-      catalogueReady = true;
       catalogueLoading.hidden = folders.length > 0;
       if (!folders.length) {
         catalogueLoading.textContent = "No projects published yet.";
         spotlightStatus("No featured projects published yet.");
       }
-      syncWithUrl();
       await Promise.all(cards);
     } catch (error) {
       console.error("Could not load the project list.", error);
@@ -320,6 +316,12 @@
       catalogueError.textContent = `Projects could not be loaded. Check ${projectSource}/index.json or try again.`;
       catalogueError.hidden = false;
       catalogueRetry.hidden = false;
+      if (requestedProject !== null) {
+        loading.hidden = true;
+        errorMessage.textContent = "Project details could not be loaded. Please try again.";
+        errorMessage.hidden = false;
+        retry.hidden = false;
+      }
     } finally {
       projectList.setAttribute("aria-busy", "false");
     }
@@ -327,9 +329,9 @@
 
   function renderDetails(slug, data) {
     title.textContent = data.title;
-    content.replaceChildren(
-      data.gallery?.length ? renderGallery(slug, data) : coverFigure(slug, data, "detail-cover", "01 / 01")
-    );
+    location.textContent = data.location;
+    document.title = `${data.title} | AHK Architects`;
+    content.replaceChildren(renderGallery(slug, data));
     content.hidden = false;
   }
 
@@ -337,163 +339,69 @@
     const files = [data.cover.file, ...data.gallery];
     const gallery = element("section", undefined, "detail-gallery");
     gallery.setAttribute("aria-label", `${data.title} image gallery`);
-    gallery.setAttribute("aria-roledescription", "carousel");
-    const figure = element("figure", undefined, "detail-cover");
-    const stage = element("div", undefined, "gallery-stage");
-    const imageSlot = element("div", undefined, "gallery-image");
-    imageSlot.id = "project-gallery-image";
-    const caption = element("figcaption", undefined, "project-caption");
-    caption.append(
-      element("span", data.title, "project-title"),
-      element("span", data.location, "project-location")
-    );
-    const count = element("p", undefined, "gallery-count");
-    count.setAttribute("role", "status");
-    count.setAttribute("aria-atomic", "true");
-    const dots = element("div", undefined, "gallery-dots");
-    dots.setAttribute("role", "group");
-    dots.setAttribute("aria-label", "Choose an image");
-    const status = element("p", undefined, "detail-message");
-    status.setAttribute("role", "status");
-    const retryImage = element("button", "Retry image", "text-link");
-    retryImage.type = "button";
-    retryImage.hidden = true;
-    let index = 0;
-
-    function showImage(destination) {
-      if (destination < 0 || destination >= files.length) return;
-      index = destination;
-      const file = files[index];
+    files.forEach((file, index) => {
+      const figure = element("figure", undefined, "project-gallery-item");
       const image = element("img");
-      if (index === 0) image.className = "gallery-cover-image";
       image.alt = index === 0 ? data.cover.alt : imageAlt(data.title, file);
       image.decoding = "async";
-      image.loading = "eager";
-      imageSlot.replaceChildren(image);
-      imageSlot.setAttribute("aria-busy", "true");
-      count.textContent = `${String(index + 1).padStart(2, "0")} / ${String(files.length).padStart(2, "0")}`;
-      count.setAttribute("aria-label", `Image ${index + 1} of ${files.length}`);
-      for (const { button, offset } of arrows) {
-        button.disabled = offset < 0 ? index === 0 : index === files.length - 1;
-      }
-      for (const [position, dot] of [...dots.children].entries()) {
-        if (position === index) dot.setAttribute("aria-current", "true");
-        else dot.removeAttribute("aria-current");
-      }
-      status.textContent = "Loading image...";
-      status.hidden = false;
+      image.loading = index === 0 ? "eager" : "lazy";
+      const status = element("p", "Loading image...", "detail-message");
+      status.setAttribute("role", "status");
+      const retryImage = element("button", "Retry image", "text-link");
+      retryImage.type = "button";
+      retryImage.setAttribute("aria-label", `Retry image ${index + 1}`);
       retryImage.hidden = true;
+      figure.setAttribute("aria-busy", "true");
       image.addEventListener("load", () => {
-        if (!imageSlot.isConnected || !imageSlot.contains(image)) return;
-        imageSlot.setAttribute("aria-busy", "false");
+        figure.setAttribute("aria-busy", "false");
         status.hidden = true;
+        retryImage.hidden = true;
       });
       image.addEventListener("error", () => {
-        if (!imageSlot.isConnected || !imageSlot.contains(image)) return;
-        imageSlot.setAttribute("aria-busy", "false");
-        status.textContent = "This image could not be loaded. Retry it or choose another image.";
+        figure.setAttribute("aria-busy", "false");
+        status.textContent = "This image could not be loaded. Please retry it.";
+        status.setAttribute("role", "alert");
+        status.hidden = false;
         retryImage.hidden = false;
         console.error(`Could not load gallery image "${file}" for project "${slug}".`);
       });
-      image.src = new URL(`${projectFolder(slug)}/${file}`, window.location.href).href;
-    }
-
-    const arrows = [
-      { offset: -1, text: "\u2039", className: "gallery-arrow gallery-arrow-previous" },
-      { offset: 1, text: "\u203a", className: "gallery-arrow gallery-arrow-next" }
-    ].map((control) => {
-      const button = element("button", control.text, control.className);
-      button.type = "button";
-      button.setAttribute("aria-label", control.offset < 0 ? "Previous image" : "Next image");
-      button.setAttribute("aria-controls", imageSlot.id);
-      button.addEventListener("click", () => showImage(index + control.offset));
-      stage.append(button);
-      return { button, offset: control.offset };
+      function loadImage() {
+        figure.setAttribute("aria-busy", "true");
+        status.textContent = "Loading image...";
+        status.setAttribute("role", "status");
+        status.hidden = false;
+        retryImage.hidden = true;
+        image.removeAttribute("src");
+        image.src = new URL(`${projectFolder(slug)}/${file}`, window.location.href).href;
+      }
+      retryImage.addEventListener("click", loadImage);
+      loadImage();
+      figure.append(image, status, retryImage);
+      gallery.append(figure);
     });
-    for (const [position, file] of files.entries()) {
-      const dot = element("button", undefined, "gallery-dot");
-      dot.type = "button";
-      dot.setAttribute("aria-label", `Show image ${position + 1} of ${files.length}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")}`);
-      dot.setAttribute("aria-controls", imageSlot.id);
-      dot.addEventListener("click", () => {
-        if (position !== index) showImage(position);
-      });
-      dots.append(dot);
-    }
-    stage.prepend(imageSlot);
-    stage.append(dots);
-    stage.append(count);
-    figure.append(stage, caption);
-    gallery.append(figure, status, retryImage);
-    navigateGallery = (offset) => showImage(index + offset);
-    retryImage.addEventListener("click", () => showImage(index));
-    showImage(0);
     return gallery;
   }
 
   async function loadDetails(slug) {
-    const request = ++detailRequest;
-    navigateGallery = null;
-    activeSlug = slug;
     content.hidden = true;
     content.replaceChildren();
     errorMessage.hidden = true;
     retry.hidden = true;
     loading.hidden = false;
     title.textContent = cache.get(slug)?.title || "Project details";
-    if (!dialog.open) {
-      opener = document.activeElement;
-      dialog.showModal();
-      document.body.classList.add("project-open");
-    }
-    dialog.scrollTop = 0;
     try {
       if (!knownProjects.has(slug)) throw new Error("Project not found.");
       const data = await getMetadata(slug);
-      if (request !== detailRequest) return;
       renderDetails(slug, data);
     } catch (error) {
-      if (request !== detailRequest) return;
       console.error(`Could not load project "${slug}".`, error);
       errorMessage.textContent = !knownProjects.has(slug)
-        ? "This project could not be found. Close this view and choose a project below."
+        ? "This project could not be found. Return to the project list to choose a project."
         : "Project details could not be loaded. Please try again.";
       errorMessage.hidden = false;
       retry.hidden = !knownProjects.has(slug);
     } finally {
-      if (request === detailRequest) loading.hidden = true;
-    }
-  }
-
-  function hideDetails() {
-    detailRequest++;
-    navigateGallery = null;
-    activeSlug = null;
-    if (dialog.open) dialog.close();
-    document.body.classList.remove("project-open");
-    content.replaceChildren();
-    if (opener?.isConnected) opener.focus({ preventScroll: true });
-    opener = null;
-  }
-
-  function syncWithUrl() {
-    if (!catalogueReady || featured) return;
-    const slug = new URL(window.location.href).searchParams.get("project");
-    if (slug !== null) {
-      loadDetails(slug);
-    } else {
-      hideDetails();
-    }
-  }
-
-  function closeDetails() {
-    if (window.history.state?.portfolioProject) {
-      window.history.back();
-    } else {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("project");
-      window.history.replaceState(window.history.state, "", url);
-      hideDetails();
+      loading.hidden = true;
     }
   }
 
@@ -515,24 +423,10 @@
       scheduleSpotlight();
     });
   }
-  if (!featured) {
-    dialog.querySelector(".dialog-close").addEventListener("click", closeDetails);
-    dialog.addEventListener("cancel", (event) => {
-      event.preventDefault();
-      closeDetails();
-    });
-    dialog.addEventListener("keydown", (event) => {
-      if (
-        !navigateGallery ||
-        event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
-        event.target.closest("input, textarea, select, [contenteditable]") ||
-        !["ArrowLeft", "ArrowRight"].includes(event.key)
-      ) return;
-      event.preventDefault();
-      navigateGallery(event.key === "ArrowLeft" ? -1 : 1);
-    });
-    retry.addEventListener("click", () => loadDetails(activeSlug));
-    window.addEventListener("popstate", syncWithUrl);
+  if (requestedProject !== null) {
+    catalogueSection.hidden = true;
+    projectPage.hidden = false;
+    retry.addEventListener("click", loadCatalogue);
   }
   catalogueRetry.addEventListener("click", loadCatalogue);
   loadCatalogue();
