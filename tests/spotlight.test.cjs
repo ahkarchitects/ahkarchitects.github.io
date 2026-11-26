@@ -25,7 +25,7 @@ class Node {
   contains(node) { return node === this || this.children.some(child => child.contains(node)); }
   querySelector(tag) {
     for (const child of this.children) {
-      if (child.tag === tag) return child;
+      if (child.tag === tag || (tag.startsWith(".") && child.className === tag.slice(1))) return child;
       const match = child.querySelector(tag);
       if (match) return match;
     }
@@ -37,7 +37,7 @@ class Node {
 async function homepage(reduced = false) {
   const ids = Object.fromEntries([
     "project-list", "home-spotlight", "catalogue-loading", "catalogue-error",
-    "catalogue-retry", "spotlight-previous", "spotlight-pause", "spotlight-next", "spotlight-indicators",
+    "catalogue-retry", "spotlight-indicators",
   ].map(id => [id, new Node()]));
   ids["project-list"].dataset.featured = "true";
   const hero = new Node();
@@ -46,6 +46,7 @@ async function homepage(reduced = false) {
   const media = { matches: reduced, addEventListener() {} };
   const intervals = new Map();
   let nextTimer = 0;
+  let now = 0;
   const document = {
     activeElement: null,
     hidden: false,
@@ -61,14 +62,12 @@ async function homepage(reduced = false) {
     window: {
       location: { href: "https://example.com/" },
       matchMedia: () => media,
-      setTimeout: () => ++nextTimer,
-      clearTimeout() {},
-      setInterval: (handler, delay) => {
-        assert.equal(delay, 5000);
-        intervals.set(++nextTimer, handler);
+      setTimeout: (handler, delay) => {
+        if (delay <= 5000) intervals.set(++nextTimer, { handler, delay });
+        else ++nextTimer;
         return nextTimer;
       },
-      clearInterval: id => intervals.delete(id),
+      clearTimeout: id => intervals.delete(id),
     },
     fetch: async url => ({
       ok: true,
@@ -78,12 +77,22 @@ async function homepage(reduced = false) {
         images: ["cover.jpg"],
       },
     }),
-    AbortController, URL, console,
+    AbortController, URL, console, performance: { now: () => now },
   });
   await new Promise(resolve => setImmediate(resolve));
   const active = () => ids["home-spotlight"].children.find(node => node.classes.has("is-active"));
+  const indicators = () => ids["spotlight-indicators"].children;
   return { ids, hero, controls, document, intervals, active,
-    advance() { for (const handler of [...intervals.values()]) handler(); },
+    toggle() { indicators().find(node => node.classes.has("is-active")).listeners.click(); },
+    select(index) { indicators()[index].listeners.click(); },
+    elapse(ms) { now += ms; },
+    advance() {
+      for (const [id, { handler, delay }] of [...intervals]) {
+        intervals.delete(id);
+        now += delay;
+        handler();
+      }
+    },
   };
 }
 
@@ -102,16 +111,16 @@ test("hero cycles original featured covers and links in order, then wraps", asyn
   assert.equal(page.active(), slides[0]);
 });
 
-test("Pause stops autoplay while manual controls wrap in both directions", async () => {
+test("active indicator toggles autoplay and inactive indicators select projects", async () => {
   const page = await homepage();
-  page.ids["spotlight-pause"].listeners.click();
+  page.toggle();
   assert.equal(page.intervals.size, 0);
-  assert.equal(page.ids["spotlight-pause"].textContent, "Play");
-  page.ids["spotlight-previous"].listeners.click();
+  assert.match(page.ids["spotlight-indicators"].children[0].attributes["aria-label"], /^Play/);
+  page.select(2);
   assert.equal(page.active(), page.ids["home-spotlight"].children[2]);
-  page.ids["spotlight-next"].listeners.click();
+  page.select(0);
   assert.equal(page.active(), page.ids["home-spotlight"].children[0]);
-  page.ids["spotlight-pause"].listeners.click();
+  page.toggle();
   assert.equal(page.intervals.size, 1);
 });
 
@@ -124,14 +133,31 @@ test("subtle indicators follow the active slide and only animate during autoplay
   assert.equal(indicators.dataset.running, "true");
   page.advance();
   assert.equal(current(), 1);
-  page.ids["spotlight-pause"].listeners.click();
+  page.toggle();
   assert.equal(indicators.dataset.running, "false");
-  page.ids["spotlight-next"].listeners.click();
+  page.select(2);
   assert.equal(current(), 2);
-  page.ids["spotlight-next"].listeners.click();
+  page.select(0);
   assert.equal(current(), 0);
   const reduced = await homepage(true);
   assert.equal(reduced.ids["spotlight-indicators"].dataset.running, "false");
+});
+
+test("pausing preserves partial progress and resumes the remaining countdown", async () => {
+  const page = await homepage();
+  const indicator = page.ids["spotlight-indicators"].children[0];
+  const fill = indicator.children[0].children[0];
+  page.elapse(2000);
+  page.hero.listeners.mouseenter();
+  assert.equal(indicator.children[0].children[0], fill);
+  assert.equal(page.intervals.size, 0);
+  page.elapse(10000);
+  page.hero.listeners.mouseleave();
+  assert.equal(indicator.children[0].children[0], fill);
+  assert.equal([...page.intervals.values()][0].delay, 3000);
+  page.advance();
+  assert.equal(page.active(), page.ids["home-spotlight"].children[1]);
+  assert.equal([...page.intervals.values()][0].delay, 5000);
 });
 
 test("hover, keyboard focus, and hidden tabs suspend autoplay; reduced motion starts paused", async () => {
@@ -152,6 +178,6 @@ test("hover, keyboard focus, and hidden tabs suspend autoplay; reduced motion st
   assert.equal(page.intervals.size, 1);
   const reduced = await homepage(true);
   assert.equal(reduced.intervals.size, 0);
-  reduced.ids["spotlight-next"].listeners.click();
+  reduced.select(1);
   assert.equal(reduced.active(), reduced.ids["home-spotlight"].children[1]);
 });

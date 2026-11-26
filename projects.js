@@ -11,10 +11,11 @@
   const spotlight = document.getElementById("home-spotlight");
   const spotlightSlides = new Map();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const spotlightControls = document.querySelector(".spotlight-controls");
   const spotlightIndicators = document.getElementById("spotlight-indicators");
   let spotlightIndex = 0;
   let spotlightTimer = null;
+  let spotlightRemaining = 5000;
+  let spotlightStarted = 0;
   let spotlightPaused = reducedMotion.matches;
   let spotlightHovered = false;
   const catalogueLoading = document.getElementById("catalogue-loading");
@@ -117,11 +118,11 @@
 
   function spotlightStatus(message) {
     if (!spotlight) return;
-    window.clearInterval(spotlightTimer);
+    window.clearTimeout(spotlightTimer);
     spotlightTimer = null;
     spotlightSlides.clear();
     spotlightIndex = 0;
-    spotlightControls.hidden = true;
+    spotlightRemaining = 5000;
     spotlightIndicators.hidden = true;
     spotlightIndicators.replaceChildren();
     const status = element("p", message, "spotlight-status");
@@ -138,7 +139,6 @@
     const figure = coverFigure(slug, data, "spotlight-cover");
     figure.querySelector("img").fetchPriority = spotlightSlides.size ? "auto" : "high";
     figure.querySelector("figcaption").replaceChildren(
-      element("span", "Concept illustration", "spotlight-label"),
       element("span", data.title, "spotlight-title"),
       element("span", data.location, "spotlight-location")
     );
@@ -151,9 +151,19 @@
     });
     spotlight.replaceChildren(...orderedSlides);
     spotlight.setAttribute("aria-busy", "false");
-    spotlightControls.hidden = orderedSlides.length < 2;
     spotlightIndicators.hidden = orderedSlides.length < 2;
-    spotlightIndicators.replaceChildren(...orderedSlides.map(() => element("span", undefined, "spotlight-indicator")));
+    spotlightIndicators.replaceChildren(...orderedSlides.map((slide, index) => {
+      const button = element("button", undefined, "spotlight-indicator");
+      button.type = "button";
+      button.dataset.title = slide.querySelector(".spotlight-title").textContent;
+      button.append(element("span", undefined, "spotlight-indicator-track"));
+      button.addEventListener("click", () => {
+        if (index === spotlightIndex) spotlightPaused = !spotlightPaused;
+        else showSpotlight(index);
+        scheduleSpotlight();
+      });
+      return button;
+    }));
     showSpotlight(0);
     scheduleSpotlight();
   }
@@ -161,7 +171,10 @@
   function showSpotlight(index) {
     const slides = [...spotlight.children];
     if (!spotlightSlides.size) return;
+    window.clearTimeout(spotlightTimer);
+    spotlightTimer = null;
     spotlightIndex = (index + slides.length) % slides.length;
+    spotlightRemaining = 5000;
     slides.forEach((slide, position) => {
       const active = position === spotlightIndex;
       slide.classList.toggle("is-active", active);
@@ -175,22 +188,39 @@
     if (!spotlightIndicators) return;
     [...spotlightIndicators.children].forEach((indicator, position) => {
       indicator.classList.toggle("is-active", position === spotlightIndex);
-      indicator.replaceChildren(element("span", undefined, "spotlight-indicator-fill"));
+      indicator.querySelector("span").replaceChildren(element("span", undefined, "spotlight-indicator-fill"));
+    });
+    labelSpotlightIndicators();
+  }
+
+  function labelSpotlightIndicators() {
+    if (!spotlightIndicators) return;
+    [...spotlightIndicators.children].forEach((indicator, position) => {
+      const active = position === spotlightIndex;
+      indicator.setAttribute("aria-current", String(active));
+      indicator.setAttribute("aria-label", active
+        ? `${spotlightPaused ? "Play" : "Pause"} featured slideshow: ${indicator.dataset.title}`
+        : `Show featured project: ${indicator.dataset.title}`);
     });
   }
 
   function scheduleSpotlight() {
-    window.clearInterval(spotlightTimer);
-    spotlightTimer = null;
     if (!spotlight) return;
+    if (spotlightTimer !== null) {
+      window.clearTimeout(spotlightTimer);
+      spotlightRemaining = Math.max(0, spotlightRemaining - (performance.now() - spotlightStarted));
+      spotlightTimer = null;
+    }
     spotlightIndicators.dataset.running = "false";
-    updateSpotlightIndicators();
-    const pause = document.getElementById("spotlight-pause");
-    pause.textContent = spotlightPaused ? "Play" : "Pause";
-    pause.setAttribute("aria-label", `${spotlightPaused ? "Play" : "Pause"} featured slideshow`);
+    labelSpotlightIndicators();
     if (spotlightSlides.size < 2 || spotlightPaused || spotlightHovered ||
         document.hidden || document.querySelector(".home-hero").contains(document.activeElement)) return;
-    spotlightTimer = window.setInterval(() => showSpotlight(spotlightIndex + 1), 5000);
+    spotlightStarted = performance.now();
+    spotlightTimer = window.setTimeout(() => {
+      spotlightTimer = null;
+      showSpotlight(spotlightIndex + 1);
+      scheduleSpotlight();
+    }, spotlightRemaining);
     spotlightIndicators.dataset.running = "true";
   }
 
@@ -473,18 +503,6 @@
 
   if (spotlight) {
     const hero = document.querySelector(".home-hero");
-    document.getElementById("spotlight-previous").addEventListener("click", () => {
-      showSpotlight(spotlightIndex - 1);
-      scheduleSpotlight();
-    });
-    document.getElementById("spotlight-next").addEventListener("click", () => {
-      showSpotlight(spotlightIndex + 1);
-      scheduleSpotlight();
-    });
-    document.getElementById("spotlight-pause").addEventListener("click", () => {
-      spotlightPaused = !spotlightPaused;
-      scheduleSpotlight();
-    });
     hero.addEventListener("mouseenter", () => {
       spotlightHovered = true;
       scheduleSpotlight();
