@@ -101,7 +101,9 @@ When changing the public domain, update the canonical URL, Open Graph URL, and a
 
 The portfolio uses the supplied project images, including architectural views and plans, office interiors, and lake renderings. Each project folder contains its cover and gallery images as sequentially named JPEGs.
 
-The first filename in `images` is the cover; accessible image labels come from the title and filename. No alt, width, or height metadata fields are required. Cards and detail views use the same CSS-controlled 4:3 image frame, reserving space before images load and cropping differently shaped images with `object-fit: cover`. Change `--project-image-ratio` in `styles.css` to adjust that ratio everywhere. Upload optimized images rather than full-resolution originals; nothing automatically resizes or compresses images.
+The first filename in `images` is the cover; accessible image labels come from the title and filename. No alt, width, or height metadata fields are required. Cards use a portrait 3:4 frame and the homepage spotlight fills its frame with `object-fit: cover`; detail images retain their natural proportions. Upload optimized images; nothing automatically resizes or compresses images.
+
+The six project covers have light sharpening applied at their existing pixel dimensions, without changing their colors, composition, or layout. They remain within the 250 KiB per-image limit. Sharpening does not restore missing detail: the two architecture covers are only 904-by-444 and 876-by-444 pixels, so tall mobile crops can still look soft. For a genuine resolution improvement, replace those files with optimized exports from the original high-resolution renders rather than enlarging these JPEGs.
 
 ## Updating projects without editing HTML
 
