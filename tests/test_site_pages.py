@@ -207,7 +207,7 @@ class SitePageTests(unittest.TestCase):
         expected = {
             "architecture": ["01-sadaaramam-v3", "02-jessy-duplex-residence", "03-sudeep-duplex-residence"],
             "interiors": ["01-office-space", "02-mr-karuna-rao"],
-            "landscape": ["02-banda-cheruvu"],
+            "landscape": ["01-banda-cheruvu"],
         }
         self.assertEqual(home, [
             f"{section}/{slug}" for section, slugs in expected.items() for slug in slugs

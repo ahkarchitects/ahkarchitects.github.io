@@ -48,7 +48,7 @@ Home shows **Featured projects** using references only. `projects/index.json` in
   "architecture/03-sudeep-duplex-residence",
   "interiors/01-office-space",
   "interiors/02-mr-karuna-rao",
-  "landscape/02-banda-cheruvu"
+  "landscape/01-banda-cheruvu"
 ]
 ```
 
@@ -165,7 +165,7 @@ python scripts/validate_projects.py
 
 The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
-The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage and section image links use normal browser navigation to a full-page project view with title, location, and all project images. No project page replays the branded opening animation: a loading status is shown only while metadata or images are loading. The first gallery image loads eagerly and later images use native lazy loading as visitors scroll. Catalogue cards are not rendered, and unrelated project metadata is not fetched, on a project URL. Failed metadata and images show explicit errors and retry buttons; unknown projects link back to the section list. A Back to section link, standard browser Back/Forward, direct opening, and refresh all work with existing section URLs such as `landscape.html?project=02-banda-cheruvu`. Standard `<img>` elements retain the browser's image context menu. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
+The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage and section image links use normal browser navigation to a full-page project view with title, location, and all project images. No project page replays the branded opening animation: a loading status is shown only while metadata or images are loading. The first gallery image loads eagerly and later images use native lazy loading as visitors scroll. Catalogue cards are not rendered, and unrelated project metadata is not fetched, on a project URL. Failed metadata and images show explicit errors and retry buttons; unknown projects link back to the section list. A Back to section link, standard browser Back/Forward, direct opening, and refresh all work with existing section URLs such as `landscape.html?project=01-banda-cheruvu`. Standard `<img>` elements retain the browser's image context menu. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
