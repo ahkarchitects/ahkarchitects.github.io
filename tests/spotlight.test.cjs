@@ -151,20 +151,20 @@ test("featured cards use one image link with a top count and title/location capt
   }
 });
 
-test("all seven published projects appear in the autoplay loop and featured cards", async () => {
+test("all six published projects appear in the autoplay loop and featured cards", async () => {
   const references = JSON.parse(readFileSync(require.resolve("../projects/index.json"), "utf8"));
   const page = await portfolio({ references });
-  assert.equal(references.length, 7);
-  assert.equal(page.ids["home-spotlight"].children.length, 7);
-  assert.equal(page.ids["spotlight-indicators"].children.length, 7);
-  assert.equal(page.ids["project-list"].children.length, 7);
+  assert.equal(references.length, 6);
+  assert.equal(page.ids["home-spotlight"].children.length, 6);
+  assert.equal(page.ids["spotlight-indicators"].children.length, 6);
+  assert.equal(page.ids["project-list"].children.length, 6);
   for (const [index, reference] of references.entries()) {
     const [section, slug] = reference.split("/");
     const href = `./${section}.html?project=${slug}`;
     assert.equal(page.active().href, href);
     const card = page.ids["project-list"].children[index];
     assert.equal(card.children[0].href, href);
-    assert.equal(card.querySelector(".project-number").textContent, `0${index + 1} / 07`);
+    assert.equal(card.querySelector(".project-number").textContent, `0${index + 1} / 06`);
     assert.equal(page.intervals.size, 1);
     page.advance();
   }

@@ -139,7 +139,8 @@ class SitePageTests(unittest.TestCase):
 
     def test_about_contains_founder_biography(self):
         about = self.pages["about.html"]
-        self.assertEqual(about.content("h1"), "Spaces that feel like you.")
+        self.assertEqual(about.content("h1"), "")
+        self.assertNotIn("Spaces that feel", about.content("main"))
         text = about.content("main")
         self.assertIn("Arishella Harish Kumar · Founder and Principal Architect", text)
         self.assertIn(
@@ -166,7 +167,8 @@ class SitePageTests(unittest.TestCase):
 
     def test_contact_merges_invitation_and_preserves_contact_methods(self):
         contact = self.pages["contact.html"]
-        self.assertEqual(contact.content("h1"), "Contact us.")
+        self.assertEqual(contact.content("h1"), "")
+        self.assertNotIn("Contact us.", contact.content("main"))
         for text in ("Have a space in mind?", "Let’s make it feel like home.",
                      "Project enquiries Tell us about your space.", "Arishella Harish Kumar"):
             with self.subTest(text=text):
@@ -205,7 +207,7 @@ class SitePageTests(unittest.TestCase):
         expected = {
             "architecture": ["01-sadaaramam-v3", "02-jessy-duplex-residence", "03-sudeep-duplex-residence"],
             "interiors": ["01-office-space", "02-mr-karuna-rao"],
-            "landscape": ["01-shatam-lake", "02-banda-cheruvu"],
+            "landscape": ["01-banda-cheruvu"],
         }
         self.assertEqual(home, [
             f"{section}/{slug}" for section, slugs in expected.items() for slug in slugs
