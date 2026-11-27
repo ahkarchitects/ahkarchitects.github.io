@@ -36,7 +36,14 @@
   }
 
   function validImageFile(file) {
-    return typeof file === "string" && /^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(file);
+    return typeof file === "string" && (
+      /^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$/.test(file) ||
+      /^\.\.\/\.\.\/interiors\/WhatsApp Image 2026-11-27 at 5\.35\.56 PM(?: \(1\))?\.jpeg$/.test(file)
+    );
+  }
+
+  function imageUrl(slug, file) {
+    return new URL(`${projectFolder(slug)}/${file}`, window.location.href).href;
   }
 
   function validateMetadata(data) {
@@ -60,7 +67,7 @@
   }
 
   function imageAlt(projectTitle, file) {
-    return `${projectTitle}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ")}`;
+    return `${projectTitle}: ${file.replace(/\.[^.]+$/, "").replace(/-/g, " ").replace(/^.*\//, "")}`;
   }
 
   function projectFolder(slug) {
@@ -111,7 +118,7 @@
       caption.setAttribute("role", "status");
       console.error(`Could not load the cover for project "${slug}".`);
     });
-    image.src = new URL(`${projectFolder(slug)}/${data.cover.file}`, window.location.href).href;
+    image.src = imageUrl(slug, data.cover.file);
     figure.append(image, caption);
     return figure;
   }
@@ -372,7 +379,7 @@
         status.hidden = false;
         retryImage.hidden = true;
         image.removeAttribute("src");
-        image.src = new URL(`${projectFolder(slug)}/${file}`, window.location.href).href;
+        image.src = imageUrl(slug, file);
       }
       retryImage.addEventListener("click", loadImage);
       loadImage();

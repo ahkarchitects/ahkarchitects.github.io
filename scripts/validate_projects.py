@@ -11,7 +11,10 @@ from PIL import Image, UnidentifiedImageError
 
 MAX_COVER_BYTES = 250 * 1024
 SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
-COVER_FILE = re.compile(r"[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)")
+IMAGE_REFERENCE = re.compile(
+    r"(?:[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)|"
+    r"\.\./\.\./interiors/WhatsApp Image 2026-11-27 at 5\.35\.56 PM(?: \(1\))?\.jpeg)"
+)
 FIELDS = {"title", "type", "description", "location", "scope", "cover"}
 SCOPES = {"Architecture & planning", "Interior design", "Turnkey execution"}
 FORMATS = {"jpg": "JPEG", "jpeg": "JPEG", "png": "PNG", "webp": "WEBP", "avif": "AVIF"}
@@ -45,13 +48,19 @@ def validate_projects(root, directory="projects", simple=False):
         errors.append(f"{path.relative_to(root)}: {message}")
 
     def check_image(folder, filename, label):
-        if not isinstance(filename, str) or not COVER_FILE.fullmatch(filename):
+        if not isinstance(filename, str) or not IMAGE_REFERENCE.fullmatch(filename):
             field = "cover.file" if label == "cover" else label
             report(folder / "metadata.json", f"{field} must be a supported lowercase image filename in this folder")
             return
-        image_path = folder / filename
+        candidate = folder / filename
+        image_path = candidate.resolve()
         try:
-            if image_path.is_symlink() or not image_path.is_file():
+            image_path.relative_to(root.resolve())
+        except ValueError:
+            report(folder / "metadata.json", f"{label} must resolve to a file within the repository")
+            return
+        try:
+            if candidate.is_symlink() or not image_path.is_file():
                 raise ValueError(f"{label} must be an existing regular file, not a symbolic link")
             size = image_path.stat().st_size
             if size > MAX_COVER_BYTES:
