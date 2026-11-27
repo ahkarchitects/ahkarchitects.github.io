@@ -68,8 +68,8 @@ test("skips internal links, deep links, reloads, history, and reduced motion", (
   for (const options of [
     { referrer: "https://example.com/contact.html" },
     { path: "/#architecture" },
-    { path: "/?project=01-jessy-duplex-residence" },
-    { path: "/architecture.html?project=01-jessy-duplex-residence" },
+    { path: "/?project=02-jessy-duplex-residence" },
+    { path: "/architecture.html?project=02-jessy-duplex-residence" },
     { path: "/interiors.html?project=01-office-space" },
     { path: "/landscape.html?project=01-shatam-lake" },
     { type: "reload" },

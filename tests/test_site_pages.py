@@ -203,7 +203,7 @@ class SitePageTests(unittest.TestCase):
     def test_projects_live_only_in_their_sections_with_simple_metadata(self):
         home = json.loads((ROOT / "projects/index.json").read_text())
         expected = {
-            "architecture": ["01-jessy-duplex-residence", "02-sudeep-duplex-residence"],
+            "architecture": ["01-sadaaramam-v3", "02-jessy-duplex-residence", "03-sudeep-duplex-residence"],
             "interiors": ["01-office-space", "02-mr-karuna-rao"],
             "landscape": ["01-shatam-lake", "02-banda-cheruvu"],
         }
@@ -221,7 +221,12 @@ class SitePageTests(unittest.TestCase):
                     self.assertEqual(set(metadata), {"title", "location", "images"})
                     self.assertTrue(metadata["images"])
                     for image in metadata["images"]:
+                        self.assertRegex(image, r"^[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp|avif)$")
                         self.assertTrue((folder / image).is_file())
+        featured = json.loads((ROOT / "projects/index.json").read_text())
+        architecture = json.loads((ROOT / "architecture/index.json").read_text())
+        self.assertEqual(featured[0], "architecture/01-sadaaramam-v3")
+        self.assertEqual(architecture[0], sorted(architecture)[0])
 
     def test_all_menus_reach_separate_pages(self):
         for filename, page in self.pages.items():
