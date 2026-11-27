@@ -18,7 +18,7 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 ## Section projects and homepage features
 
-The projects and their images live in their own sections: Architecture has Jessy - Duplex Residence and Sudeep - Duplex Residence; Interiors has Office Space and Mr Karuna Rao; Landscape has Shatam Lake and Banda Cheruvu.
+The projects and their images live in their own sections: Architecture has Sadaaramam - V3, Jessy - Duplex Residence, and Sudeep - Duplex Residence; Interiors has Office Space and Mr Karuna Rao; Landscape has Shatam Lake and Banda Cheruvu.
 
 All sections use the same `projects.js`, CSS, cards, and full-page image gallery. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
 
@@ -35,14 +35,15 @@ All sections use the same `projects.js`, CSS, cards, and full-page image gallery
 
 The first image is the card cover; the remaining filenames follow in gallery order. All images live beside that project's metadata. Titles and locations must be nonempty; `images` must be a nonempty list of unique supported image filenames. No type, description, scope, cover object, or per-image metadata is needed. Accessible image labels are derived from the project title and filename.
 
-Home and section cards are borderless image links, with a project counter at the top and the project title and location overlaid at the bottom. Tap anywhere on the image or activate its link with the keyboard to navigate to a regular project page, not a popup. The project page shows the existing title and location followed by every image in metadata order, including the cover. Desktop alternates paired images and full-width rows; mobile uses one vertical column. Images retain their natural proportions without cropping, including floor plans. Direct links use the owning section, for example `architecture.html?project=01-jessy-duplex-residence` or `interiors.html?project=01-office-space`. These existing URLs render the project view in the page's main content instead of the catalogue, so there is no separate HTML file to maintain per project.
+Home and section cards are borderless image links, with a project counter at the top and the project title and location overlaid at the bottom. Tap anywhere on the image or activate its link with the keyboard to navigate to a regular project page, not a popup. The project page shows the existing title and location followed by every image in metadata order, including the cover. Desktop alternates paired images and full-width rows; mobile uses one vertical column. Images retain their natural proportions without cropping, including floor plans. Direct links use the owning section, for example `architecture.html?project=02-jessy-duplex-residence` or `interiors.html?project=01-office-space`. These existing URLs render the project view in the page's main content instead of the catalogue, so there is no separate HTML file to maintain per project.
 
-Home shows **Featured projects** using references only. `projects/index.json` includes all six published projects in both the background slideshow and the Featured projects cards:
+Home shows **Featured projects** using references only. `projects/index.json` includes all seven published projects in both the background slideshow and the Featured projects cards:
 
 ```json
 [
-  "architecture/01-jessy-duplex-residence",
-  "architecture/02-sudeep-duplex-residence",
+  "architecture/01-sadaaramam-v3",
+  "architecture/02-jessy-duplex-residence",
+  "architecture/03-sudeep-duplex-residence",
   "interiors/01-office-space",
   "interiors/02-mr-karuna-rao",
   "landscape/01-shatam-lake",
