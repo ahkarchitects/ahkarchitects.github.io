@@ -20,7 +20,7 @@ Content edits take effect after refreshing the preview. There are no generated f
 
 ## Section projects and homepage features
 
-The projects and their images live in their own sections: Architecture has Sadaaramam - V3, Jessy - Duplex Residence, and Sudeep - Duplex Residence; Interiors has Office Space and Mr Karuna Rao; Landscape has Shatam Lake and Banda Cheruvu.
+The projects and their images live in their own sections: Architecture has Sadaaramam - V3, Jessy - Duplex Residence, and Sudeep - Duplex Residence; Interiors has Office Space and Mr Karuna Rao; Landscape has Banda Cheruvu.
 
 All sections use the same `projects.js`, CSS, cards, and full-page image gallery. Each reads its own `<section>/index.json` and project folders. Every project's `metadata.json` contains only:
 
@@ -39,7 +39,7 @@ The first image is the card cover; the remaining filenames follow in gallery ord
 
 Home and section cards are borderless image links, with a project counter at the top and the project title and location overlaid at the bottom. Tap anywhere on the image or activate its link with the keyboard to navigate to a regular project page, not a popup. The project page shows the existing title and location followed by every image in metadata order, including the cover. Desktop alternates paired images and full-width rows; mobile uses one vertical column. Images retain their natural proportions without cropping, including floor plans. Direct links use the owning section, for example `architecture.html?project=02-jessy-duplex-residence` or `interiors.html?project=01-office-space`. These existing URLs render the project view in the page's main content instead of the catalogue, so there is no separate HTML file to maintain per project.
 
-Home shows **Featured projects** using references only. `projects/index.json` includes all seven published projects in both the background slideshow and the Featured projects cards:
+Home shows **Featured projects** using references only. `projects/index.json` includes all six published projects in both the background slideshow and the Featured projects cards:
 
 ```json
 [
@@ -48,7 +48,6 @@ Home shows **Featured projects** using references only. `projects/index.json` in
   "architecture/03-sudeep-duplex-residence",
   "interiors/01-office-space",
   "interiors/02-mr-karuna-rao",
-  "landscape/01-shatam-lake",
   "landscape/02-banda-cheruvu"
 ]
 ```
@@ -166,7 +165,7 @@ python scripts/validate_projects.py
 
 The validator exits nonzero if content is invalid. To prevent invalid pull requests from merging, configure a `main` branch ruleset requiring the **Project content validation** status check. Push validation alone does not block direct pushes or GitHub Pages deployment.
 
-The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage and section image links use normal browser navigation to a full-page project view with title, location, and all project images. No project page replays the branded opening animation: a loading status is shown only while metadata or images are loading. The first gallery image loads eagerly and later images use native lazy loading as visitors scroll. Catalogue cards are not rendered, and unrelated project metadata is not fetched, on a project URL. Failed metadata and images show explicit errors and retry buttons; unknown projects link back to the section list. A Back to section link, standard browser Back/Forward, direct opening, and refresh all work with existing section URLs such as `landscape.html?project=01-shatam-lake`. Standard `<img>` elements retain the browser's image context menu. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
+The homepage heading and layout load immediately behind the opening animation. JavaScript fetches featured references and reads metadata from the owning sections; covers use native lazy loading. Homepage and section image links use normal browser navigation to a full-page project view with title, location, and all project images. No project page replays the branded opening animation: a loading status is shown only while metadata or images are loading. The first gallery image loads eagerly and later images use native lazy loading as visitors scroll. Catalogue cards are not rendered, and unrelated project metadata is not fetched, on a project URL. Failed metadata and images show explicit errors and retry buttons; unknown projects link back to the section list. A Back to section link, standard browser Back/Forward, direct opening, and refresh all work with existing section URLs such as `landscape.html?project=02-banda-cheruvu`. Standard `<img>` elements retain the browser's image context menu. JavaScript and HTTP are required for cards and details; navigation and the rest of the page remain available without JavaScript.
 
 All content and uploaded files are public. The site keeps its homepage SEO and sharing metadata, but projects now render client-side, so project indexing is less reliable and details do not provide project-specific WhatsApp/Open Graph previews. Automatic folder discovery with a build script and custom GitHub Actions publishing can be added later if maintaining the manual list becomes inconvenient.
 
@@ -174,7 +173,7 @@ All content and uploaded files are public. The site keeps its homepage SEO and s
 
 All six pages share the compact logo/name, appearance dropdown, and icon-only menu toggle. Home overlays the header on the spotlight image; other pages retain a sticky, theme-colored header. The toggle retains a screen-reader label. The native expandable menu lists Home, About Us (`./about.html`), Architecture (`./architecture.html`), Interiors (`./interiors.html`), Landscape (`./landscape.html`), and Contact Us (`./contact.html`) with full-width divided rows, contact shortcuts, and a close control. All three service pages load their own project catalogues. They are separate pages, not homepage sections, and there is no Turnkey page. The active page is identified with `aria-current="page"`. `site-navigation.js` adds Escape-to-close with focus restoration, outside-click dismissal, and dismissal when following a link. Opening, closing, and following links also work without JavaScript.
 
-`about.html` introduces Arishella Harish Kumar as Founder and Principal Architect of AHK Architects. A small portrait (`assets/harish-kumar.jpg`) appears above his introduction, displayed at 12rem wide without cropping or enlargement. The biography describes his graduation from CSIIT, Hyderabad, and founding of the studio in 2015, his work across architecture, interiors, and landscape, and an approach that lets every project develop its own identity. It retains the "Spaces that feel like you" heading. The homepage contains the image spotlight, Featured projects, and a compact copyright footer, without the introduction or large enquiry block.
+`about.html` introduces Arishella Harish Kumar as Founder and Principal Architect of AHK Architects. A small portrait (`assets/harish-kumar.jpg`) appears above his introduction, displayed at 12rem wide without cropping or enlargement. The biography describes his graduation from CSIIT, Hyderabad, and founding of the studio in 2015, his work across architecture, interiors, and landscape, and an approach that lets every project develop its own identity. The decorative "Spaces that feel like you" heading and Contact Us page's large "Contact us." heading are omitted. The homepage contains the image spotlight, Featured projects, and a compact copyright footer, without the introduction or large enquiry block.
 
 `contact.html` merges the former homepage invitation ("Have a space in mind?", "Let's make it feel like home", and "Project enquiries / Tell us about your space") into the existing Contact Us layout. It preserves the Arishella Harish Kumar identity, clickable Indian phone number (**+91 77804 12526**), WhatsApp, and email. All non-home pages use the same theme storage as the homepage but never show an opening animation. Home and all three service pages load `projects.js`. Header markup is kept explicitly in all six HTML pages so branding and navigation remain available without a build step or JavaScript. When updating the shared header or menu, keep all six in sync and retain each page's own active-menu marker.
 
