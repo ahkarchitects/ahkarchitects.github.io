@@ -1,5 +1,7 @@
 # AHK Architects
 
+Public website: **[ahkarchitects.in](https://ahkarchitects.in/)**.
+
 Official static portfolio website for AHK Architects (Arishella Harish Kumar), built with plain HTML, CSS, and a small JavaScript project-detail view for GitHub Pages. The organization is `ahkarchitects` and the repository is `ahkarchitects/ahkarchitects.github.io`. Project content lives in repository folders; no CMS, private credentials, or separate project HTML pages are required.
 
 ## Local development
@@ -86,11 +88,13 @@ Run appearance and intro regression tests with `node --test tests/*.test.cjs`.
 
 In the repository, open **Settings → Pages** and set **Build and deployment → Source** to **Deploy from a branch**, then select **main** and **/ (root)** and save. If you switched the source to GitHub Actions while trying the earlier build-based approach, switch it back.
 
-Merge the website changes into `main`. GitHub Pages publishes the repository's static files at `https://ahkarchitects.github.io/`; subsequent commits to `main` update the site automatically. Keep the repository name `ahkarchitects.github.io` to serve the organization site at this root address. This project does not need a Python build script or a custom publishing workflow. GitHub may show its own managed Pages deployment in the Actions tab; that does not mean you need to maintain an Actions workflow.
+Merge the website changes into `main`. GitHub Pages publishes the repository's static files at `https://ahkarchitects.in/`; subsequent commits to `main` update the site automatically. Keep the repository name `ahkarchitects.github.io` for the organization Pages repository; the public website uses the custom domain, not the repository address. This project does not need a Python build script or a custom publishing workflow. GitHub may show its own managed Pages deployment in the Actions tab; that does not mean you need to maintain an Actions workflow.
 
-To use a custom domain you own, configure it in GitHub Pages and add the corresponding DNS records. That makes the custom domain the address of this site, not a separate production deployment alongside staging.
+The root `CNAME` file contains `ahkarchitects.in`. Keep **Settings → Pages → Custom domain** set to `ahkarchitects.in` and **Enforce HTTPS** enabled, with the domain's DNS records pointing to GitHub Pages. This is the public production website, not a separate deployment alongside staging.
 
 ## Branding and link previews
+
+Use **AHK Architects** as the public brand name, not AHK Design or AHK Studio. The GitHub organization display name should be **AHK Architects**, and both its profile website and the repository About website should link to `https://ahkarchitects.in/`. Keep the organization login and repository name unchanged.
 
 The north-arrow logo is drawn as vector paths in `assets/ahk-logo.svg`, shared by the page and SVG-capable browser tabs so it stays sharp at any size. `assets/favicon-32.png` is a fallback for browsers without SVG favicon support. The 1200-by-630 `assets/social-preview.png` is a raster sharing card referenced by Open Graph and Twitter card metadata; many sharing services do not accept SVG preview images.
 
@@ -98,7 +102,7 @@ The sharing card uses the logo, AHK Architects name, Architecture, Interiors, an
 
 There is no Apple-specific home-screen icon. Without one, iOS may use a page snapshot or generic icon depending on the browser/version; the PNG favicon is not a guaranteed home-screen fallback. The website itself is unaffected.
 
-When changing the public domain, update the canonical URL, Open Graph URL, and absolute preview-image URLs in all six HTML pages, as well as the repository About website and organization profile website. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
+All six HTML pages use `https://ahkarchitects.in/` for canonical URLs, Open Graph URLs, and absolute preview-image URLs. When changing the public domain, update these URLs, `CNAME`, the GitHub Pages custom domain and DNS records, the repository About website, and the organization profile website together. Sharing services and browsers may cache old previews and icons; new assets must be deployed before external services can retrieve them.
 
 ## Portfolio images
 

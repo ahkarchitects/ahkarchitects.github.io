@@ -20,11 +20,19 @@ class Page(HTMLParser):
         self.ids = []
         self.scripts = []
         self.images = []
+        self.canonicals = []
+        self.metadata = {}
         self.intro_count = 0
         self.feed((ROOT / filename).read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "link" and attrs.get("rel") == "canonical":
+            self.canonicals.append(attrs["href"])
+        if tag == "meta":
+            key = attrs.get("property") or attrs.get("name")
+            if key:
+                self.metadata[key] = attrs.get("content", "")
         if tag == "img":
             self.images.append(attrs)
         if tag == "script" and "src" in attrs:
@@ -65,6 +73,19 @@ class SitePageTests(unittest.TestCase):
                 "architecture.html", "interiors.html", "landscape.html",
             )
         }
+
+    def test_public_urls_match_the_pages_custom_domain(self):
+        origin = "https://" + (ROOT / "CNAME").read_text().strip()
+        for filename, page in self.pages.items():
+            with self.subTest(page=filename):
+                url = origin + "/" + ("" if filename == "index.html" else filename)
+                self.assertEqual(page.canonicals, [url])
+                self.assertEqual(page.metadata["og:url"], url)
+                self.assertEqual(page.metadata["og:site_name"], "AHK Architects")
+                for key in ("og:image", "twitter:image"):
+                    image = urlsplit(page.metadata[key])
+                    self.assertEqual(f"{image.scheme}://{image.netloc}", origin)
+                    self.assertTrue((ROOT / image.path.lstrip("/")).is_file())
 
     def test_logo_extends_the_arrow_silhouette_without_clipping(self):
         svg = ET.parse(ROOT / "assets/ahk-logo.svg").getroot()
